@@ -1,0 +1,9 @@
+.gradle/
+.idea/
+*.class
+*.log
+*.jar
+*.zip
+*.tar.gz
+
+workdir/

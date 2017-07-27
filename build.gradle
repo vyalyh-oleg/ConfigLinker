@@ -1,0 +1,70 @@
+buildscript {
+	repositories {
+		mavenLocal()
+		mavenCentral()
+		jcenter()
+	}
+	dependencies {
+		classpath group: 'org.junit.platform', name: 'junit-platform-gradle-plugin', version: '1.0.0-M5'
+	}
+}
+
+// Apply the java plugin to add support for Java
+apply plugin: 'java-library'
+apply plugin: 'maven'
+//apply plugin: 'application'
+apply plugin: 'org.junit.platform.gradle.plugin'
+
+
+repositories {
+	mavenLocal()
+
+	maven {
+		name "internal"
+		url "https://archiva.2me.link/repository/internal"
+		credentials { username(archivaUserName); password(archivaUserPass) }
+	}
+
+	maven {
+		name "own-repo"
+		url "https://archiva.2me.link/repository/own-repo"
+		credentials { username(archivaUserName); password(archivaUserPass) }
+	}
+
+	mavenCentral()
+	jcenter()
+}
+
+dependencies {
+    // This dependency is found on compile classpath of this component and consumers.
+//    compile
+
+    // This dependency is exported to consumers, that is to say found on their compile classpath.
+//    api
+
+    // This dependency is used internally, and not exposed to consumers on their own compile classpath.
+//    implementation
+
+    // Use JUnit test framework
+//    testImplementation
+
+	testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: project.properties['junit.jupiter.version']
+	testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: project.properties['junit.jupiter.version']
+	testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: project.properties['junit.jupiter.version']
+	testRuntimeOnly group: 'org.junit.platform', name: 'junit-platform-runner', version: project.properties['junit.platform.version']
+	testRuntimeOnly group: 'org.junit.platform', name: 'junit-platform-launcher', version: project.properties['junit.platform.version']
+	testRuntimeOnly group: 'org.junit.platform', name: 'junit-platform-console', version: project.properties['junit.platform.version']
+}
+
+test {
+	workingDir "./workdir"
+}
+
+junitPlatformTest {
+	println "See report here:" + testReportDir
+	workingDir "./workdir"
+}
+
+// Define the main class for the application
+//mainClassName = 'App'
+
