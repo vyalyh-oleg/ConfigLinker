@@ -5,7 +5,7 @@ buildscript {
 		jcenter()
 	}
 	dependencies {
-		classpath group: 'org.junit.platform', name: 'junit-platform-gradle-plugin', version: '1.0.0-M5'
+		classpath group: 'org.junit.platform', name: 'junit-platform-gradle-plugin', version: project.properties['junit.platform.version']
 	}
 }
 
