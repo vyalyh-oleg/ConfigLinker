@@ -12,6 +12,7 @@ import java.util.Map;
 
 public final class ConfigSetBuilder {
 	private Map<String, String> parameters = new HashMap<>();
+	private Map<String, String> httpHeaders = new HashMap<>();
 	private BoundObject.SourceScheme sourceScheme = BoundObject.SourceScheme.FILE;
 	private BoundObject.TrackPolicy trackPolicy = BoundObject.TrackPolicy.DISABLE;
 	private int trackingInterval = 60;
@@ -20,7 +21,7 @@ public final class ConfigSetBuilder {
 	private boolean closed = false;
 
 	/**
-	 * String parameters, used for substitution in {@link BoundObject#sourcePath}, {@link BoundObject#propertyNamePrefix} and {@link com.configlinker.annotations.BoundProperty#name}.
+	 * String parameters, used for substitution in {@link BoundObject#sourcePath}, {@link BoundObject#propertyNamePrefix}, {@link com.configlinker.annotations.BoundProperty#name} and {@link BoundObject#httpHeaders}.
 	 */
 	public ConfigSetBuilder addParameter(String key, String value) throws ConfigSetBuilderClosedException {
 		if (closed)
@@ -36,6 +37,19 @@ public final class ConfigSetBuilder {
 		if (closed)
 			throw ConfigSetBuilderClosedException.getInstance();
 		this.sourceScheme = sourceScheme;
+		return this;
+	}
+
+	/**
+	 * Use this method to add necessary headers to every request that will be made to receive configuration. This headers are used only if the {@link BoundObject#sourceScheme} is {@link BoundObject.SourceScheme#HTTP}.
+	 * This method do not merge values for the same header names. In duplicaate case header will be simply replaced.
+	 * @param name Header name
+	 * @param value Header value
+	 */
+	public ConfigSetBuilder setHttpHeader(String name, String value){
+		if (closed)
+			throw ConfigSetBuilderClosedException.getInstance();
+		this.httpHeaders.put(name, value);
 		return this;
 	}
 
@@ -89,6 +103,10 @@ public final class ConfigSetBuilder {
 
 	BoundObject.SourceScheme getSourceScheme() {
 		return sourceScheme;
+	}
+
+	Map<String, String> getHttpHeaders() {
+		return httpHeaders;
 	}
 
 	BoundObject.TrackPolicy getTrackPolicy() {

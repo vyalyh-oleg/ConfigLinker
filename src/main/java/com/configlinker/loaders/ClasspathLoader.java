@@ -19,6 +19,8 @@ import java.util.Properties;
 final class ClasspathLoader extends ALoader {
 	ClasspathLoader(HashMap<Class<?>, ConfigDescription> configDescriptions) throws PropertyLoadException, PropertyValidateException, PropertyMatchException {
 		super(configDescriptions);
+
+		// invoke only in final loader instance (subclass of 'ALoader')
 		this.prepareLoader();
 		this.loadProperties();
 	}

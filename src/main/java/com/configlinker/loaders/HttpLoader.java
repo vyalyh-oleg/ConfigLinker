@@ -28,6 +28,11 @@ final class HttpLoader extends ALoader {
 
 	HttpLoader(HashMap<Class<?>, ConfigDescription> configDescriptions) throws PropertyLoadException {
 		super(configDescriptions);
+
+		// invoke only in final loader instance (subclass of 'ALoader')
+		this.prepareLoader();
+		this.loadProperties();
+		this.startTrackChanges();
 	}
 
 	@Override
@@ -59,10 +64,11 @@ final class HttpLoader extends ALoader {
 		BufferedReader configReader = null;
 		try {
 			URLConnection connection = url.openConnection();
+
+			if (configDescription.getHttpHeaders() != null)
+				configDescription.getHttpHeaders().forEach(connection::setRequestProperty);
+
 			connection.setUseCaches(true);
-
-//			connection.getHeaderFields().putAll();
-
 			connection.connect();
 			configReader = new BufferedReader(new InputStreamReader(connection.getInputStream(), configDescription.getCharset()));
 			Properties properties = new Properties();
@@ -103,6 +109,5 @@ final class HttpLoader extends ALoader {
 		trackChanges = false;
 		executorService.shutdown();
 		executorService = null;
-
 	}
 }

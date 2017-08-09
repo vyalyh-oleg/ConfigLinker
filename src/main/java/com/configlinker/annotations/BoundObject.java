@@ -21,14 +21,24 @@ public @interface BoundObject {
 	SourceScheme sourceScheme() default SourceScheme.INHERIT;
 
 	/**
-	 * Must point to source where can be found data to fill in this object with necessary values.<br/><br/>
+	 * Must point to source where data can be found to fill in this object with necessary values.
 	 * <p>
 	 * You can use variables for substituting some parts of this path.
 	 * Variables can be set in {@link ConfigSetBuilder#addParameter(String, String)}.<br/>
 	 * Example path:
-	 * <pre>"${substitution1}/path_part1/${substitution2}/path_part2/endName"</pre><br/>
+	 * <pre>"${substitution1}/path_part1/${substitution2}/path_part2/endPart"</pre>
 	 */
 	String sourcePath();
+
+	/**
+	 * Headers that are used to make requests to get configuration parameters (if the {@link BoundObject#sourceScheme} is {@link SourceScheme#HTTP}). These values are merged with values which you can set with {@link ConfigSetBuilder}.
+	 * <p>
+	 * You can use variables for substituting some parts of this path.
+	 * Variables can be set in {@link ConfigSetBuilder#addParameter(String, String)}.<br/>
+	 * Example path:
+	 * <pre>"${substitution1}/path_part1/${substitution2}/path_part2/endName"</pre>
+	 */
+	String[] httpHeaders() default "";
 
 	/**
 	 * <p>This value is used to retrieve {@code Charset} object invoking {@link java.nio.charset.Charset#forName(String)}, and then it will be used to load configuration in raw text format.
