@@ -9,7 +9,7 @@ buildscript {
 	}
 }
 
-// Apply the java plugin to add support for Java
+//apply plugin: 'java'
 apply plugin: 'java-library'
 apply plugin: 'maven'
 //apply plugin: 'application'
@@ -64,7 +64,3 @@ junitPlatformTest {
 	println "See report here:" + testReportDir
 	workingDir "./workdir"
 }
-
-// Define the main class for the application
-//mainClassName = 'App'
-

@@ -106,30 +106,29 @@ final class AnnotationScanner {
 
 
 		// get and validate http headers
-		String[] customHttpHeaders = boundObjectAnnotation.httpHeaders();
-		if (!(customHttpHeaders.length == 1 && customHttpHeaders[0].isEmpty()) && sourceScheme != BoundObject.SourceScheme.HTTP)
-			throw new AnnotationAnalyzeException("Setting custom http headers in '@BoundObject.httpHeaders()' is allowed only if 'BoundObject.SourceScheme == SourceScheme.HTTP'; interface  '" + configInterface.getName() + "'.");
-
 		Map<String, String> httpHeaders = null;
-		if (sourceScheme == BoundObject.SourceScheme.HTTP) {
-			httpHeaders = new HashMap<>();
-			httpHeaders.putAll(this.configBuilder.getHttpHeaders());
-			String header;
-			int colonIndex;
-			for (int i = 0; i < customHttpHeaders.length; i++)
-				try {
-					header = validateAndMakeVariableSubstitution(customHttpHeaders[i]);
-					colonIndex = header.indexOf(':');
-					if (colonIndex == -1) {
-						throw new AnnotationAnalyzeException("Syntax error in '@BoundObject.httpHeaders()': '" + customHttpHeaders[i] + "' value; interface '" + configInterface.getName() + "': header name and value should be separated with colon ':'");
+		String[] customHttpHeaders = boundObjectAnnotation.httpHeaders();
+		if (!(customHttpHeaders.length == 1 && customHttpHeaders[0].isEmpty()))
+			if (sourceScheme == BoundObject.SourceScheme.HTTP) {
+				httpHeaders = new HashMap<>();
+				httpHeaders.putAll(this.configBuilder.getHttpHeaders());
+				String header;
+				int colonIndex;
+				for (String httpHeader : customHttpHeaders)
+					try {
+						header = validateAndMakeVariableSubstitution(httpHeader);
+						colonIndex = header.indexOf(':');
+						if (colonIndex == -1) {
+							throw new AnnotationAnalyzeException("Syntax error in '@BoundObject.httpHeaders()': '" + httpHeader + "' value; interface '" + configInterface.getName() + "': header name and value should be separated with colon ':'");
+						}
+						httpHeaders.put(header.substring(0, colonIndex).trim(),
+								header.substring(colonIndex + 1, header.length()).trim());
+					} catch (AnnotationAnalyzeException e) {
+						// TODO:log
+						throw new AnnotationAnalyzeException("Syntax error in '@BoundObject.httpHeaders()': '" + httpHeader + "' value; interface '" + configInterface.getName() + "'.", e);
 					}
-					httpHeaders.put(header.substring(0, colonIndex).trim(),
-									header.substring(colonIndex + 1, header.length()).trim());
-				} catch (AnnotationAnalyzeException e) {
-					// TODO:log
-					throw new AnnotationAnalyzeException("Syntax error in '@BoundObject.httpHeaders()': '" + customHttpHeaders[i] + "' value; interface '" + configInterface.getName() + "'.", e);
-				}
-		}
+			} else
+				throw new AnnotationAnalyzeException("Setting custom http headers in '@BoundObject.httpHeaders()' is allowed only if 'BoundObject.SourceScheme == SourceScheme.HTTP'; interface  '" + configInterface.getName() + "'.");
 
 
 		// get charset of raw configuration text

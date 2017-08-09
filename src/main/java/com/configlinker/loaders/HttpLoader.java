@@ -28,6 +28,11 @@ final class HttpLoader extends ALoader {
 
 	HttpLoader(HashMap<Class<?>, ConfigDescription> configDescriptions) throws PropertyLoadException {
 		super(configDescriptions);
+
+		// invoke only in final loader instance (subclass of 'ALoader')
+		this.prepareLoader();
+		this.loadProperties();
+		this.startTrackChanges();
 	}
 
 	@Override
