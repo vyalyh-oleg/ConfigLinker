@@ -1,3 +1,6 @@
+println 'gradle :build -Prelease -- to make release build (not a snapshot)'
+
+
 buildscript {
 	repositories {
 		mavenLocal()
@@ -56,12 +59,31 @@ dependencies {
 	testRuntimeOnly group: 'org.junit.platform', name: 'junit-platform-console', version: project.properties['junit.platform.version']
 }
 
+
+project.ext {
+	address = project.properties["address"]
+	email = project.properties["email"]
+}
+
+// Project configuration:
+group = project.properties["package.group"]
+archivesBaseName = project.properties["package.artifact"]
+version = project.properties["package.version"]
+
+if (!hasProperty("release"))
+	version = version + "-SNAPSHOT-b" + new Date().format('yyMMddHHmmss')
+
+
+project.sourceCompatibility = 1.8
+project.targetCompatibility = 1.8
+
+
 test {
 	workingDir "./workdir"
 }
 
 junitPlatformTest {
-	println "See report here:" + testReportDir
+	println "See reports here: '" + testReportDir + "'."
 	workingDir "./workdir"
 }
 
