@@ -151,14 +151,13 @@ abstract class ALoader {
 			singleReturnsMethodsCache.put(configDescription.getConfInterface(), singleReturns);
 		}
 
-		if (!error)
-		{
+		if (!error) {
 			this.rawProperties.put(description.getSourcePath(), newProperties);
 			this.singleReturnsMethodsCache.putAll(singleReturnsMethodsCache);
 			configDescriptions.forEach(confDescr -> this.multiReturnsMethodsCache.get(confDescr.getConfInterface()).clear());
 		}
 
-		configDescriptions.forEach(confDescr -> confDescr.getConfigChangeListener().configChanged(configChangedEvents.get(confDescr)) );
+		configDescriptions.forEach(confDescr -> confDescr.getConfigChangeListener().configChanged(configChangedEvents.get(confDescr)));
 	}
 
 	final Object getProperty(ConfigDescription configDescription, ConfigDescription.PropertyDescription propertyDescription, Method method, HashMap<String, String> methodArguments) throws ConfigProxyException, PropertyValidateException, PropertyMatchException, PropertyLoadException {

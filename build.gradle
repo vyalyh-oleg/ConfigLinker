@@ -8,11 +8,11 @@ buildscript {
 		jcenter()
 	}
 	dependencies {
-		classpath group: 'org.junit.platform', name: 'junit-platform-gradle-plugin', version: '1.0.0-M5'
+		classpath group: 'org.junit.platform', name: 'junit-platform-gradle-plugin', version: project.properties['junit.platform.version']
 	}
 }
 
-// Apply the java plugin to add support for Java
+//apply plugin: 'java'
 apply plugin: 'java-library'
 apply plugin: 'maven'
 //apply plugin: 'application'
@@ -86,7 +86,3 @@ junitPlatformTest {
 	println "See reports here: '" + testReportDir + "'."
 	workingDir "./workdir"
 }
-
-// Define the main class for the application
-//mainClassName = 'App'
-

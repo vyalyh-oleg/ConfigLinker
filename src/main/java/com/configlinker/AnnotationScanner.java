@@ -14,6 +14,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -75,6 +76,7 @@ final class AnnotationScanner {
 			throw new AnnotationAnalyzeException("'" + configInterface.getName() + "' is not annotated with '@" + BoundObject.class.getSimpleName() + "'.");
 		}
 
+
 		// validate variables in @BoundObject#sourcePath
 		String rawSourcePath = boundObjectAnnotation.sourcePath();
 		String sourcePath;
@@ -82,8 +84,9 @@ final class AnnotationScanner {
 			sourcePath = validateAndMakeVariableSubstitution(rawSourcePath);
 		} catch (AnnotationAnalyzeException e) {
 			// TODO:log
-			throw new AnnotationAnalyzeException("Syntax error in '@BoundObject.sourcePath()' value, interface  '" + configInterface.getName() + "'.", e);
+			throw new AnnotationAnalyzeException("Syntax error in '@BoundObject.sourcePath()' value; interface  '" + configInterface.getName() + "'.", e);
 		}
+
 
 		// validate variables in @BoundObject#propertyNamePrefix
 		String rawPropertyNamePrefix = boundObjectAnnotation.propertyNamePrefix();
@@ -92,13 +95,41 @@ final class AnnotationScanner {
 			propertyNamePrefix = validateAndMakeVariableSubstitution(rawPropertyNamePrefix);
 		} catch (AnnotationAnalyzeException e) {
 			// TODO:log
-			throw new AnnotationAnalyzeException("Syntax error in '@BoundObject.propertyNamePrefix()' value, interface  '" + configInterface.getName() + "'.", e);
+			throw new AnnotationAnalyzeException("Syntax error in '@BoundObject.propertyNamePrefix()' value; interface  '" + configInterface.getName() + "'.", e);
 		}
+
 
 		// get SourceScheme
 		BoundObject.SourceScheme sourceScheme = boundObjectAnnotation.sourceScheme();
 		if (sourceScheme == BoundObject.SourceScheme.INHERIT)
 			sourceScheme = configBuilder.getSourceScheme();
+
+
+		// get and validate http headers
+		Map<String, String> httpHeaders = null;
+		String[] customHttpHeaders = boundObjectAnnotation.httpHeaders();
+		if (!(customHttpHeaders.length == 1 && customHttpHeaders[0].isEmpty()))
+			if (sourceScheme == BoundObject.SourceScheme.HTTP) {
+				httpHeaders = new HashMap<>();
+				httpHeaders.putAll(this.configBuilder.getHttpHeaders());
+				String header;
+				int colonIndex;
+				for (String httpHeader : customHttpHeaders)
+					try {
+						header = validateAndMakeVariableSubstitution(httpHeader);
+						colonIndex = header.indexOf(':');
+						if (colonIndex == -1) {
+							throw new AnnotationAnalyzeException("Syntax error in '@BoundObject.httpHeaders()': '" + httpHeader + "' value; interface '" + configInterface.getName() + "': header name and value should be separated with colon ':'");
+						}
+						httpHeaders.put(header.substring(0, colonIndex).trim(),
+								header.substring(colonIndex + 1, header.length()).trim());
+					} catch (AnnotationAnalyzeException e) {
+						// TODO:log
+						throw new AnnotationAnalyzeException("Syntax error in '@BoundObject.httpHeaders()': '" + httpHeader + "' value; interface '" + configInterface.getName() + "'.", e);
+					}
+			} else
+				throw new AnnotationAnalyzeException("Setting custom http headers in '@BoundObject.httpHeaders()' is allowed only if 'BoundObject.SourceScheme == SourceScheme.HTTP'; interface  '" + configInterface.getName() + "'.");
+
 
 		// get charset of raw configuration text
 		String charsetName = boundObjectAnnotation.charsetName();
@@ -113,6 +144,7 @@ final class AnnotationScanner {
 				throw new AnnotationAnalyzeException("Charset with name '" + charsetName + "' not found.", e);
 			}
 
+
 		// get TrackPolicy
 		BoundObject.TrackPolicy trackPolicy = boundObjectAnnotation.trackPolicy();
 		if (trackPolicy == BoundObject.TrackPolicy.INHERIT)
@@ -124,12 +156,14 @@ final class AnnotationScanner {
 			throw new AnnotationAnalyzeException(msg);
 		}
 
+
 		// get tracking interval
 		int trackingInterval = boundObjectAnnotation.trackingInterval();
 		if (sourceScheme != BoundObject.SourceScheme.HTTP || trackPolicy == BoundObject.TrackPolicy.DISABLE)
 			trackingInterval = -1;
 		else if (trackingInterval == 0)
 			trackingInterval = configBuilder.getTrackingInterval();
+
 
 		// get and check ConfigChangeListener
 		Class<? extends ConfigChangeListener> changeListener_class = boundObjectAnnotation.changeListener();
@@ -147,16 +181,19 @@ final class AnnotationScanner {
 			throw new AnnotationAnalyzeException("You cannot use @BoundObject.changeListener() if TrackPolicy is 'DISABLE', config interface '" + configInterface.getName() + "'.");
 		}
 
+
 		// get ErrorBehaviour
 		ErrorBehavior errorBehavior = boundObjectAnnotation.errorBehavior();
 		if (errorBehavior == ErrorBehavior.INHERITED)
 			errorBehavior = configBuilder.getErrorBehavior();
+
 
 		// create ConfigDescription
 		ConfigDescription configDescription = new ConfigDescription(configInterface);
 		configDescription.setSourcePath(sourcePath);
 		configDescription.setPropertyNamePrefix(propertyNamePrefix);
 		configDescription.setSourceScheme(sourceScheme);
+		configDescription.setHttpHeaders(httpHeaders);
 		configDescription.setCharset(charset);
 		configDescription.setTrackPolicy(trackPolicy);
 		configDescription.setTrackingInterval(trackingInterval);

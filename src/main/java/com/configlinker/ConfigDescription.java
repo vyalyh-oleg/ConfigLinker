@@ -11,6 +11,7 @@ import java.util.Map;
 public final class ConfigDescription {
 	private final Class<?> confInterface;
 	private BoundObject.SourceScheme sourceScheme;
+	private Map<String, String> httpHeaders;
 	private String sourcePath;
 	private Charset charset;
 	private String propertyNamePrefix;
@@ -31,6 +32,10 @@ public final class ConfigDescription {
 
 	public BoundObject.SourceScheme getSourceScheme() {
 		return sourceScheme;
+	}
+
+	public Map<String, String> getHttpHeaders() {
+		return httpHeaders;
 	}
 
 	public String getSourcePath() {
@@ -76,6 +81,10 @@ public final class ConfigDescription {
 
 	void setSourceScheme(BoundObject.SourceScheme sourceScheme) {
 		this.sourceScheme = sourceScheme;
+	}
+
+	void setHttpHeaders(Map<String, String> httpHeaders) {
+		this.httpHeaders = httpHeaders;
 	}
 
 	void setSourcePath(String sourcePath) {
