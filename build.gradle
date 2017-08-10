@@ -1,3 +1,4 @@
+// output help information
 println 'gradle :build -Prelease -- to make release build (not a snapshot)'
 
 
@@ -76,6 +77,15 @@ if (!hasProperty("release"))
 
 project.sourceCompatibility = 1.8
 project.targetCompatibility = 1.8
+
+task javadocJar(type: Jar) {
+	classifier = 'javadoc'
+	from javadoc
+}
+task sourcesJar(type: Jar) {
+	classifier = 'sources'
+	from sourceSets.main.allSource
+}
 
 
 test {

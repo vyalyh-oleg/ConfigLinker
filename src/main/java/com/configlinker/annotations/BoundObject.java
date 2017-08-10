@@ -16,7 +16,7 @@ import java.nio.charset.Charset;
 public @interface BoundObject {
 
 	/**
-	 * Describe the type of the source that used to retrieve property values for this annotated object.<br/>
+	 * Describe the type of the source that used to retrieve property values for this annotated object.
 	 */
 	SourceScheme sourceScheme() default SourceScheme.INHERIT;
 
@@ -24,7 +24,8 @@ public @interface BoundObject {
 	 * Must point to source where data can be found to fill in this object with necessary values.
 	 * <p>
 	 * You can use variables for substituting some parts of this path.
-	 * Variables can be set in {@link ConfigSetBuilder#addParameter(String, String)}.<br/>
+	 * Variables can be set in {@link ConfigSetBuilder#addParameter(String, String)}.
+	 * <p>
 	 * Example path:
 	 * <pre>"${substitution1}/path_part1/${substitution2}/path_part2/endPart"</pre>
 	 */
@@ -34,7 +35,8 @@ public @interface BoundObject {
 	 * Headers that are used to make requests to get configuration parameters (if the {@link BoundObject#sourceScheme} is {@link SourceScheme#HTTP}). These values are merged with values which you can set with {@link ConfigSetBuilder}.
 	 * <p>
 	 * You can use variables for substituting some parts of this path.
-	 * Variables can be set in {@link ConfigSetBuilder#addParameter(String, String)}.<br/>
+	 * Variables can be set in {@link ConfigSetBuilder#addParameter(String, String)}.
+	 * <p>
 	 * Example path:
 	 * <pre>"${substitution1}/path_part1/${substitution2}/path_part2/endName"</pre>
 	 */
@@ -48,13 +50,14 @@ public @interface BoundObject {
 	String charsetName() default "";
 
 	/**
-	 * <p>The common names part of parameters group that is used to bind with methods of this annotated object. If it is not specified you should use full parameter names in {@code @BoundPropert.propertyName}.</p><br/>
+	 * <p>The common names part of parameters group that is used to bind with methods of this annotated object. If it is not specified you should use full parameter names in {@code @BoundPropert.propertyName}.</p>
 	 * <p>
 	 * You can use variables for substituting some parts of this prefix.
-	 * Variables should be set with {@link ConfigSetBuilder#addParameter(String, String)}.<br/>
+	 * Variables should be set with {@link ConfigSetBuilder#addParameter(String, String)}.
+	 * <p>
 	 * Example:
 	 * <pre>	"servers.${type}.srv1.configuration"</pre>
-	 * Where the {@code type} can be for example "test" or "production", etc.:<br/>
+	 * Where the {@code type} can be for example "test" or "production", etc.:
 	 * <pre>	"servers.<b>test</b>.srv1.configuration"</pre>
 	 * <p>
 	 */
@@ -115,14 +118,10 @@ public @interface BoundObject {
 		 * <p>All changes, made in the underlying persistent configuration store, will be tracked.
 		 * <p>The behavior depends on {@link SourceScheme}:
 		 * <ul>
-		 * <li>if {@link SourceScheme#CLASSPATH}</li>
-		 * Track changes not allowed for this scheme.
-		 * <li>if {@link SourceScheme#FILE}</li>
-		 * Listen OS notification from file system. Should be supported by operation system.
-		 * <li>if {@link SourceScheme#HTTP}</li>
-		 * Refresh values from persistent store by schedule with specified period of time.
-		 * <li>if {@link SourceScheme#CONFIG_LINKER_SERVER}</li>
-		 * Listen notification from remote ConfigLinker server.
+		 * <li>if {@link SourceScheme#CLASSPATH} -- track changes not allowed for this scheme.</li>
+		 * <li>if {@link SourceScheme#FILE} -- listen OS notification from file system. Should be supported by operation system.</li>
+		 * <li>if {@link SourceScheme#HTTP} -- refresh values from persistent store by schedule with specified period of time.</li>
+		 * <li>if {@link SourceScheme#CONFIG_LINKER_SERVER} -- listen notification from remote ConfigLinker server.</li>
 		 * </ul>
 		 */
 		ENABLE,
