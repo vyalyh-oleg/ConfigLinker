@@ -71,8 +71,9 @@ group = project.properties["package.group"]
 archivesBaseName = project.properties["package.artifact"]
 version = project.properties["package.version"]
 
+//ext.currentBuildNumber = ""
 if (!hasProperty("release"))
-	version = version + "-SNAPSHOT-b" + new Date().format('yyMMddHHmmss')
+	version = version + "-b" + new Date().format('yyMMddHH.mmss') + "-SNAPSHOT"
 
 
 project.sourceCompatibility = 1.8
