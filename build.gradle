@@ -73,7 +73,8 @@ version = project.properties["package.version"]
 
 //ext.currentBuildNumber = ""
 if (!hasProperty("release"))
-	version = version + "-b" + new Date().format('yyMMddHH.mmss') + "-SNAPSHOT"
+	version = version + "-SNAPSHOT"
+	//version = version + "-b" + new Date().format('yyMMddHH.mmss') + "-SNAPSHOT"
 
 
 project.sourceCompatibility = 1.8
