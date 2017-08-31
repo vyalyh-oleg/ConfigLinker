@@ -35,10 +35,9 @@ abstract class AbstractPropertyMapper<RAW_TYPE, MAPPED_TYPE> implements Property
 	@Override
 	public final MAPPED_TYPE mapFromString(String rawStringValue) throws PropertyMatchException, PropertyValidateException, PropertyMapException {
 		MAPPED_TYPE mappedValue = mapFrom(propertyParser.parse(rawStringValue, this.regexpPattern, delimiterForList, delimiterForKeyValue));
-		if (mappedValue == null) {
-			// TODO: log
-			throw new PropertyMapException("");
-		}
+		if (mappedValue == null)
+			throw new PropertyMapException("Cannot create mapped value from raw string '" + rawStringValue + "' for method '" + this.executable.getDeclaringClass().getName() + "::" + this.executable.getName() + "'.").logAndReturn();
+
 		return mappedValue;
 	}
 
@@ -47,7 +46,6 @@ abstract class AbstractPropertyMapper<RAW_TYPE, MAPPED_TYPE> implements Property
 		// TODO: additional check for generic type (customTypeOrDeserializer), if return type is List, Set or Map
 		// TODO: additional mapper for each element if it is complex type
 		//PropertyParser propertyParser = ParserFactory.create(returnType, deserializationMethod);
-
 		return null;
 	}
 
@@ -69,15 +67,11 @@ abstract class AbstractPropertyMapper<RAW_TYPE, MAPPED_TYPE> implements Property
 			if (Modifier.isStatic(this.executable.getModifiers()))
 				returnElement = (RETURN_TYPE) ((Method) this.executable).invoke(null, elementValue);
 		} catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-			// TODO: log and throw
-			throw new PropertyMapException("", e);
+			throw new PropertyMapException("Cannot interpret return type for method '" + this.executable.getDeclaringClass().getName() + "::" + this.executable.getName() + "'.", e).logAndReturn();
 		}
 
-		// TODO: check errorBehaviour
-		if (returnElement == null) {
-			// TODO: log
-			throw new PropertyMapException("");
-		}
+		if (returnElement == null)
+			throw new PropertyMapException("Cannot interpret return type for method '" + this.executable.getDeclaringClass().getName() + "::" + this.executable.getName() + "'.").logAndReturn();
 
 		if (this.validator != null)
 			this.validator.validate(returnElement);

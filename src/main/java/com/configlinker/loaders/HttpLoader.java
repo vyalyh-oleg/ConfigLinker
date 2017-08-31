@@ -1,8 +1,10 @@
 package com.configlinker.loaders;
 
 import com.configlinker.ConfigDescription;
+import com.configlinker.Loggers;
 import com.configlinker.annotations.BoundObject;
 import com.configlinker.exceptions.PropertyLoadException;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,7 +17,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -42,8 +43,7 @@ final class HttpLoader extends ALoader {
 			try {
 				url = new URL(description.getSourcePath());
 			} catch (MalformedURLException e) {
-				//TODO: log
-				throw new PropertyLoadException("Wrong HTTP/S URL '" + description.getSourcePath() + "' in annotation parameter @BoundObject.sourcePath() on interface '" + description.getConfInterface().getName() + "'.");
+				throw new PropertyLoadException("Wrong HTTP/S URL '" + description.getSourcePath() + "' in annotation parameter @BoundObject.sourcePath() on interface '" + description.getConfInterface().getName() + "'.").logAndReturn();
 			}
 			if (description.getTrackPolicy() == BoundObject.TrackPolicy.ENABLE)
 				watchedFiles.computeIfAbsent(url, url1 -> new HashSet<>()).add(description);
@@ -57,8 +57,7 @@ final class HttpLoader extends ALoader {
 			url = new URL(configDescription.getSourcePath());
 		}
 		catch (MalformedURLException e) {
-			//TODO: log
-			throw new PropertyLoadException("Wrong HTTP/S URL '" + configDescription.getSourcePath() + "' in annotation parameter @BoundObject.sourcePath() on interface '" + configDescription.getConfInterface().getName() + "'.", e);
+			throw new PropertyLoadException("Wrong HTTP/S URL '" + configDescription.getSourcePath() + "' in annotation parameter @BoundObject.sourcePath() on interface '" + configDescription.getConfInterface().getName() + "'.", e).logAndReturn();
 		}
 
 		BufferedReader configReader = null;
@@ -75,15 +74,13 @@ final class HttpLoader extends ALoader {
 			properties.load(configReader);
 			return properties;
 		} catch (IOException e) {
-			// TODO: log
-			throw new PropertyLoadException("Error during loading raw properties from URL '" + url.toString() + "' with charset '" + configDescription.getCharset().toString() + "', config interface: '" + configDescription.getConfInterface().getName() + "'.", e);
+			throw new PropertyLoadException("Error during loading raw properties from URL '" + url.toString() + "' with charset '" + configDescription.getCharset().toString() + "', config interface: '" + configDescription.getConfInterface().getName() + "'.", e).logAndReturn();
 		} finally {
 			if (configReader != null)
 				try {
 					configReader.close();
 				} catch (IOException e) {
-					String message = "Can not close URLConnection for URL: '" + url.toString() + "', config interface: '" + configDescription.getConfInterface().getName() + "'; " + e.getMessage();
-					// TODO: log
+					LoggerFactory.getLogger(Loggers.mainLogger).warn("Can not close URLConnection for URL: '{}', config interface: '{}'.", url.toString(), configDescription.getConfInterface().getName(), e );
 				}
 		}
 	}

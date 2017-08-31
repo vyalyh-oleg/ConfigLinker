@@ -34,23 +34,18 @@ final class ClasspathLoader extends ALoader {
 	protected Properties loadRawProperties(ConfigDescription configDescription) throws PropertyLoadException {
 		Class<?> configInterface = configDescription.getConfInterface();
 		Path relativeFilePath = Paths.get(configDescription.getSourcePath()).normalize();
-		if (relativeFilePath.isAbsolute()) {
-			// TODO: log
-			throw new PropertyLoadException("'" + configDescription.getConfInterface().getName() + "' doesn't accept absolute path, only relative, because ConfigLinker searches configuration files in your classpath directories or 'jar' files. Actual source path:'" + relativeFilePath + "'.");
-		}
+		if (relativeFilePath.isAbsolute())
+			throw new PropertyLoadException("'" + configDescription.getConfInterface().getName() + "' doesn't accept absolute path, only relative, because ConfigLinker searches configuration files in your classpath directories or 'jar' files. Actual source path:'" + relativeFilePath + "'.").logAndReturn();
 
 		URL resource = ClasspathLoader.class.getClassLoader().getResource(relativeFilePath.toString());
-		if (resource == null) {
-			// TODO: log
-			throw new PropertyLoadException("Configuration file '" + relativeFilePath + "' not exists; see annotation parameter @BoundObject.sourcePath() on interface '" + configDescription.getConfInterface().getName() + "'.");
-		}
+		if (resource == null)
+			throw new PropertyLoadException("Configuration file '" + relativeFilePath + "' not exists; see annotation parameter @BoundObject.sourcePath() on interface '" + configDescription.getConfInterface().getName() + "'.").logAndReturn();
 
 		Path fullFilePath;
 		try {
 			fullFilePath = Paths.get(resource.toURI());
 		} catch (URISyntaxException e) {
-			// TODO: log
-			throw new PropertyLoadException("'" + this.getClass().getSimpleName() + "' couldn't get resource from classpath and convert it to ordinary 'Path' object. Actual resource URL:'" + resource.toString() + "'.");
+			throw new PropertyLoadException("'" + this.getClass().getSimpleName() + "' couldn't get resource from classpath and convert it to ordinary 'Path' object. Actual resource URL:'" + resource.toString() + "'.").logAndReturn();
 		}
 
 		try {
@@ -60,18 +55,17 @@ final class ClasspathLoader extends ALoader {
 			propFileReader.close();
 			return newProperties;
 		} catch (IOException e) {
-			// TODO: log
-			throw new PropertyLoadException("Error during loading raw properties from file '" + fullFilePath + "', config interface: '" + configInterface.getName() + "'.", e);
+			throw new PropertyLoadException("Error during loading raw properties from file '" + fullFilePath + "', config interface: '" + configInterface.getName() + "'.", e).logAndReturn();
 		}
 	}
 
 	@Override
 	protected void startTrackChanges() throws PropertyLoadException {
-		throw new PropertyLoadException("'" + this.getClass().getSimpleName() + "' doesn't support tracking changes.");
+		throw new PropertyLoadException("'" + this.getClass().getSimpleName() + "' doesn't support tracking changes.").logAndReturn();
 	}
 
 	@Override
 	protected void stopTrackChanges() throws PropertyLoadException {
-		throw new PropertyLoadException("'" + this.getClass().getSimpleName() + "' doesn't support tracking changes.");
+		throw new PropertyLoadException("'" + this.getClass().getSimpleName() + "' doesn't support tracking changes.").logAndReturn();
 	}
 }

@@ -6,8 +6,6 @@ import com.configlinker.exceptions.AnnotationAnalyzeException;
 import com.configlinker.exceptions.PropertyMapException;
 import com.configlinker.mappers.MapperFactory;
 import com.configlinker.mappers.PropertyMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -24,8 +22,6 @@ import java.util.stream.Stream;
 
 
 final class AnnotationScanner {
-	private Logger logger = LoggerFactory.getLogger(Loggers.mainLogger);
-
 	/**
 	 * Property name pattern for '${var}' constructions.
 	 */
@@ -57,7 +53,7 @@ final class AnnotationScanner {
 			}
 
 			if (boundPropertyMethods.isEmpty())
-				throw logErrorAndCreateException("Interface '" + configInterface.getName() + "' doesn't contain any methods annotated with '@" + BoundProperty.class.getSimpleName() + "'.");
+				throw new AnnotationAnalyzeException("Interface '" + configInterface.getName() + "' doesn't contain any methods annotated with '@" + BoundProperty.class.getSimpleName() + "'.").logAndReturn();
 
 			configInterfaceDescription.setBoundPropertyMethods(boundPropertyMethods);
 			configDescriptions.put(configInterface, configInterfaceDescription);
@@ -69,11 +65,11 @@ final class AnnotationScanner {
 		BoundObject boundObjectAnnotation = configInterface.getDeclaredAnnotation(BoundObject.class);
 
 		if (!configInterface.isInterface()) {
-			throw logErrorAndCreateException("'" + configInterface.getName() + "' is not interface.");
+			throw new AnnotationAnalyzeException("'" + configInterface.getName() + "' is not interface.").logAndReturn();
 		}
 
 		if (boundObjectAnnotation == null) {
-			throw logErrorAndCreateException("'" + configInterface.getName() + "' is not annotated with '@" + BoundObject.class.getSimpleName() + "'.");
+			throw new AnnotationAnalyzeException("'" + configInterface.getName() + "' is not annotated with '@" + BoundObject.class.getSimpleName() + "'.").logAndReturn();
 		}
 
 
@@ -83,7 +79,7 @@ final class AnnotationScanner {
 		try {
 			sourcePath = validateAndMakeVariableSubstitution(rawSourcePath);
 		} catch (IllegalArgumentException e) {
-			throw logErrorAndCreateException("Syntax error in '@BoundObject.sourcePath()' value; interface  '" + configInterface.getName() + "'.", e);
+			throw new AnnotationAnalyzeException("Syntax error in '@BoundObject.sourcePath()' value; interface  '" + configInterface.getName() + "'.", e).logAndReturn();
 		}
 
 
@@ -93,7 +89,7 @@ final class AnnotationScanner {
 		try {
 			propertyNamePrefix = validateAndMakeVariableSubstitution(rawPropertyNamePrefix);
 		} catch (IllegalArgumentException e) {
-			throw logErrorAndCreateException("Syntax error in '@BoundObject.propertyNamePrefix()' value; interface  '" + configInterface.getName() + "'.", e);
+			throw new AnnotationAnalyzeException("Syntax error in '@BoundObject.propertyNamePrefix()' value; interface  '" + configInterface.getName() + "'.", e).logAndReturn();
 		}
 
 
@@ -117,15 +113,15 @@ final class AnnotationScanner {
 						header = validateAndMakeVariableSubstitution(httpHeader);
 						colonIndex = header.indexOf(':');
 						if (colonIndex == -1) {
-							throw logErrorAndCreateException("Syntax error in '@BoundObject.httpHeaders()': '" + httpHeader + "' value; interface '" + configInterface.getName() + "': header name and value should be separated with colon ':'");
+							throw new AnnotationAnalyzeException("Syntax error in '@BoundObject.httpHeaders()': '" + httpHeader + "' value; interface '" + configInterface.getName() + "': header name and value should be separated with colon ':'").logAndReturn();
 						}
 						httpHeaders.put(header.substring(0, colonIndex).trim(),
 								header.substring(colonIndex + 1, header.length()).trim());
 					} catch (IllegalArgumentException e) {
-						throw logErrorAndCreateException("Syntax error in '@BoundObject.httpHeaders()': '" + httpHeader + "' value; interface '" + configInterface.getName() + "'.", e);
+						throw new AnnotationAnalyzeException("Syntax error in '@BoundObject.httpHeaders()': '" + httpHeader + "' value; interface '" + configInterface.getName() + "'.", e).logAndReturn();
 					}
 			} else
-				throw logErrorAndCreateException("Setting custom http headers in '@BoundObject.httpHeaders()' is allowed only if 'BoundObject.SourceScheme == SourceScheme.HTTP'; interface  '" + configInterface.getName() + "'.");
+				throw new AnnotationAnalyzeException("Setting custom http headers in '@BoundObject.httpHeaders()' is allowed only if 'BoundObject.SourceScheme == SourceScheme.HTTP'; interface  '" + configInterface.getName() + "'.").logAndReturn();
 
 
 		// get charset of raw configuration text
@@ -137,7 +133,7 @@ final class AnnotationScanner {
 			try {
 				charset = Charset.forName(charsetName);
 			} catch (UnsupportedCharsetException e) {
-				throw logErrorAndCreateException("Charset with name '" + charsetName + "' not found.", e);
+				throw new AnnotationAnalyzeException("Charset with name '" + charsetName + "' not found.", e).logAndReturn();
 			}
 
 
@@ -148,7 +144,7 @@ final class AnnotationScanner {
 
 		if (trackPolicy == BoundObject.TrackPolicy.ENABLE && sourceScheme == BoundObject.SourceScheme.CLASSPATH) {
 			String msg = "You can not track changes for " + BoundObject.SourceScheme.class.getSimpleName() + "=='" + BoundObject.SourceScheme.CLASSPATH.name() + "', config interface '" + configInterface.getName() + "'; please, use for such purposes '" + BoundObject.SourceScheme.FILE.name() + "'.";
-			throw logErrorAndCreateException(msg);
+			throw new AnnotationAnalyzeException(msg).logAndReturn();
 		}
 
 
@@ -168,10 +164,10 @@ final class AnnotationScanner {
 				changeListener_class.getDeclaredConstructor().setAccessible(true);
 				changeListener = changeListener_class.newInstance();
 			} catch (InstantiationException | IllegalAccessException | NoSuchMethodException e) {
-				throw logErrorAndCreateException("Cannot create '" + ConfigChangeListener.class.getSimpleName() + "' object; config interface '" + configInterface.getName() + "'.", e);
+				throw new AnnotationAnalyzeException("Cannot create '" + ConfigChangeListener.class.getSimpleName() + "' object; config interface '" + configInterface.getName() + "'.", e).logAndReturn();
 			}
 		if (changeListener != null && trackPolicy == BoundObject.TrackPolicy.DISABLE) {
-			throw logErrorAndCreateException("You cannot use @BoundObject.changeListener() if TrackPolicy is 'DISABLE', config interface '" + configInterface.getName() + "'.");
+			throw new AnnotationAnalyzeException("You cannot use @BoundObject.changeListener() if TrackPolicy is 'DISABLE', config interface '" + configInterface.getName() + "'.").logAndReturn();
 		}
 
 
@@ -236,7 +232,7 @@ final class AnnotationScanner {
 			Class<?> parameterType = mp.getType();
 			if (!(parameterType == String.class || parameterType.isEnum())) {
 				String fullMethodName = method.getDeclaringClass().getName() + "::" + method.getName();
-				throw logErrorAndCreateException("Syntax error in '@BoundProperty.name()' value. Wrong signature in method '" + fullMethodName + "': it should use only String or Enum types as arguments, but found '" + parameterType.getName() + "'.");
+				throw new AnnotationAnalyzeException("Syntax error in '@BoundProperty.name()' value. Wrong signature in method '" + fullMethodName + "': it should use only String or Enum types as arguments, but found '" + parameterType.getName() + "'.").logAndReturn();
 			}
 
 			String parameterName = mp.getName();
@@ -244,7 +240,7 @@ final class AnnotationScanner {
 			boolean isPresentInVars = Stream.of(dynamicVars).anyMatch(parameterName::equals);
 			if (!isPresentInVars) {
 				String fullMethodName = method.getDeclaringClass().getName() + "::" + method.getName();
-				throw logErrorAndCreateException("Syntax error in '@BoundProperty.name()' value. Incompatible signature in method '" + fullMethodName + "': parameter name '" + parameterName + "' doesn't present in template '" + parameterNameTemplate + "'.");
+				throw new AnnotationAnalyzeException("Syntax error in '@BoundProperty.name()' value. Incompatible signature in method '" + fullMethodName + "': parameter name '" + parameterName + "' doesn't present in template '" + parameterNameTemplate + "'.").logAndReturn();
 			}
 		}
 
@@ -252,7 +248,7 @@ final class AnnotationScanner {
 			boolean isPresentInParameters = Stream.of(parameterNames).anyMatch(varName::equals);
 			if (!isPresentInParameters) {
 				String fullMethodName = method.getDeclaringClass().getName() + "::" + method.getName();
-				throw logErrorAndCreateException("Syntax error in '@BoundProperty.name()' value. Incompatible signature in method '" + fullMethodName + "': template variable '@{" + varName + "}' doesn't present in method parameters.");
+				throw new AnnotationAnalyzeException("Syntax error in '@BoundProperty.name()' value. Incompatible signature in method '" + fullMethodName + "': template variable '@{" + varName + "}' doesn't present in method parameters.").logAndReturn();
 			}
 		}
 
@@ -267,13 +263,13 @@ final class AnnotationScanner {
 		final String fullMethodName = propertyMethod.getDeclaringClass().getName() + "." + propertyMethod.getName();
 
 		if (Modifier.isStatic(propertyMethod.getModifiers()))
-			throw logErrorAndCreateException("Method '" + fullMethodName + "', annotated with @BoundProperty, can not be static.");
+			throw new AnnotationAnalyzeException("Method '" + fullMethodName + "', annotated with @BoundProperty, can not be static.").logAndReturn();
 
 		String propertyNameTemplate;
 		try {
 			propertyNameTemplate = validateAndMakeVariableSubstitution(boundPropertyAnnotation.name());
 		} catch (IllegalArgumentException e) {
-			throw logErrorAndCreateException("Syntax error in '@BoundProperty.name()' value, method '" + fullMethodName + "'.", e);
+			throw new AnnotationAnalyzeException("Syntax error in '@BoundProperty.name()' value, method '" + fullMethodName + "'.", e).logAndReturn();
 		}
 
 		String[] propertyDynamicVariableNames;
@@ -300,20 +296,5 @@ final class AnnotationScanner {
 
 	private void validateNestedBoundProperty() {
 		// TODO: implement functionality of parsing nested @BoundProperty classes or remove this method.
-	}
-
-	private AnnotationAnalyzeException logErrorAndCreateException(String msg) {
-		return logErrorAndCreateException(msg, null);
-	}
-
-	private AnnotationAnalyzeException logErrorAndCreateException(String msg, Exception e) {
-		AnnotationAnalyzeException exception;
-		if (e == null)
-			exception = new AnnotationAnalyzeException(msg);
-		else
-			exception = new AnnotationAnalyzeException(msg, e);
-
-		logger.error(msg, exception);
-		return exception;
 	}
 }

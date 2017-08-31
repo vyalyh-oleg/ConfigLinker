@@ -21,10 +21,8 @@ final class MapPropertyParser implements PropertyParser<Map<String, String>> {
 
 		if (regexpPattern != null)
 			for (String elementValue : values.values())
-				if (!regexpPattern.matcher(elementValue).matches()) {
-					// TODO: log and throw
-					throw new PropertyMatchException("");
-				}
+				if (!regexpPattern.matcher(elementValue).matches())
+					throw new PropertyMatchException("Property '" + value + "' don't match pattern '" + regexpPattern.toString() + "'.").logAndReturn();
 
 		return values;
 	}
