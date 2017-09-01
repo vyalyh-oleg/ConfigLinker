@@ -41,9 +41,10 @@ repositories {
 
 dependencies {
     // This dependency is found on compile classpath of this component and consumers.
-//    compile
 
-    // This dependency is exported to consumers, that is to say found on their compile classpath.
+	compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+
+	// This dependency is exported to consumers, that is to say found on their compile classpath.
 //    api
 
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
@@ -51,6 +52,9 @@ dependencies {
 
     // Use JUnit test framework
 //    testImplementation
+
+	testRuntimeOnly group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
+	testRuntimeOnly group: 'org.fusesource.jansi', name: 'jansi', version: '1.16'
 
 	testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: project.properties['junit.jupiter.version']
 	testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: project.properties['junit.jupiter.version']

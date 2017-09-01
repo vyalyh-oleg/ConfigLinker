@@ -1,7 +1,10 @@
 package com.configlinker.parsers;
 
+import com.configlinker.Loggers;
 import com.configlinker.annotations.BoundProperty;
 import com.configlinker.exceptions.PropertyParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -43,7 +46,7 @@ public final class ParserFactory {
 				deserializationMethod == BoundProperty.DeserializationMethod.DESERIALIZER_MAP)
 			return MAP_PROPERTY_PARSER;
 
-		throw new PropertyParseException("Cannot find appropriate parser for '" + returnType.getName() + "'.");
+		throw new PropertyParseException("Cannot find appropriate parser for '" + returnType.getName() + "'.").logAndReturn();
 	}
 
 	public static boolean isPrimitiveWrapper(Class<?> returnType) {
@@ -54,7 +57,7 @@ public final class ParserFactory {
 
 	public static Class<?> getWrapperForPrimitive(Class<?> primitiveType) throws PropertyParseException {
 		if (!primitiveType.isPrimitive())
-			throw new PropertyParseException("'" + primitiveType.getName() + "' is not a primitive type.");
+			throw new PropertyParseException("'" + primitiveType.getName() + "' is not a primitive type.").logAndReturn();
 
 		if (primitiveType == boolean.class)
 			return Boolean.class;
@@ -73,6 +76,6 @@ public final class ParserFactory {
 		if (primitiveType == double.class)
 			return Double.class;
 
-		throw new PropertyParseException("Can not found wrapper for primitive type.");
+		throw new PropertyParseException("Can not found wrapper for primitive type.").logAndReturn();
 	}
 }

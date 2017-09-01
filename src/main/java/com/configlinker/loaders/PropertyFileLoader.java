@@ -1,10 +1,12 @@
 package com.configlinker.loaders;
 
 import com.configlinker.ConfigDescription;
+import com.configlinker.Loggers;
 import com.configlinker.annotations.BoundObject;
 import com.configlinker.exceptions.PropertyLoadException;
 import com.configlinker.exceptions.PropertyMatchException;
 import com.configlinker.exceptions.PropertyValidateException;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -47,8 +49,7 @@ final class PropertyFileLoader extends ALoader {
 			try {
 				fullFilePath = Paths.get(description.getSourcePath()).normalize().toAbsolutePath();
 			} catch (InvalidPathException e) {
-				// TODO: log
-				throw new PropertyLoadException("Wrong file path '" + description.getSourcePath() + "' in annotation parameter @BoundObject.sourcePath() on interface '" + description.getConfInterface().getName() + "'.");
+				throw new PropertyLoadException("Wrong file path '" + description.getSourcePath() + "' in annotation parameter @BoundObject.sourcePath() on interface '" + description.getConfInterface().getName() + "'.").logAndReturn().logAndReturn();
 			}
 
 			if (description.getTrackPolicy() == BoundObject.TrackPolicy.ENABLE)
@@ -60,10 +61,8 @@ final class PropertyFileLoader extends ALoader {
 	protected Properties loadRawProperties(ConfigDescription configDescription) throws PropertyLoadException {
 		Path fullFilePath = Paths.get(configDescription.getSourcePath()).normalize().toAbsolutePath();
 		try {
-			if (!Files.exists(fullFilePath)) {
-				// TODO: log
-				throw new PropertyLoadException("Configuration file '" + fullFilePath.getFileName().toString() + "' not exists, full file path: '" + fullFilePath.toString() + "'; see annotation parameter @BoundObject.sourcePath() on interface '" + configDescription.getConfInterface().getName() + "'.");
-			}
+			if (!Files.exists(fullFilePath))
+				throw new PropertyLoadException("Configuration file '" + fullFilePath.getFileName().toString() + "' not exists, full file path: '" + fullFilePath.toString() + "'; see annotation parameter @BoundObject.sourcePath() on interface '" + configDescription.getConfInterface().getName() + "'.").logAndReturn();
 
 			BufferedReader propFileReader = Files.newBufferedReader(fullFilePath, configDescription.getCharset());
 			Properties newProperties = new Properties();
@@ -71,8 +70,7 @@ final class PropertyFileLoader extends ALoader {
 			propFileReader.close();
 			return newProperties;
 		} catch (IOException e) {
-			// TODO: log
-			throw new PropertyLoadException("Error during loading raw properties from file '" + fullFilePath + "' with charset '" + configDescription.getCharset().toString() + "', config interface: '" + configDescription.getConfInterface().getName() + "'.", e);
+			throw new PropertyLoadException("Error during loading raw properties from file '" + fullFilePath + "' with charset '" + configDescription.getCharset().toString() + "', config interface: '" + configDescription.getConfInterface().getName() + "'.", e).logAndReturn();
 		}
 	}
 
@@ -99,8 +97,7 @@ final class PropertyFileLoader extends ALoader {
 				executorService.submit(() -> watchLoop(watchService));
 			}
 		} catch (IOException e) {
-			// TODO: log
-			throw new PropertyLoadException("Error during creating file watcher for configuration file.", e);
+			throw new PropertyLoadException("Error during creating file watcher for configuration file.", e).logAndReturn();
 		}
 	}
 
@@ -125,25 +122,23 @@ final class PropertyFileLoader extends ALoader {
 					continue;
 
 				if (kind == StandardWatchEventKinds.OVERFLOW) {
-					// TODO: log
-					String message = "Lost some events for configuration file: '" + fullFilePath + "'.";
+					LoggerFactory.getLogger(Loggers.mainLogger).info("Lost some events for configuration file: '{}'.", fullFilePath);
 					continue;
 				}
 
 				if (kind == StandardWatchEventKinds.ENTRY_MODIFY || kind == StandardWatchEventKinds.ENTRY_CREATE) {
-					// TODO: log
-					String message = "Configuration file has changed: '" + fullFilePath + "'.";
+					LoggerFactory.getLogger(Loggers.mainLogger).info("Configuration file has changed: '{}'.", fullFilePath);
 					this.refreshProperties(configDescriptions);
 					continue;
 				}
 
 				if (kind == StandardWatchEventKinds.ENTRY_DELETE) {
-					// TODO: log
-					String message = "Configuration file has been deleted: '" + fullFilePath + "'. The changes won't be applied.";
+					LoggerFactory.getLogger(Loggers.mainLogger).info("Configuration file has been deleted: '{}'. The changes won't be applied.", fullFilePath);
 				}
 			}
+
 			if (!key.reset()) {
-				// TODO: log
+				LoggerFactory.getLogger(Loggers.mainLogger).info("Watch key cancelled. Configuration file: '{}'.", key.watchable().toString());
 				key.cancel();
 			}
 		}

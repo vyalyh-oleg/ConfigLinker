@@ -12,15 +12,10 @@ final class ListPropertyParser implements PropertyParser<List<String>> {
 	@Override
 	public List<String> parse(String value, Pattern regexpPattern, String delimiterForList, String delimiterForKeyValue) throws PropertyMatchException {
 		String[] values = value.split(Pattern.quote(delimiterForList));
-
 		if (regexpPattern != null)
-			for (String elementValue : values) {
-				if (!regexpPattern.matcher(elementValue).matches()) {
-					// TODO: log and throw
-					throw new PropertyMatchException("");
-				}
-
-			}
+			for (String elementValue : values)
+				if (!regexpPattern.matcher(elementValue).matches())
+					throw new PropertyMatchException("Property '" + value + "' don't match pattern '" + regexpPattern.toString() + "'.").logAndReturn();
 
 		return Arrays.stream(values).collect(Collectors.toList());
 	}

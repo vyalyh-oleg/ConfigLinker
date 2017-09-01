@@ -2,7 +2,6 @@ package com.configlinker.mappers;
 
 import com.configlinker.PropertyValidator;
 import com.configlinker.annotations.BoundProperty;
-import com.configlinker.exceptions.AnnotationAnalyzeException;
 import com.configlinker.exceptions.PropertyMapException;
 import com.configlinker.parsers.ParserFactory;
 import com.configlinker.parsers.PropertyParser;
@@ -21,7 +20,7 @@ public final class MapperFactory {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static PropertyMapper create(Class<?> returnType, BoundProperty boundPropertyAnnotation, Method propertyMethod) throws AnnotationAnalyzeException, PropertyMapException {
+	public static PropertyMapper create(Class<?> returnType, BoundProperty boundPropertyAnnotation, Method propertyMethod) throws PropertyMapException {
 
 		String strRegexpPattern = boundPropertyAnnotation.regexpPattern();
 		Pattern regexpPattern = null;
@@ -34,7 +33,7 @@ public final class MapperFactory {
 			try {
 				validator = validator_class.newInstance();
 			} catch (InstantiationException | IllegalAccessException e) {
-				// TODO: log and exception
+				throw new PropertyMapException("Cannot create validator for '" + propertyMethod.getDeclaringClass().getName() + "::" + propertyMethod.getName() + "'.", e).logAndReturn();
 			}
 
 		Class<?> customTypeOrDeserializer = boundPropertyAnnotation.customType();
@@ -69,22 +68,19 @@ public final class MapperFactory {
 				customTypeOrDeserializer = arrayType;
 		}
 
-		if (customTypeOrDeserializer.isPrimitive()) {
-			// TODO: log
-			throw new AnnotationAnalyzeException("Value of '@BoundProperty.customType()' can not be a primitive type class, but current value is '" + customTypeOrDeserializer.getName() + "' and current return type is '" + returnType.getName() + "'.");
-		}
+		if (customTypeOrDeserializer.isPrimitive())
+			throw new PropertyMapException("Value of '@BoundProperty.customType()' can not be a primitive type class, but current value is '" + customTypeOrDeserializer.getName() + "' and current return type is '" + returnType.getName() + "'.").logAndReturn();
 
-		if (customTypeOrDeserializer == Object.class && (List.class.isAssignableFrom(returnType) || Set.class.isAssignableFrom(returnType) || Map.class.isAssignableFrom(returnType))) {
-			// TODO: log
-			throw new PropertyMapException("For type '" + returnType.getName() + "' you must specify it generic type in '@BoundProperty.customType' and choose '@BoundProperty.deserializationMethod'; method leading to error: '" + propertyMethod.getDeclaringClass().getName() + "." + propertyMethod.getName() + "()'.");
-		}
+		if (customTypeOrDeserializer == Object.class && (List.class.isAssignableFrom(returnType) || Set.class.isAssignableFrom(returnType) || Map.class.isAssignableFrom(returnType)))
+			throw new PropertyMapException("For type '" + returnType.getName() + "' you must specify it generic type in '@BoundProperty.customType' and choose '@BoundProperty.deserializationMethod'; method leading to error: '" + propertyMethod.getDeclaringClass().getName() + "." + propertyMethod.getName() + "()'.").logAndReturn();
+
 
 		// --------------------------------------------------------------------------------
 
 		PropertyParser propertyParser = ParserFactory.create(returnType, deserializationMethod);
 		Executable executable = getMethodForType(customTypeOrDeserializer, deserializationMethod);
 
-		// TODO: additional check for 'customTypeOrDeserializer', if return type is List, Set or Map
+		// TODO: Additional check for 'customTypeOrDeserializer', if return type is List, Set or Map and the Generic type is one of the List, Set or Map too.
 		executable.setAccessible(true);
 
 		if (returnType == String.class)
@@ -138,12 +134,10 @@ public final class MapperFactory {
 				case DESERIALIZER_MAP:
 					return customTypeOrDeserializer.getDeclaredMethod("deserialize", Map.class);
 				default:
-					// TODO: log and throw
-					throw new PropertyMapException("There is no suitable version for @BoundProperty.DeserializationMethod='" + deserializationMethod.name() + "'; custom type or deserializer: '" + customTypeOrDeserializer.getName() + "'.");
+					throw new PropertyMapException("There is no suitable version for @BoundProperty.DeserializationMethod='" + deserializationMethod.name() + "'; custom type or deserializer: '" + customTypeOrDeserializer.getName() + "'.").logAndReturn();
 			}
 		} catch (NoSuchMethodException e) {
-			// TODO: log and throw
-			throw new PropertyMapException("Can not find deserialization method in: '" + customTypeOrDeserializer.getName() + "'; @BoundProperty.DeserializationMethod='" + deserializationMethod.name() + "'.", e);
+			throw new PropertyMapException("Can not find deserialization method in: '" + customTypeOrDeserializer.getName() + "'; @BoundProperty.DeserializationMethod='" + deserializationMethod.name() + "'.", e).logAndReturn();
 		}
 	}
 
@@ -155,7 +149,7 @@ public final class MapperFactory {
 		if (customTypeOrDeserializer == String.class)
 			executable = customTypeOrDeserializer.getDeclaredMethod("valueOf", Object.class);
 
-		//if (customTypeOrDeserializer == String.class)
+		//if (customTypeOrDeserializer == YourType.class)
 
 		// TODO: implement for other types
 		// maybe it will be needed to change AbstractPropertyMapper.createObject() method.

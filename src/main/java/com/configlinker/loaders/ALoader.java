@@ -4,12 +4,14 @@ import com.configlinker.ConfigChangeListener;
 import com.configlinker.ConfigChangedEvent;
 import com.configlinker.ConfigDescription;
 import com.configlinker.ErrorBehavior;
+import com.configlinker.Loggers;
 import com.configlinker.exceptions.ConfigLinkerRuntimeException;
 import com.configlinker.exceptions.ConfigProxyException;
 import com.configlinker.exceptions.PropertyLoadException;
 import com.configlinker.exceptions.PropertyMapException;
 import com.configlinker.exceptions.PropertyMatchException;
 import com.configlinker.exceptions.PropertyValidateException;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -41,11 +43,11 @@ abstract class ALoader {
 	abstract protected Properties loadRawProperties(ConfigDescription configDescription) throws PropertyLoadException;
 
 	protected void startTrackChanges() throws PropertyLoadException {
-		throw new PropertyLoadException("Cannot perform 'startTrackChanges', because tracking changes didn't implemented for '" + this.getClass().getName() + "'.");
+		throw new PropertyLoadException("Cannot perform 'startTrackChanges', because tracking changes didn't implemented for '" + this.getClass().getName() + "'.").logAndReturn();
 	}
 
 	protected void stopTrackChanges() throws PropertyLoadException {
-		throw new PropertyLoadException("Cannot perform 'stopTrackChanges', because tracking changes didn't implemented for '" + this.getClass().getName() + "'.");
+		throw new PropertyLoadException("Cannot perform 'stopTrackChanges', because tracking changes didn't implemented for '" + this.getClass().getName() + "'.").logAndReturn();
 	}
 
 	final protected Collection<ConfigDescription> getConfigDescriptions() {
@@ -77,10 +79,8 @@ abstract class ALoader {
 
 			Object objValue = null;
 			if (rawValue == null) {
-				if (propertyDescription.getErrorBehavior() == ErrorBehavior.THROW_EXCEPTION) {
-					// TODO: log
-					throw new PropertyLoadException("Value for property '" + fullPropertyName + "' not found, config interface '" + configInterface.getName() + "', method '" + entryPropertyDescription.getKey().getName() + "'.");
-				}
+				if (propertyDescription.getErrorBehavior() == ErrorBehavior.THROW_EXCEPTION)
+					throw new PropertyLoadException("Value for property '" + fullPropertyName + "' not found, config interface '" + configInterface.getName() + "', method '" + entryPropertyDescription.getKey().getName() + "'.").logAndReturn();
 			} else
 				objValue = propertyDescription.getMapper().mapFromString(rawValue);
 
@@ -100,8 +100,10 @@ abstract class ALoader {
 		try {
 			newProperties = this.loadRawProperties(description);
 		} catch (ConfigLinkerRuntimeException e) {
-			// TODO: log
+			LoggerFactory.getLogger(Loggers.mainLogger).error("Cannot load raw properties for config interface '{}'.", description.getConfInterface().getName());
+
 			// TODO: ErrorHandler
+
 			for (ConfigDescription configDescription : configDescriptions) {
 				ConfigChangedEvent configChangedEvent = new ConfigChangedEvent(configDescription.getConfInterface(), configDescription.getSourcePath(), null, e);
 				ConfigChangeListener changeListener = configDescription.getConfigChangeListener();
@@ -137,8 +139,10 @@ abstract class ALoader {
 			try {
 				singleReturns = this.convertRawPropertiesToObjects(configDescription, newProperties);
 			} catch (ConfigLinkerRuntimeException e){
-				// TODO: log
+				LoggerFactory.getLogger(Loggers.mainLogger).error("Cannot convert raw properties to objects for config interface '{}'.", description.getConfInterface().getName(), e);
+
 				// TODO: ErrorHandler
+
 				convertException = e;
 				error = true;
 			}
@@ -171,10 +175,9 @@ abstract class ALoader {
 			Object value = null;
 
 			String rawValue = this.rawProperties.get(configDescription.getSourcePath()).getProperty(fullPropertyName);
-			if (rawValue == null && propertyDescription.getErrorBehavior() == ErrorBehavior.THROW_EXCEPTION) {
-				// TODO: log
-				throw new PropertyLoadException("Value for property '" + propertyDescription.getName() + "' not found, config interface '" + configInterface.getName() + "', method '" + method.getName() + "'.");
-			}
+			if (rawValue == null && propertyDescription.getErrorBehavior() == ErrorBehavior.THROW_EXCEPTION)
+				throw new PropertyLoadException("Value for property '" + propertyDescription.getName() + "' not found, config interface '" + configInterface.getName() + "', method '" + method.getName() + "'.").logAndReturn();
+
 			if (rawValue != null)
 				value = propertyDescription.getMapper().mapFromString(rawValue);
 
@@ -185,10 +188,9 @@ abstract class ALoader {
 
 	private String validateAndMakeVariableSubstitution(String parameterNamePattern, HashMap<String, String> methodArguments) throws ConfigProxyException {
 		for (Map.Entry<String,String> entryArgument : methodArguments.entrySet()) {
-			if (entryArgument.getValue() == null) {
-				// TODO: log
-				throw new ConfigProxyException("Not found value for variable '" + entryArgument.getKey() + "'.");
-			}
+			if (entryArgument.getValue() == null)
+				throw new ConfigProxyException("Not found value for variable '" + entryArgument.getKey() + "'.").logAndReturn();
+
 			parameterNamePattern = parameterNamePattern.replaceAll("@\\{" + entryArgument.getKey() + "\\}", entryArgument.getValue());
 		}
 		return parameterNamePattern;

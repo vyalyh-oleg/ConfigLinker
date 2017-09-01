@@ -18,7 +18,6 @@ class ArrayMapper<ELEMENT> extends AbstractPropertyMapper<List<String>, ELEMENT[
 	@Override
 	@SuppressWarnings("unchecked")
 	protected ELEMENT[] mapFrom(List<String> valueFromParser)  throws PropertyValidateException, PropertyMapException {
-		// TODO: additional mapper for each element
 		return (ELEMENT[]) valueFromParser.stream().map(this::<String, ELEMENT>createObject).toArray();
 	}
 }
