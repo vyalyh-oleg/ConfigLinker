@@ -95,10 +95,10 @@ task sourcesJar(type: Jar) {
 
 
 test {
-	workingDir "./workdir"
+	workingDir "./test_workdir"
 }
 
 junitPlatformTest {
 	println "See reports here: '" + testReportDir + "'."
-	workingDir "./workdir"
+	workingDir "./test_workdir"
 }
