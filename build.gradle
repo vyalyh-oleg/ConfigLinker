@@ -93,9 +93,20 @@ task sourcesJar(type: Jar) {
 	from sourceSets.main.allSource
 }
 
-
 test {
 	workingDir "./test_workdir"
+}
+
+cleanJunitPlatformTest {
+	delete "./test_workdir"
+}
+
+junitPlatformTest.doFirst {
+	mkdir("./test_workdir")
+	copy {
+		from "./workdir"
+		into "./test_workdir"
+	}
 }
 
 junitPlatformTest {
