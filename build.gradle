@@ -93,8 +93,30 @@ task sourcesJar(type: Jar) {
 	from sourceSets.main.allSource
 }
 
+
 test {
 	workingDir "./test_workdir"
+}
+
+junitPlatform {
+//	platformVersion 1.0
+//	logManager "org.apache.logging.log4j.jul.LogManager"
+	reportsDir "build/test-results/junit-platform" // this is the default
+	println "See reports here: '" + reportsDir + "'."
+	// enableStandardTestTask true
+/*
+	engines {
+		include 'junit-jupiter'
+		// exclude 'junit-vintage'
+	}
+*/
+/*
+	tags {
+		include 'fast', 'smoke'
+		// exclude 'slow', 'ci'
+	}
+*/
+//	includeClassNamePattern '.*Tests'
 }
 
 cleanJunitPlatformTest {
@@ -110,6 +132,5 @@ junitPlatformTest.doFirst {
 }
 
 junitPlatformTest {
-	println "See reports here: '" + testReportDir + "'."
 	workingDir "./test_workdir"
 }
