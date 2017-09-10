@@ -73,21 +73,28 @@ project.ext {
 // Project configuration:
 group = project.properties["package.group"]
 archivesBaseName = project.properties["package.artifact"]
-version = project.properties["package.version"]
-
-//ext.currentBuildNumber = ""
-if (!hasProperty("release"))
-	version = version + "-SNAPSHOT"
-	//version = version + "-b" + new Date().format('yyMMddHH.mmss') + "-SNAPSHOT"
+version = project.properties["package.version"] + "-" + project.properties["project.status"]
+//version = version + "-b" + new Date().format('yyMMdd.HHmmss') + "-SNAPSHOT"
 
 
 project.sourceCompatibility = 1.8
 project.targetCompatibility = 1.8
 
+
+/*
+javadoc {
+	options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
+	options.author = true
+	options.header = project.name
+	options.addStringOption('Xdoclint:none', '-quiet')
+}
+*/
+
 task javadocJar(type: Jar) {
 	classifier = 'javadoc'
 	from javadoc
 }
+
 task sourcesJar(type: Jar) {
 	classifier = 'sources'
 	from sourceSets.main.allSource
@@ -99,10 +106,10 @@ test {
 }
 
 junitPlatform {
+	details 'tree'
 //	platformVersion 1.0
 //	logManager "org.apache.logging.log4j.jul.LogManager"
 	reportsDir "build/test-results/junit-platform" // this is the default
-	println "See reports here: '" + reportsDir + "'."
 	// enableStandardTestTask true
 /*
 	engines {
@@ -124,6 +131,7 @@ cleanJunitPlatformTest {
 }
 
 junitPlatformTest.doFirst {
+	println "See reports here: '" + junitPlatform.reportsDir + "'."
 	mkdir("./test_workdir")
 	copy {
 		from "./workdir"
@@ -132,5 +140,6 @@ junitPlatformTest.doFirst {
 }
 
 junitPlatformTest {
+//	systemProperty 'org.slf4j.simpleLogger.defaultLogLevel', 'info'
 	workingDir "./test_workdir"
 }
