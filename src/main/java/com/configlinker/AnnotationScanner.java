@@ -31,10 +31,10 @@ final class AnnotationScanner {
 	 */
 	private static final Pattern dynamicVariablePattern = Pattern.compile("@\\{\\w+\\}");
 
-	private final ConfigSetBuilder configBuilder;
+	private final FactoryConfigBuilder configBuilder;
 	private final HashMap<Class<?>, ConfigDescription> configDescriptions;
 
-	AnnotationScanner(ConfigSetBuilder configBuilder) {
+	AnnotationScanner(FactoryConfigBuilder configBuilder) {
 		this.configBuilder = configBuilder;
 		this.configDescriptions = new HashMap<>();
 	}

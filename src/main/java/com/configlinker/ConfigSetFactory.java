@@ -18,10 +18,10 @@ public final class ConfigSetFactory {
 	}
 
 	public static ConfigSet create(Set<Class<?>> configInterfaces) throws AnnotationAnalyzeException, PropertyMapException {
-		return create(configInterfaces, new ConfigSetBuilder());
+		return create(configInterfaces, new FactoryConfigBuilder());
 	}
 
-	public static ConfigSet create(Set<Class<?>> configInterfaces, ConfigSetBuilder builder) throws PropertyMapException, AnnotationAnalyzeException {
+	public static ConfigSet create(Set<Class<?>> configInterfaces, FactoryConfigBuilder builder) throws PropertyMapException, AnnotationAnalyzeException {
 		builder.close();
 		configInterfaces = Collections.unmodifiableSet(new HashSet<>(configInterfaces));
 		AnnotationScanner annotationScanner = new AnnotationScanner(builder);
