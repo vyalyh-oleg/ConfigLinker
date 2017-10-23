@@ -73,4 +73,17 @@ class ApiTest {
 		Assertions.assertEquals(httpConfig.getNumber(), 1);
 		Assertions.assertEquals(httpConfig.getString(), "one");
 	}
+
+	@Test
+	void prefixTest()
+	{
+		Set<Class<?>> interfaces = new HashSet<Class<?>>() {{
+			add(PrefixTest.class);
+		}};
+		ConfigSet configSet = ConfigSetFactory.create(interfaces);
+
+		PrefixTest prefixTest = configSet.getConfigObject(PrefixTest.class);
+		System.out.println(prefixTest.oneParam());
+		System.out.println(prefixTest.twoParam());
+	}
 }

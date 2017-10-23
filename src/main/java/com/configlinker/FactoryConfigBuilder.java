@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public final class ConfigSetBuilder {
+public final class FactoryConfigBuilder {
 	private Map<String, String> parameters = new HashMap<>();
 	private Map<String, String> httpHeaders = new HashMap<>();
 	private BoundObject.SourceScheme sourceScheme = BoundObject.SourceScheme.FILE;
@@ -23,7 +23,7 @@ public final class ConfigSetBuilder {
 	/**
 	 * String parameters, used for substitution in {@link BoundObject#sourcePath}, {@link BoundObject#propertyNamePrefix}, {@link com.configlinker.annotations.BoundProperty#name} and {@link BoundObject#httpHeaders}.
 	 */
-	public ConfigSetBuilder addParameter(String key, String value) throws ConfigSetBuilderClosedException {
+	public FactoryConfigBuilder addParameter(String key, String value) throws ConfigSetBuilderClosedException {
 		if (closed)
 			throw ConfigSetBuilderClosedException.getInstance();
 		parameters.put(key, value);
@@ -33,7 +33,7 @@ public final class ConfigSetBuilder {
 	/**
 	 * See {@link BoundObject.SourceScheme} and {@link BoundObject#sourceScheme()}
 	 */
-	public ConfigSetBuilder setSourceScheme(BoundObject.SourceScheme sourceScheme) throws ConfigSetBuilderClosedException {
+	public FactoryConfigBuilder setSourceScheme(BoundObject.SourceScheme sourceScheme) throws ConfigSetBuilderClosedException {
 		if (closed)
 			throw ConfigSetBuilderClosedException.getInstance();
 		this.sourceScheme = sourceScheme;
@@ -46,7 +46,7 @@ public final class ConfigSetBuilder {
 	 * @param name Header name
 	 * @param value Header value
 	 */
-	public ConfigSetBuilder setHttpHeader(String name, String value){
+	public FactoryConfigBuilder setHttpHeader(String name, String value){
 		if (closed)
 			throw ConfigSetBuilderClosedException.getInstance();
 		this.httpHeaders.put(name, value);
@@ -56,7 +56,7 @@ public final class ConfigSetBuilder {
 	/**
 	 * See {@link BoundObject.TrackPolicy} and {@link BoundObject#trackPolicy()}
 	 */
-	public ConfigSetBuilder setTrackPolicy(BoundObject.TrackPolicy trackPolicy) throws ConfigSetBuilderClosedException {
+	public FactoryConfigBuilder setTrackPolicy(BoundObject.TrackPolicy trackPolicy) throws ConfigSetBuilderClosedException {
 		if (closed)
 			throw ConfigSetBuilderClosedException.getInstance();
 		this.trackPolicy = trackPolicy;
@@ -68,7 +68,7 @@ public final class ConfigSetBuilder {
 	 *
 	 * @param trackingInterval Parameter reread interval in seconds. MIN value = 15 seconds, MAX value = 24 hours (24*3600 seconds).
 	 */
-	public ConfigSetBuilder setTrackingInterval(int trackingInterval) throws ConfigSetBuilderClosedException, IllegalArgumentException {
+	public FactoryConfigBuilder setTrackingInterval(int trackingInterval) throws ConfigSetBuilderClosedException, IllegalArgumentException {
 		if (closed)
 			throw ConfigSetBuilderClosedException.getInstance();
 		if (trackingInterval < 15 || trackingInterval > 24 * 3600)
@@ -80,7 +80,7 @@ public final class ConfigSetBuilder {
 	/**
 	 * See {@link BoundObject#charsetName()}
 	 */
-	public ConfigSetBuilder setCharset(Charset charset) throws ConfigSetBuilderClosedException {
+	public FactoryConfigBuilder setCharset(Charset charset) throws ConfigSetBuilderClosedException {
 		if (closed)
 			throw ConfigSetBuilderClosedException.getInstance();
 		this.charset = charset;

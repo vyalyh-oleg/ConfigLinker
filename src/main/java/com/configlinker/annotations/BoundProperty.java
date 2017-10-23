@@ -1,6 +1,6 @@
 package com.configlinker.annotations;
 
-import com.configlinker.ConfigSetBuilder;
+import com.configlinker.FactoryConfigBuilder;
 import com.configlinker.Deserializer;
 import com.configlinker.ErrorBehavior;
 import com.configlinker.PropertyValidator;
@@ -20,7 +20,7 @@ public @interface BoundProperty {
 	 * <p>If you set {@code @BoundObject.propertyNamePrefix} it will be added before this value, and in that case this value should begin with a dot. If it begins from any other acceptable symbols except dot, the value considered as full name and used without {@code propertyNamePrefix}.</p>
 	 * <p>
 	 * You can use variables for substituting some parts of the name.
-	 * Variables can be set in {@link com.configlinker.ConfigSetBuilder#addParameter(String, String)}.
+	 * Variables can be set in {@link FactoryConfigBuilder#addParameter(String, String)}.
 	 * <p>
 	 * Example:
 	 * <pre>	".configuration.${type}.memory.limit"</pre>
@@ -99,7 +99,7 @@ public @interface BoundProperty {
 
 	/**
 	 * What to do if the property value not exists in underlying persistent store.
-	 * Default value is {@link ErrorBehavior#INHERITED} and specified in {@link ConfigSetBuilder#setErrorBehavior(ErrorBehavior)}
+	 * Default value is {@link ErrorBehavior#INHERITED} and specified in {@link FactoryConfigBuilder#setErrorBehavior(ErrorBehavior)}
 	 */
 	ErrorBehavior errorBehavior() default ErrorBehavior.INHERITED;
 
