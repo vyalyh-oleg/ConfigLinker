@@ -86,11 +86,14 @@ final class AnnotationScanner {
 		// validate variables in @BoundObject#propertyNamePrefix
 		String rawPropertyNamePrefix = boundObjectAnnotation.propertyNamePrefix();
 		String propertyNamePrefix;
-		try {
-			propertyNamePrefix = validateAndMakeVariableSubstitution(rawPropertyNamePrefix);
-		} catch (IllegalArgumentException e) {
-			throw new AnnotationAnalyzeException("Syntax error in '@BoundObject.propertyNamePrefix()' value; interface  '" + configInterface.getName() + "'.", e).logAndReturn();
-		}
+		if (rawPropertyNamePrefix.isEmpty())
+			propertyNamePrefix = null;
+		else
+			try {
+				propertyNamePrefix = validateAndMakeVariableSubstitution(rawPropertyNamePrefix);
+			} catch (IllegalArgumentException e) {
+				throw new AnnotationAnalyzeException("Syntax error in '@BoundObject.propertyNamePrefix()' value; interface  '" + configInterface.getName() + "'.", e).logAndReturn();
+			}
 
 
 		// get SourceScheme
@@ -271,6 +274,8 @@ final class AnnotationScanner {
 		} catch (IllegalArgumentException e) {
 			throw new AnnotationAnalyzeException("Syntax error in '@BoundProperty.name()' value, method '" + fullMethodName + "'.", e).logAndReturn();
 		}
+		if (configDescription.getPropertyNamePrefix() != null && propertyNameTemplate.startsWith("."))
+			propertyNameTemplate = configDescription.getPropertyNamePrefix() + propertyNameTemplate;
 
 		String[] propertyDynamicVariableNames;
 		propertyDynamicVariableNames = validateDynamicVariables(propertyNameTemplate, propertyMethod);
