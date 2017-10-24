@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 
 public final class MapperFactory {
@@ -25,7 +26,11 @@ public final class MapperFactory {
 		String strRegexpPattern = boundPropertyAnnotation.regexpPattern();
 		Pattern regexpPattern = null;
 		if (strRegexpPattern.length() > 0)
-			regexpPattern = Pattern.compile(strRegexpPattern);
+			try {
+				regexpPattern = Pattern.compile(strRegexpPattern);
+			} catch (PatternSyntaxException e) {
+				throw new PropertyMapException("Cannot compile regexp pattern for '" + propertyMethod.getDeclaringClass().getName() + "::" + propertyMethod.getName() + "'.", e);
+			}
 
 		Class<? extends PropertyValidator> validator_class = boundPropertyAnnotation.validator();
 		PropertyValidator validator = null;
