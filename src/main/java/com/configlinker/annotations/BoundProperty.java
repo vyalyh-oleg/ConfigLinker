@@ -1,8 +1,8 @@
 package com.configlinker.annotations;
 
-import com.configlinker.FactoryConfigBuilder;
 import com.configlinker.Deserializer;
 import com.configlinker.ErrorBehavior;
+import com.configlinker.FactoryConfigBuilder;
 import com.configlinker.PropertyValidator;
 
 import java.lang.annotation.ElementType;
@@ -26,35 +26,43 @@ public @interface BoundProperty {
 	 * <pre>	".configuration.${type}.memory.limit"</pre>
 	 * Where the {@code 'type'} can be for example "test" or "production", etc.
 	 * <p>
+	 * <br>
 	 * <p>Name can also contain dynamic variables which can be used in runtime. For using this ability you must declare property getter method that accepts desired number of {@code String} or {@code Enum} arguments.</p>
 	 * Example:
 	 * <pre>	".configuration.${type}.@{group}.limit.@{border}"</pre>
 	 * The method might look like this:
 	 * <pre>	getServerLimitFor(String group, String border);</pre>
 	 * Where the {@code 'group'} can be "memory", "disk", "cpu", and {@code 'border'} -- "max", "min", "default".
+	 * @return -
 	 */
 	String name();
 
 	/**
+	 * <p>
 	 * Regex pattern for checking raw text value, read from configuration.
 	 * For primitives single value is checked, and for collection types (list, map, enum) every element value (as string) is checked.
 	 * By defaults regex check does not used.
+	 * @return -
 	 */
 	String regexpPattern() default "";
 
 	/**
+	 * <p>
 	 * Delimiter for parameter value, which is treated as {@code List}. Default value is comma - {@code ','}.
 	 * <p>
 	 * Example:
 	 * <pre>	{@code param.name.in.file = one,two,three}</pre>
+	 * @return -
 	 */
 	String delimiterForList() default ",";
 
 	/**
+	 * <p>
 	 * Delimiter for parameter element, which is treated as key-value pair for {@code Map}. Default value is colon - {@code ':'}.
 	 * <p>
 	 * Example:
 	 * <pre>	{@code param.name.in.file = color:red,number:two,target:method}</pre>
+	 * @return -
 	 */
 	String delimiterForKeyValue() default ":";
 
@@ -74,6 +82,7 @@ public @interface BoundProperty {
 	 * <p>If you want to use custom return type as generic type for {@code List}, {@code Set} or {@code Map} (only for value), you must indicate here it {@code Class}.
 	 * <p>If you write own deserializer implementation of {@link Deserializer}, it {@code Class} must be specified here instead of return type class.
 	 * <p>
+	 * <br>
 	 * <p>Pay attention, you have different ways to implement deserialization logic, which are described in ({@link DeserializationMethod}):
 	 * <ul>
 	 * <li>write special constructor for your class, see {@link DeserializationMethod#CONSTRUCTOR_STRING}, {@link DeserializationMethod#CONSTRUCTOR_MAP};</li>
@@ -81,6 +90,7 @@ public @interface BoundProperty {
 	 * <li>write separate deserializer class, see {@link DeserializationMethod#DESERIALIZER_STRING}, {@link DeserializationMethod#DESERIALIZER_MAP}.</li>
 	 * </ul>
 	 * <p>If return type for you configuration method is List, Set or Map, then only {@link DeserializationMethod#CONSTRUCTOR_STRING}, {@link DeserializationMethod#VALUEOF_STRING}, {@link DeserializationMethod#DESERIALIZER_STRING} allowed as deserialization method for it's values.
+	 * @return -
 	 */
 	Class<?> customType() default Object.class;
 
@@ -88,23 +98,26 @@ public @interface BoundProperty {
 	 * <p>If you want to use custom return type, you must just implement deserialization logic for it (see {@link #customType()}) and point this choice here.
 	 * <p>Default value is {@link DeserializationMethod#CONSTRUCTOR_STRING}
 	 * <p>If return type for you configuration method is List, Set or Map, then only {@link DeserializationMethod#CONSTRUCTOR_STRING}, {@link DeserializationMethod#VALUEOF_STRING}, {@link DeserializationMethod#DESERIALIZER_STRING} allowed as deserialization method for it's values.
+	 * @return -
 	 */
 	DeserializationMethod deserializationMethod() default DeserializationMethod.CONSTRUCTOR_STRING;
 
 	/**
 	 * <p>Custom validator for returned value. By default no validators are used.
 	 * <p>If you need additional checks just implement {@link PropertyValidator} interface and point class here.
+	 * @return -
 	 */
 	Class<? extends PropertyValidator> validator() default PropertyValidator.class;
 
 	/**
 	 * What to do if the property value does not exist in underlying persistent store.
 	 * Default value is {@link ErrorBehavior#INHERITED} and specified in {@link FactoryConfigBuilder#setErrorBehavior(ErrorBehavior)}
+	 * @return -
 	 */
 	ErrorBehavior errorBehavior() default ErrorBehavior.INHERITED;
 
 	/**
-	 * Values:
+	 * <p>Values:
 	 * <ul>
 	 * <li>{@link #CONSTRUCTOR_STRING}</li>
 	 * <li>{@link #CONSTRUCTOR_MAP} - default for {@link #deserializationMethod()}</li>
@@ -117,31 +130,31 @@ public @interface BoundProperty {
 	 */
 	enum DeserializationMethod {
 		/**
-		 * Chose this variant if you implement special constructor for your class:
+		 * <p>Chose this variant if you implement special constructor for your class:
 		 * <p>{@code 'public/private <CustomReturnType>(String raw)'}
 		 */
 		CONSTRUCTOR_STRING,
 		/**
-		 * Chose this variant if you implement special constructor for your class:
+		 * <p>Chose this variant if you implement special constructor for your class:
 		 * <p>{@code 'public/private <CustomReturnType>(Map<String,String> raw)'}
 		 */
 		CONSTRUCTOR_MAP,
 		/**
-		 * Chose this variant if you implement in your custom type static instance generator method:
+		 * <p>Chose this variant if you implement in your custom type static instance generator method:
 		 * <p>{@code 'public/private static <CustomReturnType> valueOf(String raw)'}
 		 */
 		VALUEOF_STRING,
 		/**
-		 * Chose this variant if you implement in your custom type static instance generator method:
+		 * <p>Chose this variant if you implement in your custom type static instance generator method:
 		 * <p>{@code 'public/private static <CustomReturnType> valueOf(Map<String,String> raw)'}
 		 */
 		VALUEOF_MAP,
 		/**
-		 * Chose this variant if you implement {@link Deserializer#deserialize(String)}.
+		 * <p>Chose this variant if you implement {@link Deserializer#deserialize(String)}.
 		 */
 		DESERIALIZER_STRING,
 		/**
-		 * Chose this variant if you implement {@link Deserializer#deserialize(Map)}.
+		 * <p>Chose this variant if you implement {@link Deserializer#deserialize(Map)}.
 		 */
 		DESERIALIZER_MAP
 		;

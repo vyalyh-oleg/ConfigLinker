@@ -2,16 +2,21 @@ package com.configlinker;
 
 
 /**
- * What to do if the property value does not exist in underlying persistent store.
+ * <p>What to do if the property value does not exist in underlying persistent store or cannot be converted to object representation for any reasons.
+ * <p>This is useful only int two cases:<br>
+ * <ul>
+ * <li>if ConfigLinker library found changes in one of the tracked property file during runtime and doesn't able to deal with them;</li>
+ * <li>if the property has runtime dynamic parts (in other words this is means that methods in your interfaces have parameters) and somewhere in other code the non-existent part was passed to this method.</li>
+ * </ul>
  */
 public enum ErrorBehavior {
 	INHERITED,
 	/**
-	 * Throw {@link com.configlinker.exceptions.PropertyNotFoundException} when the value for configuration property not found.
+	 * <p>Throw {@link com.configlinker.exceptions.PropertyNotFoundException} when the value for configuration property not found.
 	 */
 	THROW_EXCEPTION,
 	/**
-	 * Return null, when the value for configuration property not found. Applicable to reference types.
+	 * <p>Return null, when the value for configuration property not found. Applicable to reference types.
 	 */
 	RETURN_NULL
 	;

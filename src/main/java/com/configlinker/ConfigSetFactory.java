@@ -2,8 +2,8 @@ package com.configlinker;
 
 import com.configlinker.exceptions.AnnotationAnalyzeException;
 import com.configlinker.exceptions.PropertyMapException;
-import com.configlinker.proxy.ConfigProxyFactory;
 import com.configlinker.loaders.LoaderService;
+import com.configlinker.proxy.ConfigProxyFactory;
 
 import java.lang.reflect.Proxy;
 import java.util.Collections;

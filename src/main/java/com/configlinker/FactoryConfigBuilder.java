@@ -21,7 +21,11 @@ public final class FactoryConfigBuilder {
 	private boolean closed = false;
 
 	/**
-	 * String parameters, used for substitution in {@link BoundObject#sourcePath}, {@link BoundObject#propertyNamePrefix}, {@link com.configlinker.annotations.BoundProperty#name} and {@link BoundObject#httpHeaders}.
+	 * <p>String parameters, used for substitution in {@link BoundObject#sourcePath}, {@link BoundObject#propertyNamePrefix}, {@link com.configlinker.annotations.BoundProperty#name} and {@link BoundObject#httpHeaders}.
+	 * @param key Key
+	 * @param value Value
+	 * @return this
+	 * @throws FactoryConfigBuilderClosedException -
 	 */
 	public FactoryConfigBuilder addParameter(String key, String value) throws FactoryConfigBuilderClosedException {
 		if (closed)
@@ -31,7 +35,9 @@ public final class FactoryConfigBuilder {
 	}
 
 	/**
-	 * See {@link BoundObject.SourceScheme} and {@link BoundObject#sourceScheme()}
+	 * @param sourceScheme See {@link BoundObject.SourceScheme} and {@link BoundObject#sourceScheme()}
+	 * @return this
+	 * @throws FactoryConfigBuilderClosedException -
 	 */
 	public FactoryConfigBuilder setSourceScheme(BoundObject.SourceScheme sourceScheme) throws FactoryConfigBuilderClosedException {
 		if (closed)
@@ -41,10 +47,11 @@ public final class FactoryConfigBuilder {
 	}
 
 	/**
-	 * Use this method to add necessary headers to every request that will be made to receive configuration. This headers are used only if the {@link BoundObject#sourceScheme} is {@link BoundObject.SourceScheme#HTTP}.
-	 * This method do not merge values for the same header names. In duplicaate case header will be simply replaced.
+	 * <p>Use this method to add necessary headers to every request that will be made to receive configuration. This headers are used only if the {@link BoundObject#sourceScheme} is {@link BoundObject.SourceScheme#HTTP}.
+	 * This method do not merge values for the same header names. In duplicate case header will be simply replaced.
 	 * @param name Header name
 	 * @param value Header value
+	 * @return this
 	 */
 	public FactoryConfigBuilder setHttpHeader(String name, String value){
 		if (closed)
@@ -54,7 +61,9 @@ public final class FactoryConfigBuilder {
 	}
 
 	/**
-	 * See {@link BoundObject.TrackPolicy} and {@link BoundObject#trackPolicy()}
+	 * @param trackPolicy See {@link BoundObject.TrackPolicy} and {@link BoundObject#trackPolicy()}
+	 * @return this
+	 * @throws FactoryConfigBuilderClosedException -
 	 */
 	public FactoryConfigBuilder setTrackPolicy(BoundObject.TrackPolicy trackPolicy) throws FactoryConfigBuilderClosedException {
 		if (closed)
@@ -64,9 +73,10 @@ public final class FactoryConfigBuilder {
 	}
 
 	/**
-	 * This property has sense only if you use {@link BoundObject.SourceScheme#HTTP} here (in builder) or in {@link BoundObject#sourceScheme()} on one of configuration interfaces.
+	 * <p>This property has sense only if you use {@link BoundObject.SourceScheme#HTTP} here (in builder) or in {@link BoundObject#sourceScheme()} on one of configuration interfaces.
 	 *
 	 * @param trackingInterval Parameter reread interval in seconds. MIN value = 15 seconds, MAX value = 24 hours (24*3600 seconds).
+	 * @return -
 	 */
 	public FactoryConfigBuilder setTrackingInterval(int trackingInterval) throws FactoryConfigBuilderClosedException, IllegalArgumentException {
 		if (closed)
@@ -78,7 +88,10 @@ public final class FactoryConfigBuilder {
 	}
 
 	/**
-	 * See {@link BoundObject#charsetName()}
+	 * <p>See {@link BoundObject#charsetName()}
+	 * @param charset The charset of the loaded property file.
+	 * @return this
+	 * @throws FactoryConfigBuilderClosedException -
 	 */
 	public FactoryConfigBuilder setCharset(Charset charset) throws FactoryConfigBuilderClosedException {
 		if (closed)
@@ -88,12 +101,15 @@ public final class FactoryConfigBuilder {
 	}
 
 	/**
-	 * See {@link ErrorBehavior} and {@link BoundObject#errorBehavior()}
+	 * @param errorBehavior See {@link ErrorBehavior} and {@link BoundObject#errorBehavior()}
+	 * @return this
+	 * @throws FactoryConfigBuilderClosedException -
 	 */
-	public void setErrorBehavior(ErrorBehavior errorBehavior) throws FactoryConfigBuilderClosedException {
+	public FactoryConfigBuilder setErrorBehavior(ErrorBehavior errorBehavior) throws FactoryConfigBuilderClosedException {
 		if (closed)
 			throw FactoryConfigBuilderClosedException.getInstance();
 		this.errorBehavior = errorBehavior;
+		return this;
 	}
 
 
@@ -129,9 +145,5 @@ public final class FactoryConfigBuilder {
 	void close() {
 		this.closed = true;
 		this.parameters = Collections.unmodifiableMap(this.parameters);
-	}
-
-	boolean isClosed() {
-		return closed;
 	}
 }
