@@ -1,7 +1,7 @@
 package com.configlinker;
 
 import com.configlinker.annotations.BoundObject;
-import com.configlinker.exceptions.ConfigSetBuilderClosedException;
+import com.configlinker.exceptions.FactoryConfigBuilderClosedException;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -23,9 +23,9 @@ public final class FactoryConfigBuilder {
 	/**
 	 * String parameters, used for substitution in {@link BoundObject#sourcePath}, {@link BoundObject#propertyNamePrefix}, {@link com.configlinker.annotations.BoundProperty#name} and {@link BoundObject#httpHeaders}.
 	 */
-	public FactoryConfigBuilder addParameter(String key, String value) throws ConfigSetBuilderClosedException {
+	public FactoryConfigBuilder addParameter(String key, String value) throws FactoryConfigBuilderClosedException {
 		if (closed)
-			throw ConfigSetBuilderClosedException.getInstance();
+			throw FactoryConfigBuilderClosedException.getInstance();
 		parameters.put(key, value);
 		return this;
 	}
@@ -33,9 +33,9 @@ public final class FactoryConfigBuilder {
 	/**
 	 * See {@link BoundObject.SourceScheme} and {@link BoundObject#sourceScheme()}
 	 */
-	public FactoryConfigBuilder setSourceScheme(BoundObject.SourceScheme sourceScheme) throws ConfigSetBuilderClosedException {
+	public FactoryConfigBuilder setSourceScheme(BoundObject.SourceScheme sourceScheme) throws FactoryConfigBuilderClosedException {
 		if (closed)
-			throw ConfigSetBuilderClosedException.getInstance();
+			throw FactoryConfigBuilderClosedException.getInstance();
 		this.sourceScheme = sourceScheme;
 		return this;
 	}
@@ -48,7 +48,7 @@ public final class FactoryConfigBuilder {
 	 */
 	public FactoryConfigBuilder setHttpHeader(String name, String value){
 		if (closed)
-			throw ConfigSetBuilderClosedException.getInstance();
+			throw FactoryConfigBuilderClosedException.getInstance();
 		this.httpHeaders.put(name, value);
 		return this;
 	}
@@ -56,9 +56,9 @@ public final class FactoryConfigBuilder {
 	/**
 	 * See {@link BoundObject.TrackPolicy} and {@link BoundObject#trackPolicy()}
 	 */
-	public FactoryConfigBuilder setTrackPolicy(BoundObject.TrackPolicy trackPolicy) throws ConfigSetBuilderClosedException {
+	public FactoryConfigBuilder setTrackPolicy(BoundObject.TrackPolicy trackPolicy) throws FactoryConfigBuilderClosedException {
 		if (closed)
-			throw ConfigSetBuilderClosedException.getInstance();
+			throw FactoryConfigBuilderClosedException.getInstance();
 		this.trackPolicy = trackPolicy;
 		return this;
 	}
@@ -68,9 +68,9 @@ public final class FactoryConfigBuilder {
 	 *
 	 * @param trackingInterval Parameter reread interval in seconds. MIN value = 15 seconds, MAX value = 24 hours (24*3600 seconds).
 	 */
-	public FactoryConfigBuilder setTrackingInterval(int trackingInterval) throws ConfigSetBuilderClosedException, IllegalArgumentException {
+	public FactoryConfigBuilder setTrackingInterval(int trackingInterval) throws FactoryConfigBuilderClosedException, IllegalArgumentException {
 		if (closed)
-			throw ConfigSetBuilderClosedException.getInstance();
+			throw FactoryConfigBuilderClosedException.getInstance();
 		if (trackingInterval < 15 || trackingInterval > 24 * 3600)
 			throw new IllegalArgumentException("Tracking interval can not be less than 15 seconds and greater than 24 hours. You set '" + trackingInterval + "'.");
 		this.trackingInterval = trackingInterval;
@@ -80,9 +80,9 @@ public final class FactoryConfigBuilder {
 	/**
 	 * See {@link BoundObject#charsetName()}
 	 */
-	public FactoryConfigBuilder setCharset(Charset charset) throws ConfigSetBuilderClosedException {
+	public FactoryConfigBuilder setCharset(Charset charset) throws FactoryConfigBuilderClosedException {
 		if (closed)
-			throw ConfigSetBuilderClosedException.getInstance();
+			throw FactoryConfigBuilderClosedException.getInstance();
 		this.charset = charset;
 		return this;
 	}
@@ -90,9 +90,9 @@ public final class FactoryConfigBuilder {
 	/**
 	 * See {@link ErrorBehavior} and {@link BoundObject#errorBehavior()}
 	 */
-	public void setErrorBehavior(ErrorBehavior errorBehavior) throws ConfigSetBuilderClosedException {
+	public void setErrorBehavior(ErrorBehavior errorBehavior) throws FactoryConfigBuilderClosedException {
 		if (closed)
-			throw ConfigSetBuilderClosedException.getInstance();
+			throw FactoryConfigBuilderClosedException.getInstance();
 		this.errorBehavior = errorBehavior;
 	}
 
