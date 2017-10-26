@@ -98,7 +98,7 @@ public @interface BoundProperty {
 	Class<? extends PropertyValidator> validator() default PropertyValidator.class;
 
 	/**
-	 * What to do if the property value not exists in underlying persistent store.
+	 * What to do if the property value does not exist in underlying persistent store.
 	 * Default value is {@link ErrorBehavior#INHERITED} and specified in {@link FactoryConfigBuilder#setErrorBehavior(ErrorBehavior)}
 	 */
 	ErrorBehavior errorBehavior() default ErrorBehavior.INHERITED;

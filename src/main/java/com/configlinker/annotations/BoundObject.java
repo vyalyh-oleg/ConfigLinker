@@ -50,9 +50,16 @@ public @interface BoundObject {
 	String charsetName() default "";
 
 	/**
-	 * <p>The common names part of parameters group that is used to bind with methods of this annotated object. If it is not specified you should use full parameter names in {@code @BoundPropert.propertyName}.</p>
-	 * <p>
-	 * You can use variables for substituting some parts of this prefix.
+	 * <p>The common names part of parameters group that is used to bind with methods of this annotated interface.<br/>
+	 * If it is not specified you can use only full parameter names in {@link BoundProperty#name()}.<br/>
+	 * If it has any value then both variants, full and prefix-aware can be used.</p>
+	 *
+	 * <p>Example:<br/>
+	 * If this parameter for example is set to {@code "mycompany"}, then the {@code @BoundProperty.name()} can be as {@code ".serverName"} (start with dot is obligatory). This means, the final parameter name, which will be searched in property file, is {@code "mycompany.serverName"}.<br/>
+	 * Without dot at the beginning {@code @BoundProperty.name()} is considered as full parameter name and the prefix is not taken into account.
+
+	 * <p><p>
+	 * You can also use variables for substituting some parts of this prefix.
 	 * Variables should be set with {@link FactoryConfigBuilder#addParameter(String, String)}.
 	 * <p>
 	 * Example:
@@ -82,7 +89,7 @@ public @interface BoundObject {
 	Class<? extends ConfigChangeListener> changeListener() default ConfigChangeListener.class;
 
 	/**
-	 * What to do if the property value not exists in underlying persistent store.
+	 * What to do if the property value does not exist in underlying persistent store.
 	 * Default value is {@link ErrorBehavior#INHERITED} and specified in {@link FactoryConfigBuilder#setErrorBehavior(ErrorBehavior)}
 	 */
 	ErrorBehavior errorBehavior() default ErrorBehavior.INHERITED;
@@ -92,12 +99,30 @@ public @interface BoundObject {
 	 */
 	enum SourceScheme {
 		/**
-		 * Mean that concrete value will be set by {@link FactoryConfigBuilder#setSourceScheme(SourceScheme)}, and it is {@link SourceScheme#FILE} by default.
+		 * <br/>
+		 * Mean that concrete value will be get from {@link FactoryConfigBuilder#setSourceScheme(SourceScheme)}, and it is {@link SourceScheme#FILE} by default.
 		 */
 		INHERIT,
+		/**
+		 * <br/>
+		 * Use when you set relative {@link BoundObject#sourcePath()} as file valid system path to load file that resides in classpath of running VM.
+		 */
 		CLASSPATH,
+		/**
+		 * <br/>
+		 * Use when you set absolute or relative {@link BoundObject#sourcePath()} as valid file system path to load file from one of mounted file systems.
+		 */
 		FILE,
+		/**
+		 * <br/>
+		 * Use when you set {@link BoundObject#sourcePath()} as valid URL to load file from HTTP/S server.
+		 */
 		HTTP,
+		/**
+		 * <br/>
+		 * Choose when you are using special ConfigLinker server for configurations management of groups of server and/or services.<br/>
+		 * <b>It is not implemented yet.</b>
+		 */
 		CONFIG_LINKER_SERVER
 		;
 	}

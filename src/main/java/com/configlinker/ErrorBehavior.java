@@ -2,7 +2,7 @@ package com.configlinker;
 
 
 /**
- * What to do if the property value not exists in underlying persistent store.
+ * What to do if the property value does not exist in underlying persistent store.
  */
 public enum ErrorBehavior {
 	INHERITED,
