@@ -5,7 +5,7 @@ import com.configlinker.annotations.BoundObject;
 import com.configlinker.annotations.BoundProperty;
 
 
-@BoundObject(sourcePath = "test_workdir/config_errorBehaviorThrowException.properties", errorBehavior = ErrorBehavior.THROW_EXCEPTION, trackPolicy = BoundObject.TrackPolicy.ENABLE)
+@BoundObject(sourcePath = "config_errorBehaviorThrowException.properties", errorBehavior = ErrorBehavior.THROW_EXCEPTION, trackPolicy = BoundObject.TrackPolicy.ENABLE)
 public interface PropertyFileConfig_errorBehaviorThrowException {
 
     @BoundProperty(name = "errorBehaviorThrowException")

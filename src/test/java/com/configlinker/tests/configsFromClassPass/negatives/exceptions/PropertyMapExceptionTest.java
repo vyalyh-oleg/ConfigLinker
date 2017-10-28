@@ -3,8 +3,8 @@ package com.configlinker.tests.configsFromClassPass.negatives.exceptions;
 import com.configlinker.ConfigSet;
 import com.configlinker.ConfigSetFactory;
 import com.configlinker.exceptions.PropertyMapException;
-import com.configlinker.tests.configsFromClassPass.TestRunner;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -12,18 +12,19 @@ import java.util.Set;
 public class PropertyMapExceptionTest {
     // task #26
 
-    @Test(expected = PropertyMapException.class)
+    @Test
     //TODO change name of method
-    public void test26_regexpPattern_inputWrongPatternShouldCallException(){
-        TestRunner.LOGGER.info("start test26_regexpPattern_inputWrongPatternShouldCallException()");
+    public void test26_regexpPattern_inputWrongPatternShouldCallException() {
+        Assertions.assertThrows(PropertyMapException.class,
+                () -> {
+                    Set<Class<?>> interfaces = new HashSet<Class<?>>() {{
+                        add(PropertyFileConfig_propertyMapException.class);
+                    }};
+                    ConfigSet configSet = ConfigSetFactory.create(interfaces);
 
-        Set<Class<?>> interfaces = new HashSet<Class<?>>() {{
-            add(PropertyFileConfig_propertyMapException.class);
-        }};
-        ConfigSet configSet = ConfigSetFactory.create(interfaces);
+                    PropertyFileConfig_propertyMapException config = configSet.getConfigObject(PropertyFileConfig_propertyMapException.class);
+                    config.getRegexPattern();
 
-        PropertyFileConfig_propertyMapException config = configSet.getConfigObject(PropertyFileConfig_propertyMapException.class);
-        config.getRegexPattern();
-
+                });
     }
 }

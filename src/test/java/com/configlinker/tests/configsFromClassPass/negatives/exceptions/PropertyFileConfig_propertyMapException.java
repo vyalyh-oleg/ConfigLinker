@@ -3,7 +3,7 @@ package com.configlinker.tests.configsFromClassPass.negatives.exceptions;
 import com.configlinker.annotations.BoundObject;
 import com.configlinker.annotations.BoundProperty;
 
-@BoundObject(sourcePath = "test_workdir/config_propertyMapException.properties")
+@BoundObject(sourcePath = "config_propertyMapException.properties")
 public interface PropertyFileConfig_propertyMapException {
 
 // task #26

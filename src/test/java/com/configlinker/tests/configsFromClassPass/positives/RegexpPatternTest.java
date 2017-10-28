@@ -2,9 +2,8 @@ package com.configlinker.tests.configsFromClassPass.positives;
 
 import com.configlinker.ConfigSet;
 import com.configlinker.ConfigSetFactory;
-import com.configlinker.tests.configsFromClassPass.TestRunner;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -13,9 +12,7 @@ public class RegexpPatternTest {
 
     @Test
     public void test_regexpPatternEmail() {
-        TestRunner.LOGGER.info("start test_regexpPatternEmail()");
 //        Pattern pattern = Pattern.compile("^([a-z0-9_\\.-]+)@([a-z0-9_\\.-]+)\\.([a-z\\.]{2,6})$", Pattern.CASE_INSENSITIVE);
-
         Set<Class<?>> interfaces = new HashSet<Class<?>>() {{
             add(PropertyFileConfig_regexpPattern.class);
         }};
@@ -25,7 +22,7 @@ public class RegexpPatternTest {
         String expectedResult = "qwerty132@test.com";
         String actualResult = config.getEmail();
 
-        Assert.assertEquals(expectedResult, actualResult);
+        Assertions.assertEquals(expectedResult, actualResult);
     }
 
 
