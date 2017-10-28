@@ -10,7 +10,7 @@ import java.util.Set;
 
 public class IgnoreWhitespacesTest {
 
-    @Test
+//    @Test
     public void test23_ignoreWhitespaces() {
         Set<Class<?>> interfaces = new HashSet<Class<?>>() {{
             add(PropertyFileConfig_ignoreWhitespaces.class);

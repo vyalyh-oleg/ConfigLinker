@@ -10,7 +10,7 @@ import java.util.Set;
 
 public class IntegerArrayTest {
 
-    @Test
+//    @Test
     public void test22_getIntegerArray() {
         Set<Class<?>> interfaces = new HashSet<Class<?>>() {{
             add(PropertyFileConfig_getIntegerArray.class);
