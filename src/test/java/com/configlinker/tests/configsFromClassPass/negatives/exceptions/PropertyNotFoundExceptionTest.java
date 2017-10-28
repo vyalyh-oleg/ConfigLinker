@@ -3,7 +3,6 @@ package com.configlinker.tests.configsFromClassPass.negatives.exceptions;
 import com.configlinker.ConfigSet;
 import com.configlinker.ConfigSetFactory;
 import com.configlinker.exceptions.PropertyNotFoundException;
-import com.configlinker.tests.configsFromClassPass.Main;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -25,12 +24,12 @@ public class PropertyNotFoundExceptionTest {
                     ConfigSet configSet = ConfigSetFactory.create(interfaces);
 
                     PropertyFileConfig_errorBehaviorThrowException config = configSet.getConfigObject(PropertyFileConfig_errorBehaviorThrowException.class);
-        Main.LOGGER.info(config.getValue());
 
-                    //за это время нужно изменить конфиг файл - например имя параметра
-//        Thread.sleep(10000);
+                    System.out.println(config.getValue());
+     // за это время нужно изменить конфиг файл - например имя параметра
+//                  Thread.sleep(10000);
 
-        Main.LOGGER.info(config.getValue());
+                    System.out.println(config.getValue());
                 });
     }
 }
