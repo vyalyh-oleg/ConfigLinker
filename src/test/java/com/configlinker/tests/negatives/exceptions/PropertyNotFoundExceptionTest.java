@@ -24,11 +24,11 @@ public class PropertyNotFoundExceptionTest {
 
                     PropertyFileConfig_errorBehaviorThrowException config = configSet.getConfigObject(PropertyFileConfig_errorBehaviorThrowException.class);
 
-                    System.out.println(config.getValue());
+//                    System.out.println(config.getValue());
      // за это время нужно изменить конфиг файл - например имя параметра
 //                  Thread.sleep(10000);
 
-                    System.out.println(config.getValue());
+//                    System.out.println(config.getValue());
                 });
     }
 }
