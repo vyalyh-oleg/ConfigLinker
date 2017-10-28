@@ -1,4 +1,4 @@
-package com.configlinker.tests.configsFromClassPass.negatives.exceptions;
+package com.configlinker.tests.negatives.exceptions;
 
 import com.configlinker.ErrorBehavior;
 import com.configlinker.annotations.BoundObject;

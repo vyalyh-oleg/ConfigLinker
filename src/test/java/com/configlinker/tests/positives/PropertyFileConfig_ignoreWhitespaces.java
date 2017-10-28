@@ -1,4 +1,4 @@
-package com.configlinker.tests.configsFromClassPass.positives;
+package com.configlinker.tests.positives;
 
 import com.configlinker.annotations.BoundObject;
 import com.configlinker.annotations.BoundProperty;

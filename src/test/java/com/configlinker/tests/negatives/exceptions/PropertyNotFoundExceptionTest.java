@@ -1,10 +1,9 @@
-package com.configlinker.tests.configsFromClassPass.negatives.exceptions;
+package com.configlinker.tests.negatives.exceptions;
 
 import com.configlinker.ConfigSet;
 import com.configlinker.ConfigSetFactory;
 import com.configlinker.exceptions.PropertyNotFoundException;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 import java.util.Set;

@@ -1,4 +1,4 @@
-package com.configlinker.tests.configsFromClassPass.negatives.exceptions;
+package com.configlinker.tests.negatives.exceptions;
 
 import com.configlinker.ConfigSet;
 import com.configlinker.ConfigSetFactory;
