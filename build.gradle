@@ -126,6 +126,7 @@ junitPlatform {
 //	includeClassNamePattern '.*Tests'
 }
 
+/*
 cleanJunitPlatformTest {
 	delete "./test_workdir"
 }
@@ -137,6 +138,11 @@ junitPlatformTest.doFirst {
 		from "./workdir"
 		into "./test_workdir"
 	}
+}
+*/
+
+junitPlatformTest.doFirst {
+	println "See reports here: '" + junitPlatform.reportsDir + "'."
 }
 
 junitPlatformTest {
