@@ -42,7 +42,7 @@ repositories {
 dependencies {
     // This dependency is found on compile classpath of this component and consumers.
 
-	compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+	implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
 
 	// This dependency is exported to consumers, that is to say found on their compile classpath.
 //    api
@@ -53,11 +53,11 @@ dependencies {
     // Use JUnit test framework
 //    testImplementation
 
-	testRuntimeOnly group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
+	testRuntimeOnly group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
 	testRuntimeOnly group: 'org.fusesource.jansi', name: 'jansi', version: '1.16'
 
-	testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: project.properties['junit.jupiter.version']
-	testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: project.properties['junit.jupiter.version']
+	testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: project.properties['junit.jupiter.version']
+	testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: project.properties['junit.jupiter.version']
 	testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: project.properties['junit.jupiter.version']
 //	testRuntimeOnly group: 'org.junit.platform', name: 'junit-platform-runner', version: project.properties['junit.platform.version']
 //	testRuntimeOnly group: 'org.junit.platform', name: 'junit-platform-launcher', version: project.properties['junit.platform.version']
