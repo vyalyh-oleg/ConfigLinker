@@ -12,8 +12,8 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 class MapStringObjectMapper<VALUE> extends AbstractPropertyMapper<Map<String, String>, Map<String, VALUE>> {
-	MapStringObjectMapper(PropertyParser<Map<String, String>> propertyParser, Executable executable, Pattern regexpPattern, PropertyValidator validator, String delimiterForList, String delimiterForKeyValue) {
-		super(propertyParser, executable, regexpPattern, validator, delimiterForList, delimiterForKeyValue);
+	MapStringObjectMapper(Class<?> returnType, PropertyParser<Map<String, String>> propertyParser, Executable executable, Pattern regexpPattern, PropertyValidator validator, String delimiterForList, String delimiterForKeyValue) {
+		super(returnType, propertyParser, executable, regexpPattern, validator, delimiterForList, delimiterForKeyValue);
 	}
 
 	@Override

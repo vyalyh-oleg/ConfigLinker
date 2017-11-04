@@ -5,14 +5,15 @@ import com.configlinker.exceptions.PropertyMapException;
 import com.configlinker.exceptions.PropertyValidateException;
 import com.configlinker.parsers.PropertyParser;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Executable;
 import java.util.List;
 import java.util.regex.Pattern;
 
 
 class ArrayMapper<ELEMENT> extends AbstractPropertyMapper<List<String>, ELEMENT[]> {
-	ArrayMapper(PropertyParser<List<String>> propertyParser, Executable executable, Pattern regexpPattern, PropertyValidator validator, String delimiterForList) {
-		super(propertyParser, executable, regexpPattern, validator, delimiterForList, null);
+	ArrayMapper(Class<?> returnType, PropertyParser<List<String>> propertyParser, Executable executable, Pattern regexpPattern, PropertyValidator validator, String delimiterForList) {
+		super(returnType, propertyParser, executable, regexpPattern, validator, delimiterForList, null);
 	}
 
 	@Override

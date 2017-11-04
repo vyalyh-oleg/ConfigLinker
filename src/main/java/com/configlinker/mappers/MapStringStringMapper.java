@@ -10,8 +10,8 @@ import java.util.regex.Pattern;
 
 
 final class MapStringStringMapper extends MapStringObjectMapper<String> {
-	MapStringStringMapper(PropertyParser<Map<String, String>> propertyParser, Executable executable, Pattern regexpPattern, String delimiterForList, String delimiterForKeyValue) {
-		super(propertyParser, executable, regexpPattern, null, delimiterForList, delimiterForKeyValue);
+	MapStringStringMapper(Class<?> returnType, PropertyParser<Map<String, String>> propertyParser, Executable executable, Pattern regexpPattern, String delimiterForList, String delimiterForKeyValue) {
+		super(returnType, propertyParser, executable, regexpPattern, null, delimiterForList, delimiterForKeyValue);
 	}
 
 	@Override
