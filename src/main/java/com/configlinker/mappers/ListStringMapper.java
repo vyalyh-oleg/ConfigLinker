@@ -10,8 +10,8 @@ import java.util.regex.Pattern;
 
 
 final class ListStringMapper extends ListObjectMapper<String> {
-	ListStringMapper(PropertyParser<List<String>> propertyParser, Executable executable, Pattern regexpPattern, String delimiterForList) {
-		super(propertyParser, executable, regexpPattern, null, delimiterForList);
+	ListStringMapper(Class<?> returnType, PropertyParser<List<String>> propertyParser, Executable executable, Pattern regexpPattern, String delimiterForList) {
+		super(returnType, propertyParser, executable, regexpPattern, null, delimiterForList);
 	}
 
 	@Override

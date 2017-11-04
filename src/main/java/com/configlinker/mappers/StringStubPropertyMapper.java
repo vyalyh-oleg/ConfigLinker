@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 final class StringStubPropertyMapper extends AbstractPropertyMapper<String, String> {
 	StringStubPropertyMapper(PropertyParser<String> propertyParser, Executable executable, Pattern regexpPattern) {
-		super(propertyParser, executable, regexpPattern, null, null, null);
+		super(String.class, propertyParser, executable, regexpPattern, null, null, null);
 	}
 
 	@Override

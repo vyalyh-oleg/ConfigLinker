@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 
 final class ArrayStringMapper extends ArrayMapper<String> {
 	ArrayStringMapper(PropertyParser<List<String>> propertyParser, Executable executable, Pattern regexpPattern, String delimiterForList) {
-		super(propertyParser, executable, regexpPattern, null, delimiterForList);
+		super(String.class, propertyParser, executable, regexpPattern, null, delimiterForList);
 	}
 
 	@Override
