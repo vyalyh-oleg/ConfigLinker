@@ -26,6 +26,7 @@ public final class FactoryConfigBuilder {
 	private BoundObject.TrackPolicy trackPolicy = BoundObject.TrackPolicy.DISABLE;
 	private int trackingInterval = 60;
 	private Charset charset = StandardCharsets.UTF_8;
+	private boolean ignoreWhitespaces = true;
 	private ErrorBehavior errorBehavior = ErrorBehavior.THROW_EXCEPTION;
 	private boolean closed = false;
 
@@ -110,6 +111,22 @@ public final class FactoryConfigBuilder {
 	}
 
 	/**
+	 *
+	 * @param ignoreWhitespaces <br>Whether ignore or not leading and trailing whitespaces for configuration values.<br>
+	 *                          This behaviour concerns both single parameter values and values in lists or maps.<br>
+	 *                          Default value: {@code true}
+	 *                          <p>Examples:
+	 *                          <pre>'color = green' -- value: "green"</pre>
+	 *                          <pre>'color = green, blue' -- values: "green" and "blue"</pre>
+	 *                          <pre>'color = one: green, two:blue , three : red ' -- values: "green", "blue", "red"</pre>
+	 * @return this
+	 */
+	public FactoryConfigBuilder setIgnoreWhitespaces(boolean ignoreWhitespaces) {
+		this.ignoreWhitespaces = ignoreWhitespaces;
+		return this;
+	}
+
+	/**
 	 * @param errorBehavior See {@link ErrorBehavior} and {@link BoundObject#errorBehavior()}
 	 * @return this
 	 * @throws FactoryConfigBuilderClosedException -
@@ -144,6 +161,10 @@ public final class FactoryConfigBuilder {
 
 	Charset getCharset() {
 		return charset;
+	}
+
+	boolean isIgnoreWhitespaces() {
+		return ignoreWhitespaces;
 	}
 
 	ErrorBehavior getErrorBehavior() {

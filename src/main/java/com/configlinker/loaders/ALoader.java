@@ -29,10 +29,6 @@ abstract class ALoader {
 	private final HashMap<Class<?>, HashMap<Integer, Object>> singleReturnsMethodsCache = new HashMap<>();
 	private final HashMap<Class<?>, HashMap<Integer, Object>> multiReturnsMethodsCache = new HashMap<>();
 
-	private ALoader() {
-		this.configDescriptions = null;
-	}
-
 	ALoader(HashMap<Class<?>, ConfigDescription> configDescriptions) throws PropertyLoadException {
 		this.configDescriptions = Collections.unmodifiableMap(configDescriptions);
 	}

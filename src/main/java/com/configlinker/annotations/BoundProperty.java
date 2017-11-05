@@ -48,7 +48,7 @@ public @interface BoundProperty {
 
 	/**
 	 * <p>
-	 * Delimiter for parameter value, which is treated as {@code List}. Default value is comma - {@code ','}.
+	 * Delimiter for parameter value, which is treated as {@code List} or key-value pairs in {@code Map}. Default value is comma - {@code ','}.
 	 * <p>
 	 * Example:
 	 * <pre>	{@code param.name.in.file = one,two,three}</pre>
@@ -58,7 +58,7 @@ public @interface BoundProperty {
 
 	/**
 	 * <p>
-	 * Delimiter for parameter element, which is treated as key-value pair for {@code Map}. Default value is colon - {@code ':'}.
+	 * Delimiter between key-value pair for {@code Map}. Default value is colon - {@code ':'}.
 	 * <p>
 	 * Example:
 	 * <pre>	{@code param.name.in.file = color:red,number:two,target:method}</pre>

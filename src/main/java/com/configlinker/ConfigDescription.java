@@ -14,6 +14,7 @@ public final class ConfigDescription {
 	private Map<String, String> httpHeaders;
 	private String sourcePath;
 	private Charset charset;
+	private boolean ignoreWhitespaces;
 	private String propertyNamePrefix;
 	private BoundObject.TrackPolicy trackPolicy;
 	private int trackingInterval;
@@ -44,6 +45,10 @@ public final class ConfigDescription {
 
 	public Charset getCharset() {
 		return charset;
+	}
+
+	public boolean isIgnoreWhitespaces() {
+		return ignoreWhitespaces;
 	}
 
 	public String getPropertyNamePrefix() {
@@ -95,6 +100,10 @@ public final class ConfigDescription {
 		this.charset = charset;
 	}
 
+	void setIgnoreWhitespaces(boolean ignoreWhitespaces) {
+		this.ignoreWhitespaces = ignoreWhitespaces;
+	}
+
 	void setPropertyNamePrefix(String propertyNamePrefix) {
 		this.propertyNamePrefix = propertyNamePrefix;
 	}
@@ -126,11 +135,18 @@ public final class ConfigDescription {
 	}
 
 
-	public static final class PropertyDescription {
-		private String name;
-		private String[] dynamicVariableNames; // can be null
-		private PropertyMapper mapper;
-		private ErrorBehavior errorBehavior;
+	public final class PropertyDescription {
+		private final String name;
+		private final String[] dynamicVariableNames; // can be null
+		private final PropertyMapper mapper;
+		private final ErrorBehavior errorBehavior;
+
+		public PropertyDescription(String name, String[] dynamicVariableNames, PropertyMapper propertyMapper, ErrorBehavior errorBehavior) {
+			this.name = name;
+			this.dynamicVariableNames = dynamicVariableNames;
+			this.errorBehavior = errorBehavior;
+			this.mapper = propertyMapper;
+		}
 
 		/**
 		 * @return Full property name, if method don't have parameters, or name template (contains @{paramName} construction) in other case.
@@ -153,26 +169,6 @@ public final class ConfigDescription {
 
 		public ErrorBehavior getErrorBehavior() {
 			return errorBehavior;
-		}
-
-		void setName(String name) {
-			this.name = name;
-		}
-
-		/**
-		 *
-		 * @param dynamicVariableNames Can be null.
-		 */
-		void setDynamicVariableNames(String[] dynamicVariableNames) {
-			this.dynamicVariableNames = dynamicVariableNames;
-		}
-
-		void setMapper(PropertyMapper mapper) {
-			this.mapper = mapper;
-		}
-
-		void setErrorBehavior(ErrorBehavior errorBehavior) {
-			this.errorBehavior = errorBehavior;
 		}
 	}
 }
