@@ -10,6 +10,7 @@ import com.configlinker.exceptions.ConfigProxyException;
 import com.configlinker.exceptions.PropertyLoadException;
 import com.configlinker.exceptions.PropertyMapException;
 import com.configlinker.exceptions.PropertyMatchException;
+import com.configlinker.exceptions.PropertyNotFoundException;
 import com.configlinker.exceptions.PropertyValidateException;
 import org.slf4j.LoggerFactory;
 
@@ -36,9 +37,7 @@ abstract class ALoader {
 		this.configDescriptions = Collections.unmodifiableMap(configDescriptions);
 	}
 
-	protected void prepareLoader() throws PropertyLoadException {
-
-	};
+	abstract protected void prepareLoader() throws PropertyLoadException;
 
 	abstract protected Properties loadRawProperties(ConfigDescription configDescription) throws PropertyLoadException;
 
@@ -57,14 +56,14 @@ abstract class ALoader {
 	final protected void loadProperties() throws PropertyLoadException, PropertyValidateException, PropertyMatchException, PropertyMapException {
 		for (ConfigDescription configDescription : this.configDescriptions.values()) {
 			Properties newProperties = this.rawProperties.computeIfAbsent(configDescription.getSourcePath(), (sourcePath) -> this.loadRawProperties(configDescription));
-			HashMap<Integer, Object> singleReturns = this.convertRawPropertiesToObjects(configDescription, newProperties);
+			HashMap<Integer, Object> singleReturns = this.convertSingleRawPropertiesToObjects(configDescription, newProperties);
 
 			this.singleReturnsMethodsCache.put(configDescription.getConfInterface(), singleReturns);
 			this.multiReturnsMethodsCache.put(configDescription.getConfInterface(), new HashMap<>());
 		}
 	}
 
-	private HashMap<Integer, Object> convertRawPropertiesToObjects(ConfigDescription configDescription, Properties newProperties) throws PropertyLoadException, PropertyMatchException, PropertyValidateException, PropertyMapException {
+	private HashMap<Integer, Object> convertSingleRawPropertiesToObjects(ConfigDescription configDescription, Properties newProperties) throws PropertyLoadException, PropertyMatchException, PropertyValidateException, PropertyMapException {
 		Class<?> configInterface = configDescription.getConfInterface();
 		HashMap<Integer, Object> singleReturns = new HashMap<>();
 
@@ -80,18 +79,22 @@ abstract class ALoader {
 			Object objValue = null;
 			if (rawValue == null) {
 				if (propertyDescription.getErrorBehavior() == ErrorBehavior.THROW_EXCEPTION)
-					throw new PropertyLoadException("Value for property '" + fullPropertyName + "' not found, config interface '" + configInterface.getName() + "', method '" + entryPropertyDescription.getKey().getName() + "'.").logAndReturn();
+					throw new PropertyNotFoundException("Value for property '" + fullPropertyName + "' not found, config interface '" + configInterface.getName() + "', method '" + entryPropertyDescription.getKey().getName() + "'.").logAndReturn();
 			} else
-				objValue = propertyDescription.getMapper().mapFromString(rawValue);
-
+				try {
+					objValue = propertyDescription.getMapper().mapFromString(rawValue);
+				} catch (ConfigLinkerRuntimeException e) {
+					if (propertyDescription.getErrorBehavior() == ErrorBehavior.THROW_EXCEPTION)
+						throw e;
+				}
 			singleReturns.put(computeKeyHash(fullPropertyName, entryPropertyDescription.getKey()), objValue);
 		}
 		return singleReturns;
 	}
 
 	/**
-	 * Suppress all exceptions, because this methods calls during runtime when configuration refreshes. If it is exception appeared during refreshing ConfigLinker just send {@link ConfigChangedEvent} to all {@link ConfigChangeListener}s and of course to the ErrorHandler.
-	 * @param configDescriptions
+	 * <p>Suppress all exceptions, because this methods is called during runtime when configuration is refreshed. If exception appear during refreshing ConfigLinker just send {@link ConfigChangedEvent} to all {@link ConfigChangeListener}s.
+	 * @param configDescriptions -
 	 */
 	final protected void refreshProperties(Set<ConfigDescription> configDescriptions) {
 		ConfigDescription description = configDescriptions.iterator().next();
@@ -101,13 +104,9 @@ abstract class ALoader {
 			newProperties = this.loadRawProperties(description);
 		} catch (ConfigLinkerRuntimeException e) {
 			LoggerFactory.getLogger(Loggers.mainLogger).error("Cannot load raw properties for config interface '{}'.", description.getConfInterface().getName());
-
-			// TODO: ErrorHandler
-
 			for (ConfigDescription configDescription : configDescriptions) {
 				ConfigChangedEvent configChangedEvent = new ConfigChangedEvent(configDescription.getConfInterface(), configDescription.getSourcePath(), null, e);
-				ConfigChangeListener changeListener = configDescription.getConfigChangeListener();
-				changeListener.configChanged(configChangedEvent);
+				configDescription.fireConfigChanged(configChangedEvent);
 			}
 			return;
 		}
@@ -137,20 +136,14 @@ abstract class ALoader {
 			HashMap<Integer, Object> singleReturns = null;
 			ConfigLinkerRuntimeException convertException = null;
 			try {
-				singleReturns = this.convertRawPropertiesToObjects(configDescription, newProperties);
+				singleReturns = this.convertSingleRawPropertiesToObjects(configDescription, newProperties);
 			} catch (ConfigLinkerRuntimeException e){
-				LoggerFactory.getLogger(Loggers.mainLogger).error("Cannot convert raw properties to objects for config interface '{}'.", description.getConfInterface().getName(), e);
-
-				// TODO: ErrorHandler
-
+				LoggerFactory.getLogger(Loggers.mainLogger).error("Cannot convert raw properties to objects for config interface '{}'.", configInterface.getName(), e);
 				convertException = e;
 				error = true;
 			}
 
 			ConfigChangedEvent configChangedEvent = new ConfigChangedEvent(configInterface, configDescription.getSourcePath(), changedValues, convertException);
-			ConfigChangeListener changeListener = configDescription.getConfigChangeListener();
-			changeListener.configChanged(configChangedEvent);
-
 			configChangedEvents.put(configDescription, configChangedEvent);
 			singleReturnsMethodsCache.put(configDescription.getConfInterface(), singleReturns);
 		}
@@ -161,7 +154,7 @@ abstract class ALoader {
 			configDescriptions.forEach(confDescr -> this.multiReturnsMethodsCache.get(confDescr.getConfInterface()).clear());
 		}
 
-		configDescriptions.forEach(confDescr -> confDescr.getConfigChangeListener().configChanged(configChangedEvents.get(confDescr)));
+		configDescriptions.forEach(confDescr -> confDescr.fireConfigChanged(configChangedEvents.get(confDescr)));
 	}
 
 	final Object getProperty(ConfigDescription configDescription, ConfigDescription.PropertyDescription propertyDescription, Method method, HashMap<String, String> methodArguments) throws ConfigProxyException, PropertyValidateException, PropertyMatchException, PropertyLoadException {
@@ -171,18 +164,19 @@ abstract class ALoader {
 			return this.singleReturnsMethodsCache.get(configInterface).get(computeKeyHash(propertyDescription.getName(), method));
 
 		String fullPropertyName = validateAndMakeVariableSubstitution(propertyDescription.getName(), methodArguments);
-		Object objValue = this.multiReturnsMethodsCache.get(configInterface).computeIfAbsent(computeKeyHash(fullPropertyName, method), key -> {
-			Object value = null;
+		Object objValue = this.multiReturnsMethodsCache.get(configInterface)
+			.computeIfAbsent(computeKeyHash(fullPropertyName, method), key -> {
+				Object value = null;
 
-			String rawValue = this.rawProperties.get(configDescription.getSourcePath()).getProperty(fullPropertyName);
-			if (rawValue == null && propertyDescription.getErrorBehavior() == ErrorBehavior.THROW_EXCEPTION)
-				throw new PropertyLoadException("Value for property '" + propertyDescription.getName() + "' not found, config interface '" + configInterface.getName() + "', method '" + method.getName() + "'.").logAndReturn();
+				String rawValue = this.rawProperties.get(configDescription.getSourcePath()).getProperty(fullPropertyName);
+				if (rawValue == null && propertyDescription.getErrorBehavior() == ErrorBehavior.THROW_EXCEPTION)
+					throw new PropertyNotFoundException("Value for property '" + propertyDescription.getName() + "' not found, config interface '" + configInterface.getName() + "', method '" + method.getName() + "'.").logAndReturn();
 
-			if (rawValue != null)
-				value = propertyDescription.getMapper().mapFromString(rawValue);
+				if (rawValue != null)
+					value = propertyDescription.getMapper().mapFromString(rawValue);
 
-			return value;
-		});
+				return value;
+			});
 		return objValue;
 	}
 
