@@ -120,6 +120,12 @@ public final class ConfigDescription {
 	}
 
 
+	public void fireConfigChanged(ConfigChangedEvent configChangedEvent) {
+		if (configChangeListener != null)
+			configChangeListener.configChanged(configChangedEvent);
+	}
+
+
 	public static final class PropertyDescription {
 		private String name;
 		private String[] dynamicVariableNames; // can be null
