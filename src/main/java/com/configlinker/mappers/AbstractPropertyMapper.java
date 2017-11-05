@@ -17,16 +17,18 @@ import java.util.regex.Pattern;
 
 abstract class AbstractPropertyMapper<RAW_TYPE, MAPPED_TYPE> implements PropertyMapper<MAPPED_TYPE> {
 	protected final PropertyParser<RAW_TYPE> propertyParser;
+	private final boolean ignoreWhitespaces;
 	protected final Class<?> returnType;
 	private String delimiterForList;
 	private String delimiterForKeyValue;
 	protected final Executable executable;
 	protected final Pattern regexpPattern;
-	protected final PropertyValidator validator;
+	private final PropertyValidator validator;
 
-	AbstractPropertyMapper(Class<?> returnType, PropertyParser<RAW_TYPE> propertyParser, Executable executable, Pattern regexpPattern, PropertyValidator validator, String delimiterForList, String delimiterForKeyValue) {
+	AbstractPropertyMapper(Class<?> returnType, PropertyParser<RAW_TYPE> propertyParser, boolean ignoreWhitespaces, Executable executable, Pattern regexpPattern, PropertyValidator validator, String delimiterForList, String delimiterForKeyValue) {
 		this.returnType = returnType;
 		this.propertyParser = propertyParser;
+		this.ignoreWhitespaces = ignoreWhitespaces;
 		this.delimiterForList = delimiterForList;
 		this.delimiterForKeyValue = delimiterForKeyValue;
 		this.regexpPattern = regexpPattern;
@@ -36,7 +38,7 @@ abstract class AbstractPropertyMapper<RAW_TYPE, MAPPED_TYPE> implements Property
 
 	@Override
 	public final MAPPED_TYPE mapFromString(String rawStringValue) throws PropertyMatchException, PropertyValidateException, PropertyMapException {
-		MAPPED_TYPE mappedValue = mapFrom(propertyParser.parse(rawStringValue, this.regexpPattern, delimiterForList, delimiterForKeyValue));
+		MAPPED_TYPE mappedValue = mapFrom(propertyParser.parse(rawStringValue, ignoreWhitespaces, this.regexpPattern, delimiterForList, delimiterForKeyValue));
 		if (mappedValue == null)
 			throw new PropertyMapException("Cannot create mapped value from raw string '" + rawStringValue + "' for method '" + this.executable.getDeclaringClass().getName() + "::" + this.executable.getName() + "'.").logAndReturn();
 
@@ -62,6 +64,9 @@ abstract class AbstractPropertyMapper<RAW_TYPE, MAPPED_TYPE> implements Property
 
 			if (this.executable instanceof Constructor)
 				returnElement = ((Constructor<RETURN_TYPE>) this.executable).newInstance(elementValue);
+
+			// TODO: implement for other types
+			// maybe it will be needed to change MapperFactory.getMethodForPredefinedType() method.
 
 			if (this.executable.getDeclaringClass() == String.class && this.executable.getName().equals("charAt"))
 				returnElement = (RETURN_TYPE) ((Method) this.executable).invoke(elementValue, 0);

@@ -10,8 +10,8 @@ import java.util.regex.Pattern;
 
 
 final class CustomObjectMapper<RAW_TYPE, MAPPED_TYPE> extends AbstractPropertyMapper<RAW_TYPE, MAPPED_TYPE> {
-	CustomObjectMapper(Class<?> returnType, PropertyParser<RAW_TYPE> propertyParser, Executable executable, Pattern regexpPattern, PropertyValidator validator, String delimiterForList, String delimiterForKeyValue) {
-		super(returnType, propertyParser, executable, regexpPattern, validator, delimiterForList, delimiterForKeyValue);
+	CustomObjectMapper(Class<?> returnType, PropertyParser<RAW_TYPE> propertyParser, boolean ignoreWhitespaces, Executable executable, Pattern regexpPattern, PropertyValidator validator, String delimiterForList, String delimiterForKeyValue) {
+		super(returnType, propertyParser, ignoreWhitespaces, executable, regexpPattern, validator, delimiterForList, delimiterForKeyValue);
 	}
 
 	@Override

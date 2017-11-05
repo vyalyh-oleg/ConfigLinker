@@ -187,6 +187,7 @@ final class AnnotationScanner {
 		configDescription.setSourceScheme(sourceScheme);
 		configDescription.setHttpHeaders(httpHeaders);
 		configDescription.setCharset(charset);
+		configDescription.setIgnoreWhitespaces(configBuilder.isIgnoreWhitespaces());
 		configDescription.setTrackPolicy(trackPolicy);
 		configDescription.setTrackingInterval(trackingInterval);
 		configDescription.setConfigChangeListener(changeListener);
@@ -282,19 +283,13 @@ final class AnnotationScanner {
 		if (propertyDynamicVariableNames.length == 0)
 			propertyDynamicVariableNames = null;
 
-		Class<?> returnType = propertyMethod.getReturnType();
-		PropertyMapper propertyMapper = MapperFactory.create(returnType, boundPropertyAnnotation, propertyMethod);
-
 		ErrorBehavior errorBehavior = boundPropertyAnnotation.errorBehavior();
 		if (errorBehavior == ErrorBehavior.INHERITED)
 			errorBehavior = configDescription.getErrorBehavior();
 
+		PropertyMapper propertyMapper = MapperFactory.create(boundPropertyAnnotation, propertyMethod, configDescription.isIgnoreWhitespaces());
 
-		ConfigDescription.PropertyDescription propertyMethodDescription = new ConfigDescription.PropertyDescription();
-		propertyMethodDescription.setName(propertyNameTemplate);
-		propertyMethodDescription.setDynamicVariableNames(propertyDynamicVariableNames);
-		propertyMethodDescription.setMapper(propertyMapper);
-		propertyMethodDescription.setErrorBehavior(errorBehavior);
+		ConfigDescription.PropertyDescription propertyMethodDescription = configDescription.new PropertyDescription(propertyNameTemplate, propertyDynamicVariableNames, propertyMapper, errorBehavior);
 
 		return propertyMethodDescription;
 	}

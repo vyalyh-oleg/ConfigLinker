@@ -21,7 +21,9 @@ public final class MapperFactory {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static PropertyMapper create(Class<?> returnType, BoundProperty boundPropertyAnnotation, Method propertyMethod) throws PropertyMapException {
+	public static PropertyMapper create(BoundProperty boundPropertyAnnotation, Method propertyMethod, boolean ignoreWhitespaces) throws PropertyMapException {
+
+		Class<?> returnType = propertyMethod.getReturnType();
 
 		String strRegexpPattern = boundPropertyAnnotation.regexpPattern();
 		Pattern regexpPattern = null;
@@ -89,36 +91,36 @@ public final class MapperFactory {
 		executable.setAccessible(true);
 
 		if (returnType == String.class)
-			return new StringStubPropertyMapper(propertyParser, executable, regexpPattern);
+			return new StringStubPropertyMapper(propertyParser, ignoreWhitespaces, executable, regexpPattern);
 
 		if (returnType.isArray()) {
 			if (customTypeOrDeserializer == String.class)
-				return new ArrayStringMapper(propertyParser, executable, regexpPattern, delimiterForList);
+				return new ArrayStringMapper(propertyParser, ignoreWhitespaces, executable, regexpPattern, delimiterForList);
 			if (returnType.getComponentType().isPrimitive())
-				return new ArrayPrimitiveMapper(returnType, propertyParser, executable, regexpPattern, validator, delimiterForList);
+				return new ArrayPrimitiveMapper(returnType, propertyParser, ignoreWhitespaces, executable, regexpPattern, validator, delimiterForList);
 			else
-				return new ArrayMapper(returnType, propertyParser, executable, regexpPattern, validator, delimiterForList);
+				return new ArrayMapper(returnType, propertyParser, ignoreWhitespaces, executable, regexpPattern, validator, delimiterForList);
 		}
 
 		if (List.class.isAssignableFrom(returnType))
 			if (customTypeOrDeserializer == String.class)
-				return new ListStringMapper(returnType, propertyParser, executable, regexpPattern, delimiterForList);
+				return new ListStringMapper(returnType, propertyParser, ignoreWhitespaces, executable, regexpPattern, delimiterForList);
 			else
-				return new ListObjectMapper(returnType, propertyParser, executable, regexpPattern, validator, delimiterForList);
+				return new ListObjectMapper(returnType, propertyParser, ignoreWhitespaces, executable, regexpPattern, validator, delimiterForList);
 
 		if (Set.class.isAssignableFrom(returnType))
 			if (customTypeOrDeserializer == String.class)
-				return new SetStringMapper(returnType, propertyParser, executable, regexpPattern, delimiterForList);
+				return new SetStringMapper(returnType, propertyParser, ignoreWhitespaces, executable, regexpPattern, delimiterForList);
 			else
-				return new SetObjectMapper(returnType, propertyParser, executable, regexpPattern, validator, delimiterForList);
+				return new SetObjectMapper(returnType, propertyParser, ignoreWhitespaces, executable, regexpPattern, validator, delimiterForList);
 
 		if (Map.class.isAssignableFrom(returnType))
 			if (customTypeOrDeserializer == String.class)
-				return new MapStringStringMapper(returnType, propertyParser, executable, regexpPattern, delimiterForList, delimiterForKeyValue);
+				return new MapStringStringMapper(returnType, propertyParser, ignoreWhitespaces, executable, regexpPattern, delimiterForList, delimiterForKeyValue);
 			else
-				return new MapStringObjectMapper(returnType, propertyParser, executable, regexpPattern, validator, delimiterForList, delimiterForKeyValue);
+				return new MapStringObjectMapper(returnType, propertyParser, ignoreWhitespaces, executable, regexpPattern, validator, delimiterForList, delimiterForKeyValue);
 
-		return new CustomObjectMapper(returnType, propertyParser, executable, regexpPattern, validator, delimiterForList, delimiterForKeyValue);
+		return new CustomObjectMapper(returnType, propertyParser, ignoreWhitespaces, executable, regexpPattern, validator, delimiterForList, delimiterForKeyValue);
 	}
 
 	private static Executable getMethodForType(Class<?> customTypeOrDeserializer, BoundProperty.DeserializationMethod deserializationMethod) throws PropertyMapException {

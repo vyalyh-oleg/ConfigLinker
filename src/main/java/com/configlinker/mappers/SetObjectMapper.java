@@ -13,8 +13,8 @@ import java.util.regex.Pattern;
 
 
 class SetObjectMapper<ELEMENT> extends AbstractPropertyMapper<List<String>, Set<ELEMENT>> {
-	SetObjectMapper(Class<?> returnType, PropertyParser<List<String>> propertyParser, Executable executable, Pattern regexpPattern, PropertyValidator validator, String delimiterForList) {
-		super(returnType, propertyParser, executable, regexpPattern, validator, delimiterForList, null);
+	SetObjectMapper(Class<?> returnType, PropertyParser<List<String>> propertyParser, boolean ignoreWhitespaces, Executable executable, Pattern regexpPattern, PropertyValidator validator, String delimiterForList) {
+		super(returnType, propertyParser, ignoreWhitespaces, executable, regexpPattern, validator, delimiterForList, null);
 	}
 
 	@Override
