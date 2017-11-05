@@ -1,10 +1,7 @@
 package com.configlinker.parsers;
 
-import com.configlinker.Loggers;
 import com.configlinker.annotations.BoundProperty;
 import com.configlinker.exceptions.PropertyParseException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -21,7 +18,7 @@ public final class ParserFactory {
 
 	public static PropertyParser create(Class<?> returnType, BoundProperty.DeserializationMethod deserializationMethod) throws PropertyParseException {
 		if (returnType.isEnum() || returnType == String.class ||
-				returnType.isPrimitive() || isPrimitiveWrapper(returnType))
+				returnType.isPrimitive() || ParserFactory.isPrimitiveWrapper(returnType))
 			return STRING_STUB_PROPERTY_PARSER;
 
 		if (returnType.isArray())

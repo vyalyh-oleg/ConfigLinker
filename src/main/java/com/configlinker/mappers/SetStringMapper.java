@@ -12,8 +12,8 @@ import java.util.regex.Pattern;
 
 
 final class SetStringMapper extends SetObjectMapper<String> {
-	SetStringMapper(PropertyParser<List<String>> propertyParser, Executable executable, Pattern regexpPattern, String delimiterForList) {
-		super(propertyParser, executable, regexpPattern, null, delimiterForList);
+	SetStringMapper(Class<?> returnType, PropertyParser<List<String>> propertyParser, Executable executable, Pattern regexpPattern, String delimiterForList) {
+		super(returnType, propertyParser, executable, regexpPattern, null, delimiterForList);
 	}
 
 	@Override

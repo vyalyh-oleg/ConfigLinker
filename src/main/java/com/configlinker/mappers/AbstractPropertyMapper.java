@@ -17,13 +17,15 @@ import java.util.regex.Pattern;
 
 abstract class AbstractPropertyMapper<RAW_TYPE, MAPPED_TYPE> implements PropertyMapper<MAPPED_TYPE> {
 	protected final PropertyParser<RAW_TYPE> propertyParser;
+	protected final Class<?> returnType;
 	private String delimiterForList;
 	private String delimiterForKeyValue;
 	protected final Executable executable;
 	protected final Pattern regexpPattern;
 	protected final PropertyValidator validator;
 
-	AbstractPropertyMapper(PropertyParser<RAW_TYPE> propertyParser, Executable executable, Pattern regexpPattern, PropertyValidator validator, String delimiterForList, String delimiterForKeyValue) {
+	AbstractPropertyMapper(Class<?> returnType, PropertyParser<RAW_TYPE> propertyParser, Executable executable, Pattern regexpPattern, PropertyValidator validator, String delimiterForList, String delimiterForKeyValue) {
+		this.returnType = returnType;
 		this.propertyParser = propertyParser;
 		this.delimiterForList = delimiterForList;
 		this.delimiterForKeyValue = delimiterForKeyValue;

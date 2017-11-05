@@ -9,7 +9,16 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-
+/**
+ * <p>Default configuration factory values:
+ * <ul>
+ * <li>sourceScheme = {@link BoundObject.SourceScheme#FILE}</li>
+ * <li>trackPolicy = {@link BoundObject.TrackPolicy#DISABLE}</li>
+ * <li>trackingInterval = 60</li>
+ * <li>charset = {@link StandardCharsets#UTF_8}</li>
+ * <li>errorBehavior = {@link ErrorBehavior#THROW_EXCEPTION}</li>
+ * </ul>
+ */
 public final class FactoryConfigBuilder {
 	private Map<String, String> parameters = new HashMap<>();
 	private Map<String, String> httpHeaders = new HashMap<>();

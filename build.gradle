@@ -50,12 +50,10 @@ dependencies {
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
 //    implementation
 
-    // Use JUnit test framework
-//    testImplementation
-
 	testRuntimeOnly group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
 	testRuntimeOnly group: 'org.fusesource.jansi', name: 'jansi', version: '1.16'
 
+    // Use JUnit test framework
 	testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: project.properties['junit.jupiter.version']
 	testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: project.properties['junit.jupiter.version']
 	testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: project.properties['junit.jupiter.version']
@@ -106,11 +104,11 @@ test {
 }
 
 junitPlatform {
-	details 'tree'
+//	details 'tree'
 //	platformVersion 1.0
 //	logManager "org.apache.logging.log4j.jul.LogManager"
 	reportsDir "build/test-results/junit-platform" // this is the default
-	// enableStandardTestTask true
+//	 enableStandardTestTask true
 /*
 	engines {
 		include 'junit-jupiter'
@@ -130,19 +128,17 @@ junitPlatform {
 cleanJunitPlatformTest {
 	delete "./test_workdir"
 }
+*/
 
 junitPlatformTest.doFirst {
 	println "See reports here: '" + junitPlatform.reportsDir + "'."
+/*
 	mkdir("./test_workdir")
 	copy {
 		from "./workdir"
 		into "./test_workdir"
 	}
-}
 */
-
-junitPlatformTest.doFirst {
-	println "See reports here: '" + junitPlatform.reportsDir + "'."
 }
 
 junitPlatformTest {

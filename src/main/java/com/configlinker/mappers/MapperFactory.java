@@ -77,7 +77,7 @@ public final class MapperFactory {
 			throw new PropertyMapException("Value of '@BoundProperty.customType()' can not be a primitive type class, but current value is '" + customTypeOrDeserializer.getName() + "' and current return type is '" + returnType.getName() + "'.").logAndReturn();
 
 		if (customTypeOrDeserializer == Object.class && (List.class.isAssignableFrom(returnType) || Set.class.isAssignableFrom(returnType) || Map.class.isAssignableFrom(returnType)))
-			throw new PropertyMapException("For type '" + returnType.getName() + "' you must specify it generic type in '@BoundProperty.customType' and choose '@BoundProperty.deserializationMethod'; method leading to error: '" + propertyMethod.getDeclaringClass().getName() + "." + propertyMethod.getName() + "()'.").logAndReturn();
+			throw new PropertyMapException("For type '" + returnType.getName() + "' you must specify its generic type in '@BoundProperty.customType' and choose '@BoundProperty.deserializationMethod'; method leading to error: '" + propertyMethod.getDeclaringClass().getName() + "." + propertyMethod.getName() + "()'.").logAndReturn();
 
 
 		// --------------------------------------------------------------------------------
@@ -91,31 +91,34 @@ public final class MapperFactory {
 		if (returnType == String.class)
 			return new StringStubPropertyMapper(propertyParser, executable, regexpPattern);
 
-		if (returnType.isArray())
+		if (returnType.isArray()) {
 			if (customTypeOrDeserializer == String.class)
 				return new ArrayStringMapper(propertyParser, executable, regexpPattern, delimiterForList);
+			if (returnType.getComponentType().isPrimitive())
+				return new ArrayPrimitiveMapper(returnType, propertyParser, executable, regexpPattern, validator, delimiterForList);
 			else
-				return new ArrayMapper(propertyParser, executable, regexpPattern, validator, delimiterForList);
+				return new ArrayMapper(returnType, propertyParser, executable, regexpPattern, validator, delimiterForList);
+		}
 
 		if (List.class.isAssignableFrom(returnType))
 			if (customTypeOrDeserializer == String.class)
-				return new ListStringMapper(propertyParser, executable, regexpPattern, delimiterForList);
+				return new ListStringMapper(returnType, propertyParser, executable, regexpPattern, delimiterForList);
 			else
-				return new ListObjectMapper(propertyParser, executable, regexpPattern, validator, delimiterForList);
+				return new ListObjectMapper(returnType, propertyParser, executable, regexpPattern, validator, delimiterForList);
 
 		if (Set.class.isAssignableFrom(returnType))
 			if (customTypeOrDeserializer == String.class)
-				return new SetStringMapper(propertyParser, executable, regexpPattern, delimiterForList);
+				return new SetStringMapper(returnType, propertyParser, executable, regexpPattern, delimiterForList);
 			else
-				return new SetObjectMapper(propertyParser, executable, regexpPattern, validator, delimiterForList);
+				return new SetObjectMapper(returnType, propertyParser, executable, regexpPattern, validator, delimiterForList);
 
 		if (Map.class.isAssignableFrom(returnType))
 			if (customTypeOrDeserializer == String.class)
-				return new MapStringStringMapper(propertyParser, executable, regexpPattern, delimiterForList, delimiterForKeyValue);
+				return new MapStringStringMapper(returnType, propertyParser, executable, regexpPattern, delimiterForList, delimiterForKeyValue);
 			else
-				return new MapStringObjectMapper(propertyParser, executable, regexpPattern, validator, delimiterForList, delimiterForKeyValue);
+				return new MapStringObjectMapper(returnType, propertyParser, executable, regexpPattern, validator, delimiterForList, delimiterForKeyValue);
 
-		return new CustomObjectMapper(propertyParser, executable, regexpPattern, validator, delimiterForList, delimiterForKeyValue);
+		return new CustomObjectMapper(returnType, propertyParser, executable, regexpPattern, validator, delimiterForList, delimiterForKeyValue);
 	}
 
 	private static Executable getMethodForType(Class<?> customTypeOrDeserializer, BoundProperty.DeserializationMethod deserializationMethod) throws PropertyMapException {
