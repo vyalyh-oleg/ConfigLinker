@@ -9,8 +9,8 @@ import java.util.regex.Pattern;
 
 
 final class StringStubPropertyMapper extends AbstractPropertyMapper<String, String> {
-	StringStubPropertyMapper(PropertyParser<String> propertyParser, Executable executable, Pattern regexpPattern) {
-		super(String.class, propertyParser, executable, regexpPattern, null, null, null);
+	StringStubPropertyMapper(PropertyParser<String> propertyParser, boolean ignoreWhitespaces, Executable executable, Pattern regexpPattern) {
+		super(String.class, propertyParser, ignoreWhitespaces, executable, regexpPattern, null, null, null);
 	}
 
 	@Override

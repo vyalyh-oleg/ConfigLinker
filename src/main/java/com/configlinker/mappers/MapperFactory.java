@@ -91,15 +91,15 @@ public final class MapperFactory {
 		executable.setAccessible(true);
 
 		if (returnType == String.class)
-			return new StringStubPropertyMapper(propertyParser, executable, regexpPattern);
+			return new StringStubPropertyMapper(propertyParser, ignoreWhitespaces, executable, regexpPattern);
 
 		if (returnType.isArray()) {
 			if (customTypeOrDeserializer == String.class)
-				return new ArrayStringMapper(propertyParser, executable, regexpPattern, delimiterForList);
+				return new ArrayStringMapper(propertyParser, ignoreWhitespaces, executable, regexpPattern, delimiterForList);
 			if (returnType.getComponentType().isPrimitive())
-				return new ArrayPrimitiveMapper(returnType, propertyParser, executable, regexpPattern, validator, delimiterForList);
+				return new ArrayPrimitiveMapper(returnType, propertyParser, ignoreWhitespaces, executable, regexpPattern, validator, delimiterForList);
 			else
-				return new ArrayMapper(returnType, propertyParser, executable, regexpPattern, validator, delimiterForList);
+				return new ArrayMapper(returnType, propertyParser, ignoreWhitespaces, executable, regexpPattern, validator, delimiterForList);
 		}
 
 		if (List.class.isAssignableFrom(returnType))
