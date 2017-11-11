@@ -17,7 +17,7 @@ public class IgnoreWhitespacesTest {
             add(PropertyFileConfig_ignoreWhitespaces.class);
         }};
 
-        ConfigSet configSet = ConfigSetFactory.create(interfaces, FactoryConfigBuilder.create().setIgnoreWhitespaces(false));
+        ConfigSet configSet = ConfigSetFactory.create(interfaces);
 
         PropertyFileConfig_ignoreWhitespaces config = configSet.getConfigObject(PropertyFileConfig_ignoreWhitespaces.class);
         String[] someValues = config.getColorsArray();
