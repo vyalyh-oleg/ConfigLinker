@@ -2,6 +2,7 @@ package com.configlinker.tests.positives;
 
 import com.configlinker.ConfigSet;
 import com.configlinker.ConfigSetFactory;
+import com.configlinker.FactoryConfigBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +16,8 @@ public class IgnoreWhitespacesTest {
         Set<Class<?>> interfaces = new HashSet<Class<?>>() {{
             add(PropertyFileConfig_ignoreWhitespaces.class);
         }};
-        ConfigSet configSet = ConfigSetFactory.create(interfaces);
+
+        ConfigSet configSet = ConfigSetFactory.create(interfaces, FactoryConfigBuilder.create().setIgnoreWhitespaces(false));
 
         PropertyFileConfig_ignoreWhitespaces config = configSet.getConfigObject(PropertyFileConfig_ignoreWhitespaces.class);
         String[] someValues = config.getColorsArray();

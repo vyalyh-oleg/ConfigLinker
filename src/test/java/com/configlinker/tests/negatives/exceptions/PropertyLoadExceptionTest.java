@@ -12,7 +12,7 @@ import java.util.Set;
 public class PropertyLoadExceptionTest {
 
     @Test
-    public void testPropertyValueNotFound() {
+    public void testIfPropertyValueNotFoundThrowsPropertyLoadException() {
         Assertions.assertThrows(PropertyLoadException.class,
                 () -> {
                     Set<Class<?>> interfaces = new HashSet<Class<?>>() {{
@@ -26,7 +26,7 @@ public class PropertyLoadExceptionTest {
     }
 
     @Test
-    public void testIfPropertyFileNotFound() {
+    public void testIfPropertyFileNotFoundThrowsPropertyLoadException() {
         Assertions.assertThrows(PropertyLoadException.class,
                 () -> {
                     Set<Class<?>> interfaces = new HashSet<Class<?>>() {{

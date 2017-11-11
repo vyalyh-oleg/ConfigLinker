@@ -14,7 +14,7 @@ public class PropertyMapExceptionTest {
 
     @Test
     //TODO change name of method
-    public void test26_regexpPattern_inputWrongPatternShouldCallException() {
+    public void test26_regexpPattern_inputWrongPatternThrowsPropertyMapException() {
         Assertions.assertThrows(PropertyMapException.class,
                 () -> {
                     Set<Class<?>> interfaces = new HashSet<Class<?>>() {{
