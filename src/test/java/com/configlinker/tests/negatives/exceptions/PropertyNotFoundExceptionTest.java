@@ -4,6 +4,8 @@ import com.configlinker.ConfigSet;
 import com.configlinker.ConfigSetFactory;
 import com.configlinker.exceptions.PropertyNotFoundException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -13,7 +15,8 @@ public class PropertyNotFoundExceptionTest {
 //TODO don't work
     // не получается вызвать нужное исключение
 
- //   @Test
+    @Test
+    @Disabled("in rework")
     public void testErrorBehaviorThrowException() throws InterruptedException {
         Assertions.assertThrows(PropertyNotFoundException.class,
                 () -> {
