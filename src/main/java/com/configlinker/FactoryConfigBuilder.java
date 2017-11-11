@@ -16,6 +16,7 @@ import java.util.Map;
  * <li>trackPolicy = {@link BoundObject.TrackPolicy#DISABLE}</li>
  * <li>trackingInterval = 60</li>
  * <li>charset = {@link StandardCharsets#UTF_8}</li>
+ * <li>ignoreWhitespaces = true</li>
  * <li>errorBehavior = {@link ErrorBehavior#THROW_EXCEPTION}</li>
  * </ul>
  */
@@ -29,6 +30,13 @@ public final class FactoryConfigBuilder {
 	private boolean ignoreWhitespaces = true;
 	private ErrorBehavior errorBehavior = ErrorBehavior.THROW_EXCEPTION;
 	private boolean closed = false;
+
+	public static FactoryConfigBuilder create() {
+		return new FactoryConfigBuilder();
+	}
+
+	private FactoryConfigBuilder() {
+	}
 
 	/**
 	 * <p>String parameters, used for substitution in {@link BoundObject#sourcePath}, {@link BoundObject#propertyNamePrefix}, {@link com.configlinker.annotations.BoundProperty#name} and {@link BoundObject#httpHeaders}.
