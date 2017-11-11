@@ -12,8 +12,8 @@ import java.util.regex.Pattern;
 
 
 class ArrayMapper<ELEMENT> extends AbstractPropertyMapper<List<String>, ELEMENT[]> {
-	ArrayMapper(Class<?> returnType, PropertyParser<List<String>> propertyParser, Executable executable, Pattern regexpPattern, PropertyValidator validator, String delimiterForList) {
-		super(returnType, propertyParser, executable, regexpPattern, validator, delimiterForList, null);
+	ArrayMapper(Class<?> returnType, PropertyParser<List<String>> propertyParser, boolean ignoreWhitespaces, Executable executable, Pattern regexpPattern, PropertyValidator validator, String delimiterForList) {
+		super(returnType, propertyParser, ignoreWhitespaces, executable, regexpPattern, validator, delimiterForList, null);
 	}
 
 	@Override

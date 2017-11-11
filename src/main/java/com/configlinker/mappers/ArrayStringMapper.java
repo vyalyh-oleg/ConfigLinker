@@ -10,8 +10,8 @@ import java.util.regex.Pattern;
 
 
 final class ArrayStringMapper extends ArrayMapper<String> {
-	ArrayStringMapper(PropertyParser<List<String>> propertyParser, Executable executable, Pattern regexpPattern, String delimiterForList) {
-		super(String.class, propertyParser, executable, regexpPattern, null, delimiterForList);
+	ArrayStringMapper(PropertyParser<List<String>> propertyParser, boolean ignoreWhitespaces, Executable executable, Pattern regexpPattern, String delimiterForList) {
+		super(String.class, propertyParser, ignoreWhitespaces, executable, regexpPattern, null, delimiterForList);
 	}
 
 	@Override

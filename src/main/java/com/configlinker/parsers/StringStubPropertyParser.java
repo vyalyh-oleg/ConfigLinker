@@ -7,10 +7,13 @@ import java.util.regex.Pattern;
 
 final class StringStubPropertyParser implements PropertyParser<String> {
 	@Override
-	public String parse(String value, Pattern regexpPattern, String delimiterForList, String delimiterForKeyValue) throws PropertyMatchException {
-		if (regexpPattern != null && !regexpPattern.matcher(value).matches())
-			throw new PropertyMatchException("Property '" + value + "' don't match pattern '" + regexpPattern.toString() + "'.").logAndReturn();
+	public String parse(String rawValue, boolean ignoreWhitespaces, Pattern regexpPattern, String delimiterForList, String delimiterForKeyValue) throws PropertyMatchException {
+		if (ignoreWhitespaces)
+			rawValue = rawValue.trim();
 
-		return value;
+		if (regexpPattern != null && !regexpPattern.matcher(rawValue).matches())
+			throw new PropertyMatchException("Property '" + rawValue + "' don't match pattern '" + regexpPattern.toString() + "'.").logAndReturn();
+
+		return rawValue;
 	}
 }
