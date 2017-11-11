@@ -18,7 +18,7 @@ public final class ConfigSetFactory {
 	}
 
 	public static ConfigSet create(Set<Class<?>> configInterfaces) throws AnnotationAnalyzeException, PropertyMapException {
-		return create(configInterfaces, new FactoryConfigBuilder());
+		return create(configInterfaces, FactoryConfigBuilder.create());
 	}
 
 	public static ConfigSet create(Set<Class<?>> configInterfaces, FactoryConfigBuilder builder) throws PropertyMapException, AnnotationAnalyzeException {
