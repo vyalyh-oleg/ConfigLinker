@@ -11,21 +11,27 @@ import java.util.Set;
 
 public class IgnoreWhitespacesTest {
 
+
+    /**
+     * <p>Example of input values:
+     * "colors = <b>white, yellow, blue</b>"
+     * <p>Expectation:
+     * <br>No exception, no output
+     * <p>(issue: 23)
+     */
     @Test
-    public void test23_ignoreWhitespaces() {
-        Set<Class<?>> interfaces = new HashSet<Class<?>>() {{
-            add(PropertyFileConfig_ignoreWhitespaces.class);
-        }};
-
+    public void test_IgnoreWhitespacesInPropertyValue() {
+        Set<Class<?>> interfaces = new HashSet<Class<?>>();
+        interfaces.add(PropertyFileConfig_ignoreWhitespaces.class);
         ConfigSet configSet = ConfigSetFactory.create(interfaces);
-
         PropertyFileConfig_ignoreWhitespaces config = configSet.getConfigObject(PropertyFileConfig_ignoreWhitespaces.class);
+
         String[] someValues = config.getColorsArray();
 
         String expected = "yellow";
         String actual = someValues[1];
 
-        Assertions.assertEquals(expected, actual, "Test ignoring whitespaces");
+        Assertions.assertEquals(expected, actual, "Test of ignoring whitespaces in property value");
     }
 
 }

@@ -10,20 +10,22 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class PropertyMapExceptionTest {
-    // task #26
 
+    /**
+     * Examples of wrong regexpPattern:
+     * <br>"{", "*", "+", "(", "())", "?", "[", "\\"
+     * <p>(issue: 26)
+     */
     @Test
-    //TODO change name of method
-    public void test26_regexpPattern_inputWrongPatternThrowsPropertyMapException() {
+    public void test_InputWrongRegexpPatternThrowsPropertyMapException() {
         Assertions.assertThrows(PropertyMapException.class,
                 () -> {
-                    Set<Class<?>> interfaces = new HashSet<Class<?>>() {{
-                        add(PropertyFileConfig_propertyMapException.class);
-                    }};
+                    Set<Class<?>> interfaces = new HashSet<Class<?>>();
+                    interfaces.add(PropertyFileConfig_propertyMapException.class);
                     ConfigSet configSet = ConfigSetFactory.create(interfaces);
 
                     PropertyFileConfig_propertyMapException config = configSet.getConfigObject(PropertyFileConfig_propertyMapException.class);
-                    config.getRegexPattern();
+                    config.getRegexpPattern();
 
                 });
     }
