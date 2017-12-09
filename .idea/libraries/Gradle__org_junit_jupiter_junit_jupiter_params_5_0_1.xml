@@ -3,7 +3,9 @@
     <CLASSES>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.junit.jupiter/junit-jupiter-params/5.0.1/57cceb0792e9ad0e32399bc7a30e230b078f63e1/junit-jupiter-params-5.0.1.jar!/" />
     </CLASSES>
-    <JAVADOC />
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.junit.jupiter/junit-jupiter-params/5.0.1/1a610b0a963803f1624b38b3f9aced48c89bc9c3/junit-jupiter-params-5.0.1-javadoc.jar!/" />
+    </JAVADOC>
     <SOURCES>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.junit.jupiter/junit-jupiter-params/5.0.1/63196e7bd872bdfaccd014747e29761d737d50da/junit-jupiter-params-5.0.1-sources.jar!/" />
     </SOURCES>
