@@ -12,7 +12,7 @@ import java.util.Set;
 public class PropertyMapExceptionTest {
 
     /**
-     * Examples of wrong regexpPattern:
+     * Examples of wrong regexPattern:
      * <br>"{", "*", "+", "(", "())", "?", "[", "\\"
      * <p>(issue: 26)
      */

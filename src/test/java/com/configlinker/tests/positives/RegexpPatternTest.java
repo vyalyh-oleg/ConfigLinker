@@ -12,7 +12,7 @@ public class RegexpPatternTest {
 
     /**
      * <p>Example:
-     * <br>@BoundProperty: <b>regexpPattern = "^([a-z0-9_\\.-]+)@([a-z0-9_\\.-]+)\\.([a-z\\.]{2,6})$"</b>
+     * <br>@BoundProperty: <b>regexPattern = "^([a-z0-9_\\.-]+)@([a-z0-9_\\.-]+)\\.([a-z\\.]{2,6})$"</b>
      * <br>properties: <b>email = qwerty132@test.com</b>
      * <p>Expectation:
      * <br>No exception, no output

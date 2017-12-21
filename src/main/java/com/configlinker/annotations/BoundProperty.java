@@ -44,7 +44,7 @@ public @interface BoundProperty {
 	 * By defaults regex check does not used.
 	 * @return -
 	 */
-	String regexpPattern() default "";
+	String regexPattern() default "";
 
 	/**
 	 * <p>
@@ -92,10 +92,10 @@ public @interface BoundProperty {
 	 * <p>If return type for you configuration method is List, Set or Map, then only {@link DeserializationMethod#CONSTRUCTOR_STRING}, {@link DeserializationMethod#VALUEOF_STRING}, {@link DeserializationMethod#DESERIALIZER_STRING} allowed as deserialization method for it's values.
 	 * @return -
 	 */
-	Class<?> customType() default Object.class;
+	Class<?> customTypeOrDeserializer() default Object.class;
 
 	/**
-	 * <p>If you want to use custom return type, you must just implement deserialization logic for it (see {@link #customType()}) and point this choice here.
+	 * <p>If you want to use custom return type, you must just implement deserialization logic for it (see {@link #customTypeOrDeserializer()}) and point this choice here.
 	 * <p>Default value is {@link DeserializationMethod#CONSTRUCTOR_STRING}
 	 * <p>If return type for you configuration method is List, Set or Map, then only {@link DeserializationMethod#CONSTRUCTOR_STRING}, {@link DeserializationMethod#VALUEOF_STRING}, {@link DeserializationMethod#DESERIALIZER_STRING} allowed as deserialization method for it's values.
 	 * @return -
@@ -127,6 +127,10 @@ public @interface BoundProperty {
 	 * <li>{@link #DESERIALIZER_MAP}</li>
 	 * </ul>
 	 * <p>If return type for you configuration method is List, Set or Map, then only {@link #CONSTRUCTOR_STRING}, {@link #VALUEOF_STRING}, {@link #DESERIALIZER_STRING} allowed as deserialization method for it's values.
+	 * <p>If you implemented custom deserializer, use {@link DeserializationMethod#DESERIALIZER_STRING}, {@link DeserializationMethod#DESERIALIZER_MAP}.
+	 * <p>
+	 * <p><b>See also:</b> {@link BoundProperty#customTypeOrDeserializer()} and {@link BoundProperty#deserializationMethod()}
+	 *
 	 */
 	enum DeserializationMethod {
 		/**

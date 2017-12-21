@@ -6,7 +6,7 @@ import com.configlinker.annotations.BoundProperty;
 @BoundObject(sourcePath = "configs/common.properties")
 public interface PropertyFileConfig_propertyMapException {
 
-    @BoundProperty(name = "regexp.pattern", regexpPattern = "?")
+    @BoundProperty(name = "regexp.pattern", regexPattern = "?")
     String getRegexpPattern();
 
 }
