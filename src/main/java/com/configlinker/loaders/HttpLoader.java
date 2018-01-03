@@ -4,7 +4,6 @@ import com.configlinker.ConfigDescription;
 import com.configlinker.Loggers;
 import com.configlinker.annotations.BoundObject;
 import com.configlinker.exceptions.PropertyLoadException;
-import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -80,7 +79,7 @@ final class HttpLoader extends AbstractLoader {
 				try {
 					configReader.close();
 				} catch (IOException e) {
-					LoggerFactory.getLogger(Loggers.mainLoggerName).warn("Can not close URLConnection for URL: '{}', config interface: '{}'.", url.toString(), configDescription.getConfInterface().getName(), e );
+					Loggers.getMainLogger().warn("Can not close URLConnection for URL: '{}', config interface: '{}'.", url.toString(), configDescription.getConfInterface().getName(), e );
 				}
 		}
 	}

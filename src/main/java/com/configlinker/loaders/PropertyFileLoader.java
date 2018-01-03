@@ -6,7 +6,6 @@ import com.configlinker.annotations.BoundObject;
 import com.configlinker.exceptions.PropertyLoadException;
 import com.configlinker.exceptions.PropertyMatchException;
 import com.configlinker.exceptions.PropertyValidateException;
-import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -122,23 +121,23 @@ final class PropertyFileLoader extends AbstractLoader {
 					continue;
 
 				if (kind == StandardWatchEventKinds.OVERFLOW) {
-					LoggerFactory.getLogger(Loggers.mainLoggerName).info("Lost some events for configuration file: '{}'.", fullFilePath);
+					Loggers.getMainLogger().info("Lost some events for configuration file: '{}'.", fullFilePath);
 					continue;
 				}
 
 				if (kind == StandardWatchEventKinds.ENTRY_MODIFY || kind == StandardWatchEventKinds.ENTRY_CREATE) {
-					LoggerFactory.getLogger(Loggers.mainLoggerName).info("Configuration file has changed: '{}'.", fullFilePath);
+					Loggers.getMainLogger().info("Configuration file has changed: '{}'.", fullFilePath);
 					this.refreshProperties(configDescriptions);
 					continue;
 				}
 
 				if (kind == StandardWatchEventKinds.ENTRY_DELETE) {
-					LoggerFactory.getLogger(Loggers.mainLoggerName).info("Configuration file has been deleted: '{}'. The changes won't be applied.", fullFilePath);
+					Loggers.getMainLogger().info("Configuration file has been deleted: '{}'. The changes won't be applied.", fullFilePath);
 				}
 			}
 
 			if (!key.reset()) {
-				LoggerFactory.getLogger(Loggers.mainLoggerName).info("Watch key cancelled. Configuration file: '{}'.", key.watchable().toString());
+				Loggers.getMainLogger().info("Watch key cancelled. Configuration file: '{}'.", key.watchable().toString());
 				key.cancel();
 			}
 		}

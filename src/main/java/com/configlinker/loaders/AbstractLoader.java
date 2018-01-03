@@ -12,7 +12,6 @@ import com.configlinker.exceptions.PropertyMapException;
 import com.configlinker.exceptions.PropertyMatchException;
 import com.configlinker.exceptions.PropertyNotFoundException;
 import com.configlinker.exceptions.PropertyValidateException;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -99,7 +98,7 @@ abstract class AbstractLoader {
 		try {
 			newProperties = this.loadRawProperties(description);
 		} catch (ConfigLinkerRuntimeException e) {
-			LoggerFactory.getLogger(Loggers.mainLoggerName).error("Cannot load raw properties for config interface '{}'.", description.getConfInterface().getName());
+			Loggers.getMainLogger().error("Cannot load raw properties for config interface '{}'.", description.getConfInterface().getName());
 			for (ConfigDescription configDescription : configDescriptions) {
 				ConfigChangedEvent configChangedEvent = new ConfigChangedEvent(configDescription.getConfInterface(), configDescription.getSourcePath(), null, e);
 				configDescription.fireConfigChanged(configChangedEvent);
@@ -134,7 +133,7 @@ abstract class AbstractLoader {
 			try {
 				singleReturns = this.convertSingleRawPropertiesToObjects(configDescription, newProperties);
 			} catch (ConfigLinkerRuntimeException e){
-				LoggerFactory.getLogger(Loggers.mainLoggerName).error("Cannot convert raw properties to objects for config interface '{}'.", configInterface.getName(), e);
+				Loggers.getMainLogger().error("Cannot convert raw properties to objects for config interface '{}'.", configInterface.getName(), e);
 				convertException = e;
 				error = true;
 			}
