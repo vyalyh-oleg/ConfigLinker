@@ -1,5 +1,5 @@
 // output help information
-println 'gradle :build -Prelease -- to make release build (not a snapshot)'
+//println 'gradle :build -Prelease -- to make release build (not a snapshot)'
 
 
 buildscript {

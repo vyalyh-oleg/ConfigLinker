@@ -5,7 +5,6 @@ import com.configlinker.exceptions.PropertyMapException;
 import com.configlinker.exceptions.PropertyValidateException;
 import com.configlinker.parsers.PropertyParser;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.Executable;
 import java.util.List;
 import java.util.regex.Pattern;

@@ -20,7 +20,7 @@ public class PropertyMapExceptionTest {
     public void test_InputWrongRegexpPatternThrowsPropertyMapException() {
         Assertions.assertThrows(PropertyMapException.class,
                 () -> {
-                    Set<Class<?>> interfaces = new HashSet<Class<?>>();
+                    Set<Class<?>> interfaces = new HashSet<>();
                     interfaces.add(PropertyFileConfig_propertyMapException.class);
                     ConfigSet configSet = ConfigSetFactory.create(interfaces);
 

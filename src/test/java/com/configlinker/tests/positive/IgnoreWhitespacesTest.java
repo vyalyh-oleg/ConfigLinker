@@ -20,7 +20,7 @@ public class IgnoreWhitespacesTest {
      */
     @Test
     public void test_IgnoreWhitespacesInPropertyValue() {
-        Set<Class<?>> interfaces = new HashSet<Class<?>>();
+        Set<Class<?>> interfaces = new HashSet<>();
         interfaces.add(PropertyFileConfig_ignoreWhitespaces.class);
         ConfigSet configSet = ConfigSetFactory.create(interfaces);
         PropertyFileConfig_ignoreWhitespaces config = configSet.getConfigObject(PropertyFileConfig_ignoreWhitespaces.class);

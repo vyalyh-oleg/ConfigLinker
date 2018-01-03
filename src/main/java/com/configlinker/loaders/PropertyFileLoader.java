@@ -28,7 +28,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-final class PropertyFileLoader extends ALoader {
+final class PropertyFileLoader extends AbstractLoader {
 	private ExecutorService executorService;
 	private Map<Path, Set<ConfigDescription>> watchedFiles = new HashMap<>();
 	private boolean trackChanges = false;
@@ -36,7 +36,7 @@ final class PropertyFileLoader extends ALoader {
 	PropertyFileLoader(HashMap<Class<?>, ConfigDescription> configDescriptions) throws PropertyValidateException, PropertyLoadException, PropertyMatchException {
 		super(configDescriptions);
 
-		// invoke only in final loader instance (subclass of 'ALoader')
+		// invoke only in final loader instance (subclass of 'AbstractLoader')
 		this.prepareLoader();
 		this.loadProperties();
 		this.startTrackChanges();
@@ -122,23 +122,23 @@ final class PropertyFileLoader extends ALoader {
 					continue;
 
 				if (kind == StandardWatchEventKinds.OVERFLOW) {
-					LoggerFactory.getLogger(Loggers.mainLogger).info("Lost some events for configuration file: '{}'.", fullFilePath);
+					LoggerFactory.getLogger(Loggers.mainLoggerName).info("Lost some events for configuration file: '{}'.", fullFilePath);
 					continue;
 				}
 
 				if (kind == StandardWatchEventKinds.ENTRY_MODIFY || kind == StandardWatchEventKinds.ENTRY_CREATE) {
-					LoggerFactory.getLogger(Loggers.mainLogger).info("Configuration file has changed: '{}'.", fullFilePath);
+					LoggerFactory.getLogger(Loggers.mainLoggerName).info("Configuration file has changed: '{}'.", fullFilePath);
 					this.refreshProperties(configDescriptions);
 					continue;
 				}
 
 				if (kind == StandardWatchEventKinds.ENTRY_DELETE) {
-					LoggerFactory.getLogger(Loggers.mainLogger).info("Configuration file has been deleted: '{}'. The changes won't be applied.", fullFilePath);
+					LoggerFactory.getLogger(Loggers.mainLoggerName).info("Configuration file has been deleted: '{}'. The changes won't be applied.", fullFilePath);
 				}
 			}
 
 			if (!key.reset()) {
-				LoggerFactory.getLogger(Loggers.mainLogger).info("Watch key cancelled. Configuration file: '{}'.", key.watchable().toString());
+				LoggerFactory.getLogger(Loggers.mainLoggerName).info("Watch key cancelled. Configuration file: '{}'.", key.watchable().toString());
 				key.cancel();
 			}
 		}

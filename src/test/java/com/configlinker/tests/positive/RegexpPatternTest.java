@@ -19,7 +19,7 @@ public class RegexpPatternTest {
      */
     @Test
     public void test_RegexpPatternEmail() {
-        Set<Class<?>> interfaces = new HashSet<Class<?>>();
+        Set<Class<?>> interfaces = new HashSet<>();
         interfaces.add(PropertyFileConfig_regexpPattern.class);
         ConfigSet configSet = ConfigSetFactory.create(interfaces);
 

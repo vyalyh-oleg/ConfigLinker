@@ -6,7 +6,6 @@ import com.configlinker.exceptions.PropertyValidateException;
 import com.configlinker.parsers.PropertyParser;
 
 import java.lang.reflect.Executable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
