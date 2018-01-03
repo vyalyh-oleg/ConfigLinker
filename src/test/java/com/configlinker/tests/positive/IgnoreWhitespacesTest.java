@@ -1,8 +1,7 @@
-package com.configlinker.tests.positives;
+package com.configlinker.tests.positive;
 
 import com.configlinker.ConfigSet;
 import com.configlinker.ConfigSetFactory;
-import com.configlinker.FactoryConfigBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
