@@ -1,4 +1,4 @@
-package com.configlinker.tests.negatives.exceptions;
+package com.configlinker.tests.negative.exceptions;
 
 import com.configlinker.ConfigSet;
 import com.configlinker.ConfigSetFactory;
@@ -12,7 +12,7 @@ import java.util.Set;
 public class PropertyMapExceptionTest {
 
     /**
-     * Examples of wrong regexpPattern:
+     * Examples of wrong regexPattern:
      * <br>"{", "*", "+", "(", "())", "?", "[", "\\"
      * <p>(issue: 26)
      */
@@ -20,7 +20,7 @@ public class PropertyMapExceptionTest {
     public void test_InputWrongRegexpPatternThrowsPropertyMapException() {
         Assertions.assertThrows(PropertyMapException.class,
                 () -> {
-                    Set<Class<?>> interfaces = new HashSet<Class<?>>();
+                    Set<Class<?>> interfaces = new HashSet<>();
                     interfaces.add(PropertyFileConfig_propertyMapException.class);
                     ConfigSet configSet = ConfigSetFactory.create(interfaces);
 

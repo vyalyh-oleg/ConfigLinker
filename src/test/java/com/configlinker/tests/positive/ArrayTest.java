@@ -1,4 +1,4 @@
-package com.configlinker.tests.positives;
+package com.configlinker.tests.positive;
 
 import com.configlinker.ConfigSet;
 import com.configlinker.ConfigSetFactory;
@@ -19,7 +19,7 @@ public class ArrayTest {
      */
     @Test
     public void test_GetIntegerArrayFromFileWithoutWhitespaces() {
-        Set<Class<?>> interfaces = new HashSet<Class<?>>();
+        Set<Class<?>> interfaces = new HashSet<>();
         interfaces.add(PropertyFileConfig_getArray.class);
         ConfigSet configSet = ConfigSetFactory.create(interfaces);
         PropertyFileConfig_getArray config = configSet.getConfigObject(PropertyFileConfig_getArray.class);
@@ -40,7 +40,7 @@ public class ArrayTest {
      */
     @Test
     public void test_GetStringArrayFromFileWithoutWhitespaces() {
-        Set<Class<?>> interfaces = new HashSet<Class<?>>();
+        Set<Class<?>> interfaces = new HashSet<>();
         interfaces.add(PropertyFileConfig_getArray.class);
         ConfigSet configSet = ConfigSetFactory.create(interfaces);
         PropertyFileConfig_getArray config = configSet.getConfigObject(PropertyFileConfig_getArray.class);

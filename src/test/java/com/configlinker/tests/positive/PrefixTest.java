@@ -1,4 +1,4 @@
-package com.configlinker.tests.positives;
+package com.configlinker.tests.positive;
 
 import com.configlinker.ConfigSet;
 import com.configlinker.ConfigSetFactory;
@@ -26,7 +26,7 @@ public class PrefixTest {
      */
     @Test
     public void test_IdentifyPropertyNamePrefix() {
-        Set<Class<?>> interfaces = new HashSet<Class<?>>();
+        Set<Class<?>> interfaces = new HashSet<>();
         interfaces.add(PropertyFileConfig_prefix.class);
         ConfigSet configSet = ConfigSetFactory.create(interfaces);
         PropertyFileConfig_prefix config = configSet.getConfigObject(PropertyFileConfig_prefix.class);

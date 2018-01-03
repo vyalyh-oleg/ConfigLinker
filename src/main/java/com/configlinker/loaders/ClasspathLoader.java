@@ -16,11 +16,11 @@ import java.util.HashMap;
 import java.util.Properties;
 
 
-final class ClasspathLoader extends ALoader {
+final class ClasspathLoader extends AbstractLoader {
 	ClasspathLoader(HashMap<Class<?>, ConfigDescription> configDescriptions) throws PropertyLoadException, PropertyValidateException, PropertyMatchException {
 		super(configDescriptions);
 
-		// invoke only in final loader instance (subclass of 'ALoader')
+		// invoke only in final loader instance (subclass of 'AbstractLoader')
 		this.prepareLoader();
 		this.loadProperties();
 	}

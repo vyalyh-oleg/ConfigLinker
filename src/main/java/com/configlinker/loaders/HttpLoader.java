@@ -4,7 +4,6 @@ import com.configlinker.ConfigDescription;
 import com.configlinker.Loggers;
 import com.configlinker.annotations.BoundObject;
 import com.configlinker.exceptions.PropertyLoadException;
-import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,7 +21,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 
-final class HttpLoader extends ALoader {
+final class HttpLoader extends AbstractLoader {
 	private ScheduledExecutorService executorService;
 	private Map<URL, Set<ConfigDescription>> watchedFiles = new HashMap<>();
 	private boolean trackChanges = false;
@@ -30,7 +29,7 @@ final class HttpLoader extends ALoader {
 	HttpLoader(HashMap<Class<?>, ConfigDescription> configDescriptions) throws PropertyLoadException {
 		super(configDescriptions);
 
-		// invoke only in final loader instance (subclass of 'ALoader')
+		// invoke only in final loader instance (subclass of 'AbstractLoader')
 		this.prepareLoader();
 		this.loadProperties();
 		this.startTrackChanges();
@@ -80,7 +79,7 @@ final class HttpLoader extends ALoader {
 				try {
 					configReader.close();
 				} catch (IOException e) {
-					LoggerFactory.getLogger(Loggers.mainLogger).warn("Can not close URLConnection for URL: '{}', config interface: '{}'.", url.toString(), configDescription.getConfInterface().getName(), e );
+					Loggers.getMainLogger().warn("Can not close URLConnection for URL: '{}', config interface: '{}'.", url.toString(), configDescription.getConfInterface().getName(), e );
 				}
 		}
 	}

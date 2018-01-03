@@ -25,7 +25,7 @@ public final class MapperFactory {
 
 		Class<?> returnType = propertyMethod.getReturnType();
 
-		String strRegexpPattern = boundPropertyAnnotation.regexpPattern();
+		String strRegexpPattern = boundPropertyAnnotation.regexPattern();
 		Pattern regexpPattern = null;
 		if (strRegexpPattern.length() > 0)
 			try {
@@ -43,7 +43,7 @@ public final class MapperFactory {
 				throw new PropertyMapException("Cannot create validator for '" + propertyMethod.getDeclaringClass().getName() + "::" + propertyMethod.getName() + "'.", e).logAndReturn();
 			}
 
-		Class<?> customTypeOrDeserializer = boundPropertyAnnotation.customType();
+		Class<?> customTypeOrDeserializer = boundPropertyAnnotation.customTypeOrDeserializer();
 		BoundProperty.DeserializationMethod deserializationMethod = boundPropertyAnnotation.deserializationMethod();
 
 		String delimiterForList = boundPropertyAnnotation.delimiterForList();
@@ -76,10 +76,10 @@ public final class MapperFactory {
 		}
 
 		if (customTypeOrDeserializer.isPrimitive())
-			throw new PropertyMapException("Value of '@BoundProperty.customType()' can not be a primitive type class, but current value is '" + customTypeOrDeserializer.getName() + "' and current return type is '" + returnType.getName() + "'.").logAndReturn();
+			throw new PropertyMapException("Value of '@BoundProperty.customTypeOrDeserializer' can not be a primitive type class, but current value is '" + customTypeOrDeserializer.getName() + "' and current return type is '" + returnType.getName() + "'.").logAndReturn();
 
 		if (customTypeOrDeserializer == Object.class && (List.class.isAssignableFrom(returnType) || Set.class.isAssignableFrom(returnType) || Map.class.isAssignableFrom(returnType)))
-			throw new PropertyMapException("For type '" + returnType.getName() + "' you must specify its generic type in '@BoundProperty.customType' and choose '@BoundProperty.deserializationMethod'; method leading to error: '" + propertyMethod.getDeclaringClass().getName() + "." + propertyMethod.getName() + "()'.").logAndReturn();
+			throw new PropertyMapException("For type '" + returnType.getName() + "' you must specify its generic type in '@BoundProperty.customTypeOrDeserializer' and choose '@BoundProperty.deserializationMethod'; method leading to error: '" + propertyMethod.getDeclaringClass().getName() + "." + propertyMethod.getName() + "()'.").logAndReturn();
 
 
 		// --------------------------------------------------------------------------------
@@ -154,10 +154,10 @@ public final class MapperFactory {
 	private static Executable getMethodForPredefinedType(Class<?> customTypeOrDeserializer) throws NoSuchMethodException {
 		Executable executable = null;
 		if (customTypeOrDeserializer == Character.class)
-			executable = customTypeOrDeserializer.getDeclaredMethod("charAt", int.class);
+			executable = String.class.getDeclaredMethod("charAt", int.class);
 
 		if (customTypeOrDeserializer == String.class)
-			executable = customTypeOrDeserializer.getDeclaredMethod("valueOf", Object.class);
+			executable = String.class.getDeclaredMethod("valueOf", Object.class);
 
 		//if (customTypeOrDeserializer == YourType.class)
 

@@ -9,7 +9,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-final class ConfigLinkerLoader extends ALoader {
+final class ConfigLinkerLoader extends AbstractLoader {
 	private ExecutorService scheduledExecutorService = Executors.newCachedThreadPool(new ConfigLinkerThreadFactory(this.getClass().getSimpleName()));
 
 	ConfigLinkerLoader(HashMap<Class<?>, ConfigDescription> configDescriptions) throws PropertyLoadException {

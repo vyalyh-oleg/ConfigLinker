@@ -1,4 +1,4 @@
-package com.configlinker.tests.positives;
+package com.configlinker.tests.positive;
 
 import com.configlinker.ConfigSet;
 import com.configlinker.ConfigSetFactory;
@@ -12,14 +12,14 @@ public class RegexpPatternTest {
 
     /**
      * <p>Example:
-     * <br>@BoundProperty: <b>regexpPattern = "^([a-z0-9_\\.-]+)@([a-z0-9_\\.-]+)\\.([a-z\\.]{2,6})$"</b>
+     * <br>@BoundProperty: <b>regexPattern = "^([a-z0-9_\\.-]+)@([a-z0-9_\\.-]+)\\.([a-z\\.]{2,6})$"</b>
      * <br>properties: <b>email = qwerty132@test.com</b>
      * <p>Expectation:
      * <br>No exception, no output
      */
     @Test
     public void test_RegexpPatternEmail() {
-        Set<Class<?>> interfaces = new HashSet<Class<?>>();
+        Set<Class<?>> interfaces = new HashSet<>();
         interfaces.add(PropertyFileConfig_regexpPattern.class);
         ConfigSet configSet = ConfigSetFactory.create(interfaces);
 

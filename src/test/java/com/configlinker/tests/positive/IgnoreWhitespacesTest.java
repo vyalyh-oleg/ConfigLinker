@@ -1,8 +1,7 @@
-package com.configlinker.tests.positives;
+package com.configlinker.tests.positive;
 
 import com.configlinker.ConfigSet;
 import com.configlinker.ConfigSetFactory;
-import com.configlinker.FactoryConfigBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +20,7 @@ public class IgnoreWhitespacesTest {
      */
     @Test
     public void test_IgnoreWhitespacesInPropertyValue() {
-        Set<Class<?>> interfaces = new HashSet<Class<?>>();
+        Set<Class<?>> interfaces = new HashSet<>();
         interfaces.add(PropertyFileConfig_ignoreWhitespaces.class);
         ConfigSet configSet = ConfigSetFactory.create(interfaces);
         PropertyFileConfig_ignoreWhitespaces config = configSet.getConfigObject(PropertyFileConfig_ignoreWhitespaces.class);
