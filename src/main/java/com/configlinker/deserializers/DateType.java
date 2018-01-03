@@ -1,4 +1,4 @@
-package com.configlinker.builtin_mappers;
+package com.configlinker.deserializers;
 
 
 import com.configlinker.Deserializer;
@@ -9,8 +9,8 @@ import java.util.Date;
 
 
 public enum DateType {
-	MILLISECONDS("S", DateType.Milliseconds.class),
-	SECONDS("S", DateType.Seconds.class),
+	MILLISECONDS("", DateType.Milliseconds.class),
+	SECONDS("", DateType.Seconds.class),
 	YEAR("yyyy", DateType.Year.class),
 	DATE("yyyy-MM-dd", DateType.DateOnly.class),
 	TIME("HH:mm:ss", DateType.TimeOnly.class),
@@ -54,6 +54,11 @@ public enum DateType {
 		Milliseconds() {
 			super(DateType.MILLISECONDS);
 		}
+
+		@Override
+		public Date deserialize(String rawValue) {
+			return new Date(Long.parseLong(rawValue));
+		}
 	}
 
 	/**
@@ -66,7 +71,7 @@ public enum DateType {
 
 		@Override
 		public Date deserialize(String rawValue) {
-			return super.deserialize(rawValue + "000");
+			return new Date(Long.parseLong(rawValue) * 1000);
 		}
 	}
 
