@@ -5,8 +5,21 @@
 buildscript {
 	repositories {
 		mavenLocal()
-		mavenCentral()
-		jcenter()
+
+		maven {
+			name "internal"
+			url repo_internal
+			credentials { username(archivaUserName); password(archivaUserPass) }
+		}
+
+		maven {
+			name "own-repo"
+			url repo_own
+			credentials { username(archivaUserName); password(archivaUserPass) }
+		}
+
+//		mavenCentral()
+//		jcenter()
 	}
 	dependencies {
 		classpath group: 'org.junit.platform', name: 'junit-platform-gradle-plugin', version: project.properties['junit.platform.version']
@@ -25,18 +38,18 @@ repositories {
 
 	maven {
 		name "internal"
-		url "https://archiva.2me.link/repository/internal"
+		url repo_internal
 		credentials { username(archivaUserName); password(archivaUserPass) }
 	}
 
 	maven {
 		name "own-repo"
-		url "https://archiva.2me.link/repository/own-repo"
+		url repo_own
 		credentials { username(archivaUserName); password(archivaUserPass) }
 	}
 
-	mavenCentral()
-	jcenter()
+//	mavenCentral()
+//	jcenter()
 }
 
 dependencies {

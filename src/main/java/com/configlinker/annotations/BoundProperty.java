@@ -127,9 +127,9 @@ public @interface BoundProperty {
 	 * <li>{@link #DESERIALIZER_MAP}</li>
 	 * </ul>
 	 * <p>If return type for you configuration method is List, Set or Map, then only {@link #CONSTRUCTOR_STRING}, {@link #VALUEOF_STRING}, {@link #DESERIALIZER_STRING} allowed as deserialization method for it's values.
-	 * <p>If you implemented custom deserializer, use {@link DeserializationMethod#DESERIALIZER_STRING}, {@link DeserializationMethod#DESERIALIZER_MAP}.
-	 * <p>
-	 * <p><b>See also:</b> {@link BoundProperty#customTypeOrDeserializer()} and {@link BoundProperty#deserializationMethod()}
+	 * <p>If you implemented custom deserializer, use {@link DeserializationMethod#DESERIALIZER_STRING}, {@link DeserializationMethod#DESERIALIZER_MAP}.</p>
+	 * <br>
+	 * <p><b>See also:</b> {@link BoundProperty#customTypeOrDeserializer()} and {@link BoundProperty#deserializationMethod()}</p>
 	 *
 	 */
 	enum DeserializationMethod {
