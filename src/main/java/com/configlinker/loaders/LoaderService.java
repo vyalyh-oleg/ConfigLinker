@@ -13,7 +13,7 @@ import java.util.Map;
 final public class LoaderService {
 	private final Map<BoundObject.SourceScheme, AbstractLoader> loaders;
 
-	public LoaderService(EnumMap<BoundObject.SourceScheme, AbstractLoader> loaders) {
+	private LoaderService(EnumMap<BoundObject.SourceScheme, AbstractLoader> loaders) {
 		this.loaders = loaders;
 	}
 
@@ -21,7 +21,8 @@ final public class LoaderService {
 		EnumMap<BoundObject.SourceScheme, HashMap<Class<?>, ConfigDescription>> schemeDescriptions = configDescriptions.values().stream()
 		.collect(
 				() -> new EnumMap<BoundObject.SourceScheme, HashMap<Class<?>, ConfigDescription>>(BoundObject.SourceScheme.class),
-				(map, confDescr) -> map.computeIfAbsent(confDescr.getSourceScheme(), srcScheme -> new HashMap<>()).put(confDescr.getConfInterface(), confDescr),
+				(map, confDescr) -> map.computeIfAbsent(confDescr.getSourceScheme(), srcScheme -> new HashMap<>())
+										.put(confDescr.getConfInterface(), confDescr),
 			EnumMap::putAll);
 
 		EnumMap<BoundObject.SourceScheme, AbstractLoader> loaders = new EnumMap<>(BoundObject.SourceScheme.class);
