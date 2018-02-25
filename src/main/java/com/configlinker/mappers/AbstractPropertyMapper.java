@@ -54,22 +54,21 @@ abstract class AbstractPropertyMapper<RAW_TYPE, MAPPED_TYPE> implements Property
 	}
 
 	@SuppressWarnings("unchecked")
-	protected final <SRC_TYPE, RETURN_TYPE> RETURN_TYPE createObject(SRC_TYPE elementValue) throws PropertyValidateException, PropertyMapException {
-		RETURN_TYPE returnElement = null;
+	final <SRC_TYPE, RETURN_TYPE> RETURN_TYPE createObject(SRC_TYPE elementValue) throws PropertyValidateException, PropertyMapException {
+		RETURN_TYPE returnElement;
 		try {
 			if (Deserializer.class.isAssignableFrom(this.executable.getDeclaringClass())) {
 				Object deserizlizerInstance = this.executable.getDeclaringClass().newInstance();
 				returnElement = (RETURN_TYPE) ((Method) this.executable).invoke(deserizlizerInstance, elementValue);
 			}
 
+			// implementation for specific type methods
+			returnElement = getMethodForPredefinedType(elementValue);
+			if (returnElement != null)
+				return returnElement;
+
 			if (this.executable instanceof Constructor)
 				returnElement = ((Constructor<RETURN_TYPE>) this.executable).newInstance(elementValue);
-
-			// TODO: implement for other types
-			// maybe it will be needed to change MapperFactory.getMethodForPredefinedType() method.
-
-			if (this.executable.getDeclaringClass() == String.class && this.executable.getName().equals("charAt"))
-				returnElement = (RETURN_TYPE) ((Method) this.executable).invoke(elementValue, 0);
 
 			if (Modifier.isStatic(this.executable.getModifiers()))
 				returnElement = (RETURN_TYPE) ((Method) this.executable).invoke(null, elementValue);
@@ -84,6 +83,19 @@ abstract class AbstractPropertyMapper<RAW_TYPE, MAPPED_TYPE> implements Property
 			this.validator.validate(returnElement);
 
 		return returnElement;
+	}
+
+	// maybe it will be needed to change MapperFactory.getMethodForPredefinedType() method.
+	@SuppressWarnings("unchecked")
+	private <SRC_TYPE, RETURN_TYPE> RETURN_TYPE getMethodForPredefinedType(SRC_TYPE elementValue) throws InvocationTargetException, IllegalAccessException {
+		RETURN_TYPE returnElement;
+
+		if (this.executable.getDeclaringClass() == String.class && this.executable.getName().equals("charAt")) {
+			returnElement = (RETURN_TYPE) ((Method) this.executable).invoke(elementValue, 0);
+			return returnElement;
+		}
+
+		return null;
 	}
 
 	abstract protected MAPPED_TYPE mapFrom(RAW_TYPE valueFromParser) throws PropertyValidateException, PropertyMapException;

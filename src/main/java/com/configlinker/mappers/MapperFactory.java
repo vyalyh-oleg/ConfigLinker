@@ -8,9 +8,13 @@ import com.configlinker.parsers.PropertyParser;
 
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
+import java.net.InetAddress;
+import java.net.URI;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -151,6 +155,7 @@ public final class MapperFactory {
 		}
 	}
 
+	// maybe it will be needed to change AbstractPropertyMapper.createObject() method.
 	private static Executable getMethodForPredefinedType(Class<?> customTypeOrDeserializer) throws NoSuchMethodException {
 		Executable executable = null;
 		if (customTypeOrDeserializer == Character.class)
@@ -159,11 +164,20 @@ public final class MapperFactory {
 		if (customTypeOrDeserializer == String.class)
 			executable = String.class.getDeclaredMethod("valueOf", Object.class);
 
-		//if (customTypeOrDeserializer == YourType.class)
+		if (customTypeOrDeserializer == URL.class)
+			executable = URL.class.getConstructor(String.class);
 
-		// TODO: implement for other types
-		// maybe it will be needed to change AbstractPropertyMapper.createObject() method.
-		// URL, URI, InetAddress
+		if (customTypeOrDeserializer == URI.class)
+			executable = URI.class.getMethod("create", String.class);
+
+		if (InetAddress.class.isAssignableFrom(customTypeOrDeserializer))
+			executable = InetAddress.class.getDeclaredMethod("getByName", String.class);
+
+		if (customTypeOrDeserializer == UUID.class)
+			executable = UUID.class.getMethod("fromString", String.class);
+
+		//if (customTypeOrDeserializer == YourType.class)
+		// implement for other types
 
 		return executable;
 	}
