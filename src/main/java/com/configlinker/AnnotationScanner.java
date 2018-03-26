@@ -159,15 +159,15 @@ final class AnnotationScanner {
 			trackingInterval = configBuilder.getTrackingInterval();
 
 
-		// get and check ConfigChangeListener
-		Class<? extends ConfigChangeListener> changeListener_class = boundObjectAnnotation.changeListener();
-		ConfigChangeListener changeListener = null;
-		if (changeListener_class != ConfigChangeListener.class)
+		// get and check ConfigChangeListeners
+		Class<? extends IConfigChangeListener> changeListener_class = boundObjectAnnotation.changeListener();
+		IConfigChangeListener changeListener = null;
+		if (changeListener_class != IConfigChangeListener.class)
 			try {
 				changeListener_class.getDeclaredConstructor().setAccessible(true);
 				changeListener = changeListener_class.newInstance();
 			} catch (InstantiationException | IllegalAccessException | NoSuchMethodException e) {
-				throw new AnnotationAnalyzeException("Cannot create '" + ConfigChangeListener.class.getSimpleName() + "' object; config interface '" + configInterface.getName() + "'.", e).logAndReturn();
+				throw new AnnotationAnalyzeException( "Cannot create '" + IConfigChangeListener.class.getSimpleName() + "' object; config interface '" + configInterface.getName() + "'.", e).logAndReturn();
 			}
 		if (changeListener != null && trackPolicy == BoundObject.TrackPolicy.DISABLE) {
 			throw new AnnotationAnalyzeException("You cannot use @BoundObject.changeListener() if TrackPolicy is 'DISABLE', config interface '" + configInterface.getName() + "'.").logAndReturn();

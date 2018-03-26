@@ -1,6 +1,6 @@
 package com.configlinker.mappers;
 
-import com.configlinker.PropertyValidator;
+import com.configlinker.IPropertyValidator;
 import com.configlinker.annotations.BoundProperty;
 import com.configlinker.exceptions.PropertyMapException;
 import com.configlinker.parsers.ParserFactory;
@@ -38,9 +38,9 @@ public final class MapperFactory {
 				throw new PropertyMapException("Cannot compile regexp pattern for '" + propertyMethod.getDeclaringClass().getName() + "::" + propertyMethod.getName() + "'.", e);
 			}
 
-		Class<? extends PropertyValidator> validator_class = boundPropertyAnnotation.validator();
-		PropertyValidator validator = null;
-		if (validator_class != PropertyValidator.class)
+		Class<? extends IPropertyValidator> validator_class = boundPropertyAnnotation.validator();
+		IPropertyValidator validator = null;
+		if (validator_class != IPropertyValidator.class)
 			try {
 				validator = validator_class.newInstance();
 			} catch (InstantiationException | IllegalAccessException e) {

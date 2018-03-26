@@ -1,9 +1,9 @@
 package com.configlinker.annotations;
 
-import com.configlinker.Deserializer;
 import com.configlinker.ErrorBehavior;
 import com.configlinker.FactoryConfigBuilder;
-import com.configlinker.PropertyValidator;
+import com.configlinker.IDeserializer;
+import com.configlinker.IPropertyValidator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -78,12 +78,12 @@ public @interface BoundProperty {
 	 * <li>{@code Set<String>}</li>
 	 * <li>{@code Map<String,String>}</li>
 	 * </ul>
-	 * <p>If you want to use custom return type (or array of custom types), you must just implement deserialization logic for it and point choice in {@link #deserializationMethod()}. And no need any changes in the current parameter.
 	 * <p>If you want to use custom return type as generic type for {@code List}, {@code Set} or {@code Map} (only for value), you must indicate here it {@code Class}.
-	 * <p>If you write own deserializer implementation of {@link Deserializer}, it {@code Class} must be specified here instead of return type class.
+	 * <p>If you want to use custom return type (or array of custom types), you must just implement deserialization logic for it and point choice in {@link #deserializationMethod()}. And no need any changes in the current parameter.
+	 * <p>If you write own implementation of {@link IDeserializer}, it {@code Class} must be specified here instead of return type class.
 	 * <p>
 	 * <br>
-	 * <p>Pay attention, you have different ways to implement deserialization logic, which are described in ({@link DeserializationMethod}):
+	 * <p>Pay attention, you have different ways to implement deserialization logic, which are described in {@link DeserializationMethod}:
 	 * <ul>
 	 * <li>write special constructor for your class, see {@link DeserializationMethod#CONSTRUCTOR_STRING}, {@link DeserializationMethod#CONSTRUCTOR_MAP};</li>
 	 * <li>write static instance generator method in your class, see {@link DeserializationMethod#VALUEOF_STRING}, {@link DeserializationMethod#VALUEOF_MAP};</li>
@@ -104,10 +104,10 @@ public @interface BoundProperty {
 
 	/**
 	 * <p>Custom validator for returned value. By default no validators are used.
-	 * <p>If you need additional checks just implement {@link PropertyValidator} interface and point class here.
+	 * <p>If you need additional checks just implement {@link IPropertyValidator} interface and point class here.
 	 * @return -
 	 */
-	Class<? extends PropertyValidator> validator() default PropertyValidator.class;
+	Class<? extends IPropertyValidator> validator() default IPropertyValidator.class;
 
 	/**
 	 * What to do if the property value does not exist in underlying persistent store.
@@ -154,11 +154,11 @@ public @interface BoundProperty {
 		 */
 		VALUEOF_MAP,
 		/**
-		 * <p>Chose this variant if you implement {@link Deserializer#deserialize(String)}.
+		 * <p>Chose this variant if you implement {@link IDeserializer#deserialize(String)}.
 		 */
 		DESERIALIZER_STRING,
 		/**
-		 * <p>Chose this variant if you implement {@link Deserializer#deserialize(Map)}.
+		 * <p>Chose this variant if you implement {@link IDeserializer#deserialize(Map)}.
 		 */
 		DESERIALIZER_MAP
 		;

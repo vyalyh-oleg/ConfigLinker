@@ -1,6 +1,6 @@
 package com.configlinker.mappers;
 
-import com.configlinker.PropertyValidator;
+import com.configlinker.IPropertyValidator;
 import com.configlinker.exceptions.PropertyMapException;
 import com.configlinker.exceptions.PropertyValidateException;
 import com.configlinker.parsers.PropertyParser;
@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 
 class ListObjectMapper<ELEMENT> extends AbstractPropertyMapper<List<String>, List<ELEMENT>> {
-	ListObjectMapper(Class<?> returnType, PropertyParser<List<String>> propertyParser, boolean ignoreWhitespaces, Executable executable, Pattern regexpPattern, PropertyValidator validator, String delimiterForList) {
+	ListObjectMapper( Class<?> returnType, PropertyParser<List<String>> propertyParser, boolean ignoreWhitespaces, Executable executable, Pattern regexpPattern, IPropertyValidator validator, String delimiterForList) {
 		super(returnType, propertyParser, ignoreWhitespaces, executable, regexpPattern, validator, delimiterForList, null);
 	}
 

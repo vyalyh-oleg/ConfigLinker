@@ -18,7 +18,7 @@ public final class ConfigDescription {
 	private String propertyNamePrefix;
 	private BoundObject.TrackPolicy trackPolicy;
 	private int trackingInterval;
-	private ConfigChangeListener configChangeListener;
+	private IConfigChangeListener configChangeListener;
 	private ErrorBehavior errorBehavior;
 	private Map<Method, PropertyDescription> boundPropertyMethods;
 
@@ -71,7 +71,7 @@ public final class ConfigDescription {
 	 *
 	 * @return Object that implements of the same name interface.
 	 */
-	public ConfigChangeListener getConfigChangeListener() {
+	public IConfigChangeListener getConfigChangeListener() {
 		return configChangeListener;
 	}
 
@@ -116,7 +116,7 @@ public final class ConfigDescription {
 		this.trackingInterval = trackingInterval;
 	}
 
-	void setConfigChangeListener(ConfigChangeListener configChangeListener) {
+	void setConfigChangeListener(IConfigChangeListener configChangeListener) {
 		this.configChangeListener = configChangeListener;
 	}
 

@@ -1,7 +1,7 @@
 package com.configlinker.mappers;
 
-import com.configlinker.Deserializer;
-import com.configlinker.PropertyValidator;
+import com.configlinker.IDeserializer;
+import com.configlinker.IPropertyValidator;
 import com.configlinker.exceptions.PropertyMapException;
 import com.configlinker.exceptions.PropertyMatchException;
 import com.configlinker.exceptions.PropertyValidateException;
@@ -23,9 +23,9 @@ abstract class AbstractPropertyMapper<RAW_TYPE, MAPPED_TYPE> implements Property
 	private String delimiterForKeyValue;
 	protected final Executable executable;
 	protected final Pattern regexpPattern;
-	private final PropertyValidator validator;
+	private final IPropertyValidator validator;
 
-	AbstractPropertyMapper(Class<?> returnType, PropertyParser<RAW_TYPE> propertyParser, boolean ignoreWhitespaces, Executable executable, Pattern regexpPattern, PropertyValidator validator, String delimiterForList, String delimiterForKeyValue) {
+	AbstractPropertyMapper( Class<?> returnType, PropertyParser<RAW_TYPE> propertyParser, boolean ignoreWhitespaces, Executable executable, Pattern regexpPattern, IPropertyValidator validator, String delimiterForList, String delimiterForKeyValue) {
 		this.returnType = returnType;
 		this.propertyParser = propertyParser;
 		this.ignoreWhitespaces = ignoreWhitespaces;
@@ -57,7 +57,7 @@ abstract class AbstractPropertyMapper<RAW_TYPE, MAPPED_TYPE> implements Property
 	final <SRC_TYPE, RETURN_TYPE> RETURN_TYPE createObject(SRC_TYPE elementValue) throws PropertyValidateException, PropertyMapException {
 		RETURN_TYPE returnElement;
 		try {
-			if (Deserializer.class.isAssignableFrom(this.executable.getDeclaringClass())) {
+			if (IDeserializer.class.isAssignableFrom( this.executable.getDeclaringClass())) {
 				Object deserizlizerInstance = this.executable.getDeclaringClass().newInstance();
 				returnElement = (RETURN_TYPE) ((Method) this.executable).invoke(deserizlizerInstance, elementValue);
 			}
