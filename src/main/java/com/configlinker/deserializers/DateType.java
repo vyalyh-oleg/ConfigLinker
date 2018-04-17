@@ -1,7 +1,7 @@
 package com.configlinker.deserializers;
 
 
-import com.configlinker.Deserializer;
+import com.configlinker.IDeserializer;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -21,16 +21,17 @@ public enum DateType {
 	RFC_850_1036("EEEEE, dd-MMM-yy HH:mm:ss zz", TimestampRFC_850_1036.class),;
 
 	private final String pattern;
-	private final Class<? extends Deserializer<Date>> deserializerClass;
+	private final Class<? extends IDeserializer<Date>> deserializerClass;
 
-	DateType(String pattern, Class<? extends Deserializer<Date>> deserializerClass) {
+	DateType(String pattern, Class<? extends IDeserializer<Date>> deserializerClass) {
 		this.pattern = pattern;
 		this.deserializerClass = deserializerClass;
 	}
 
 	// --------------------------------------------------------------------------------
 
-	static private abstract class AbstractDateTimeParser implements Deserializer<Date> {
+	static private abstract class AbstractDateTimeParser implements IDeserializer<Date>
+	{
 		private DateType dateType;
 
 		private AbstractDateTimeParser(DateType dateType) {
