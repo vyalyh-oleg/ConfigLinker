@@ -115,6 +115,7 @@ task sourcesJar(type: Jar) {
 
 test {
 	workingDir "./test_workdir"
+	useJUnitPlatform()
 }
 
 junitPlatform {

@@ -34,6 +34,7 @@ class LoadersTest
     Assertions.assertEquals("workdir_config.properties", loadFromFile.getConfigName());
   }
 
+  @Disabled
   @Test
   void test_HttpLoader()
   {
