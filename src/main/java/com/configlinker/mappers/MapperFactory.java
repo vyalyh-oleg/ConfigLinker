@@ -69,10 +69,14 @@ public final class MapperFactory {
 			Class<?> arrayType = returnType.getComponentType();
 			if (arrayType.isPrimitive())
 				arrayType = ParserFactory.getWrapperForPrimitive(arrayType);
-
-			if (ParserFactory.isPrimitiveWrapper(arrayType) || arrayType == String.class || arrayType.isEnum()) {
+			
+			if (ParserFactory.isPrimitiveWrapper(arrayType) || arrayType == String.class || arrayType.isEnum())
+			{
 				customTypeOrDeserializer = arrayType;
 				deserializationMethod = BoundProperty.DeserializationMethod.VALUEOF_STRING;
+				
+				if (customTypeOrDeserializer == Character.class)
+					regexpPattern = Pattern.compile(".");
 			}
 
 			if (customTypeOrDeserializer == Object.class)
