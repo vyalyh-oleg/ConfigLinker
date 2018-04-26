@@ -6,6 +6,7 @@ buildscript {
 	repositories {
 		mavenLocal()
 
+/*
 		maven {
 			name "internal"
 			url project.'repo.internal.url'
@@ -17,8 +18,9 @@ buildscript {
 			url project.'repo.own.url'
 			credentials { username(archivaUserName); password(archivaUserPass) }
 		}
+*/
 
-//		mavenCentral()
+		mavenCentral()
 //		jcenter()
 	}
 	dependencies {
@@ -36,6 +38,7 @@ apply plugin: 'org.junit.platform.gradle.plugin'
 repositories {
 	mavenLocal()
 
+/*
 	maven {
 		name "internal"
 		url project.'repo.internal.url'
@@ -47,8 +50,9 @@ repositories {
 		url project.'repo.own.url'
 		credentials { username(archivaUserName); password(archivaUserPass) }
 	}
+*/
 
-//	mavenCentral()
+	mavenCentral()
 //	jcenter()
 }
 

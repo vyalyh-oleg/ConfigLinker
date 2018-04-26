@@ -33,8 +33,7 @@ class LoadersTest
     LoadFromFile loadFromFile = configs.getConfigObject(LoadFromFile.class);
     Assertions.assertEquals("workdir_config.properties", loadFromFile.getConfigName());
   }
-
-  @Disabled
+  
   @Test
   void test_HttpLoader()
   {
