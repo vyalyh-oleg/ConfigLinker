@@ -15,7 +15,7 @@ import java.util.Set;
 
 
 @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
-class PrimitivesTest
+class TypesTest
 {
 	private ConfigSet getConfigSet(Class<?>... interfaceType)
 	{
@@ -29,40 +29,40 @@ class PrimitivesTest
 	}
 	
 	@Test
-	void test_primitiveBoolean()
+	void test_typeBoolean()
 	{
-		PrimitiveBoolean primitiveBoolean = getSingleConfigInstance(PrimitiveBoolean.class);
+		TypeBoolean typeBoolean = getSingleConfigInstance(TypeBoolean.class);
 		
-		Assertions.assertEquals("true", primitiveBoolean.getTrueAsString());
-		Assertions.assertTrue(primitiveBoolean.getTrue());
+		Assertions.assertEquals("true", typeBoolean.getTrueAsString());
+		Assertions.assertTrue(typeBoolean.getTrue());
 		
-		Assertions.assertEquals("false", primitiveBoolean.getFalseAsString());
-		Assertions.assertFalse(primitiveBoolean.getFalse());
+		Assertions.assertEquals("false", typeBoolean.getFalseAsString());
+		Assertions.assertFalse(typeBoolean.getFalse());
 		
-		Assertions.assertEquals("True", primitiveBoolean.getTrue2AsString());
-		Assertions.assertTrue(primitiveBoolean.getTrue2());
+		Assertions.assertEquals("True", typeBoolean.getTrue2AsString());
+		Assertions.assertTrue(typeBoolean.getTrue2());
 		
-		Assertions.assertEquals("False", primitiveBoolean.getFalse2AsString());
-		Assertions.assertFalse(primitiveBoolean.getFalse2());
+		Assertions.assertEquals("False", typeBoolean.getFalse2AsString());
+		Assertions.assertFalse(typeBoolean.getFalse2());
 		
-		Assertions.assertEquals("wrong", primitiveBoolean.getWrongValueAsString());
-		Assertions.assertFalse(primitiveBoolean.getWrongValue());
+		Assertions.assertEquals("wrong", typeBoolean.getWrongValueAsString());
+		Assertions.assertFalse(typeBoolean.getWrongValue());
 	}
 	
 	@Test
-	void test_primitiveByte()
+	void test_typeByte()
 	{
-		PrimitiveByte primitiveByte = getSingleConfigInstance(PrimitiveByte.class);
+		TypeByte typeByte = getSingleConfigInstance(TypeByte.class);
 		
-		Assertions.assertEquals("100", primitiveByte.getValueFromString());
-		Assertions.assertEquals(100, primitiveByte.getValue());
+		Assertions.assertEquals("100", typeByte.getValueFromString());
+		Assertions.assertEquals(100, typeByte.getValue());
 	}
 	
 	@Test
-	void test_primitiveByteError()
+	void test_typeByteError()
 	{
 		PropertyMapException exception = Assertions.assertThrows(PropertyMapException.class, () -> {
-			PrimitiveByteError primitiveByteError = getSingleConfigInstance(PrimitiveByteError.class);
+			TypeByteError typeByteError = getSingleConfigInstance(TypeByteError.class);
 			Assertions.fail("This should be unreachable code point.");
 		});
 		
@@ -73,43 +73,43 @@ class PrimitivesTest
 	}
 	
 	@Test
-	void test_primitiveChar()
+	void test_typeChar()
 	{
-		PrimitiveChar primitiveChar = getSingleConfigInstance(PrimitiveChar.class);
+		TypeChar typeChar = getSingleConfigInstance(TypeChar.class);
 		
-		Assertions.assertEquals("r", primitiveChar.getValueAsString());
-		Assertions.assertEquals('r', primitiveChar.getValue());
+		Assertions.assertEquals("r", typeChar.getValueAsString());
+		Assertions.assertEquals('r', typeChar.getValue());
 	}
 	
 	@Test
-	void test_primitiveCharError()
+	void test_typeCharError()
 	{
 		PropertyMapException exception = Assertions.assertThrows(PropertyMapException.class, () -> {
-			PrimitiveCharError primitiveCharError = getSingleConfigInstance(PrimitiveCharError.class);
-			System.out.println("test_primitiveCharError" + primitiveCharError.getWrongValue());
+			TypeCharError typeCharError = getSingleConfigInstance(TypeCharError.class);
+			System.out.println("test_typeCharError" + typeCharError.getWrongValue());
 			Assertions.fail("This should be unreachable code point.");
 		});
 		
-		Assertions.assertEquals("Cannot interpret return type for method 'java.lang.Byte::valueOf'.", exception.getMessage());
+		Assertions.assertEquals("Given string instead of char.", exception.getMessage());
 		Throwable baseCause = exception.getCause().getCause();
 		Assertions.assertEquals(baseCause.getClass(), NumberFormatException.class);
-		Assertions.assertEquals("Value out of range. Value:\"128\" Radix:10", baseCause.getMessage());
+		Assertions.assertEquals("Value out of range.", baseCause.getMessage());
 	}
 	
 	@Test
-	void test_primitiveShort()
+	void test_typeShort()
 	{
-		PrimitiveShort primitiveShort = getSingleConfigInstance(PrimitiveShort.class);
+		TypeShort typeShort = getSingleConfigInstance(TypeShort.class);
 		
-		Assertions.assertEquals("30802", primitiveShort.getValueAsString());
-		Assertions.assertEquals((short) 30802, primitiveShort.getValue());
+		Assertions.assertEquals("30802", typeShort.getValueAsString());
+		Assertions.assertEquals((short) 30802, typeShort.getValue());
 	}
 	
 	@Test
-	void test_primitiveShortError()
+	void test_typeShortError()
 	{
 		PropertyMapException exception = Assertions.assertThrows(PropertyMapException.class, () -> {
-			PrimitiveShortError primitiveShortError = getSingleConfigInstance(PrimitiveShortError.class);
+			TypeShortError typeShortError = getSingleConfigInstance(TypeShortError.class);
 			Assertions.fail("This should be unreachable code point.");
 		});
 		
@@ -120,19 +120,19 @@ class PrimitivesTest
 	}
 	
 	@Test
-	void test_primitiveInt()
+	void test_typeInt()
 	{
-		PrimitiveInt primitiveInt = getSingleConfigInstance(PrimitiveInt.class);
+		TypeInt typeInt = getSingleConfigInstance(TypeInt.class);
 		
-		Assertions.assertEquals("2045968711", primitiveInt.getIntFromDecimalAsString());
-		Assertions.assertEquals(2045968711, primitiveInt.getIntFromDecimal());
+		Assertions.assertEquals("2045968711", typeInt.getIntFromDecimalAsString());
+		Assertions.assertEquals(2045968711, typeInt.getIntFromDecimal());
 	}
 	
 	@Test
-	void test_primitiveIntError()
+	void test_typeIntError()
 	{
 		PropertyMapException exception = Assertions.assertThrows(PropertyMapException.class, () -> {
-			PrimitiveIntError primitiveIntError = getSingleConfigInstance(PrimitiveIntError.class);
+			TypeIntError typeIntError = getSingleConfigInstance(TypeIntError.class);
 			Assertions.fail("This should be unreachable code point.");
 		});
 		
@@ -141,11 +141,86 @@ class PrimitivesTest
 		Assertions.assertEquals(baseCause.getClass(), NumberFormatException.class);
 		Assertions.assertEquals("For input string: \"2245968711\"", baseCause.getMessage());
 	}
+	
+	@Test
+	void test_typeLong()
+	{
+		TypeLong typeLong = getSingleConfigInstance(TypeLong.class);
+		
+		Assertions.assertEquals("1234567890987654321", typeLong.getValueAsString());
+		Assertions.assertEquals(1234567890987654321L, typeLong.getValue());
+	}
+	
+	@Test
+	void test_typeLongError()
+	{
+		PropertyMapException exception = Assertions.assertThrows(PropertyMapException.class, () -> {
+			TypeLongError typeLongError = getSingleConfigInstance(TypeLongError.class);
+			Assertions.fail("This should be unreachable code point.");
+		});
+		
+		Assertions.assertEquals("Cannot interpret return type for method 'java.lang.Long::valueOf'.", exception.getMessage());
+		Throwable baseCause = exception.getCause().getCause();
+		Assertions.assertEquals(baseCause.getClass(), NumberFormatException.class);
+		Assertions.assertEquals("For input string: \"19234567890987654321\"", baseCause.getMessage());
+	}
+	
+	
+	@Test
+	void test_typeFloat()
+	{
+		TypeFloat typeFloat = getSingleConfigInstance(TypeFloat.class);
+		
+		Assertions.assertEquals("0.000103", typeFloat.getValueAsString());
+		Assertions.assertEquals(0.000103F, typeFloat.getValue());
+		Assertions.assertEquals("0.000103e-14", typeFloat.getValueWithExponentAsString());
+		Assertions.assertEquals(0.000103e-14F, typeFloat.getValueWithExponent());
+	}
+	
+	@Test
+	void test_typeFloatError()
+	{
+		PropertyMapException exception = Assertions.assertThrows(PropertyMapException.class, () -> {
+			TypeFloatError typeFloatError = getSingleConfigInstance(TypeFloatError.class);
+			Assertions.fail("This should be unreachable code point.");
+		});
+		
+		Assertions.assertEquals("Cannot interpret return type for method 'java.lang.Float::valueOf'.", exception.getMessage());
+		Throwable baseCause = exception.getCause().getCause();
+		Assertions.assertEquals(baseCause.getClass(), NumberFormatException.class);
+		Assertions.assertEquals("For input string: \"2.04e+!13\"", baseCause.getMessage());
+	}
+	
+	@Test
+	void test_typeDouble()
+	{
+		TypeDouble typeDouble = getSingleConfigInstance(TypeDouble.class);
+		
+		Assertions.assertEquals("2.040332982365", typeDouble.getValueAsString());
+		Assertions.assertEquals(2.040332982365D, typeDouble.getValue());
+		Assertions.assertEquals("2.040332e-101", typeDouble.getValueWithExponentAsString());
+		Assertions.assertEquals(2.040332e-101D, typeDouble.getValueWithExponent());
+	}
+	
+	@Test
+	void test_typeDoubleError()
+	{
+		PropertyMapException exception = Assertions.assertThrows(PropertyMapException.class, () -> {
+			TypeDoubleError typeDoubleError = getSingleConfigInstance(TypeDoubleError.class);
+			Assertions.fail("This should be unreachable code point.");
+		});
+		
+		Assertions.assertEquals("Cannot interpret return type for method 'java.lang.Double::valueOf'.", exception.getMessage());
+		Throwable baseCause = exception.getCause().getCause();
+		Assertions.assertEquals(baseCause.getClass(), NumberFormatException.class);
+		Assertions.assertEquals("For input string: \"2.040332-101\"", baseCause.getMessage());
+	}
 }
 
+// --------------------------------------------------------------------------------
 
 @BoundObject(sourcePath = "./configs/base_types.properties")
-interface PrimitiveBoolean
+interface TypeBoolean
 {
 	@BoundProperty(name = "type.boolean.true")
 	boolean getTrue();
@@ -179,7 +254,7 @@ interface PrimitiveBoolean
 }
 
 @BoundObject(sourcePath = "./configs/base_types.properties")
-interface PrimitiveByte
+interface TypeByte
 {
 	@BoundProperty(name = "type.byte")
 	byte getValue();
@@ -189,7 +264,7 @@ interface PrimitiveByte
 }
 
 @BoundObject(sourcePath = "./configs/base_types.properties")
-interface PrimitiveByteError
+interface TypeByteError
 {
 	@BoundProperty(name = "type.byte.wrong")
 	byte getWrongValue();
@@ -199,7 +274,7 @@ interface PrimitiveByteError
 }
 
 @BoundObject(sourcePath = "./configs/base_types.properties")
-interface PrimitiveChar
+interface TypeChar
 {
 	@BoundProperty(name = "type.char")
 	char getValue();
@@ -209,7 +284,7 @@ interface PrimitiveChar
 }
 
 @BoundObject(sourcePath = "./configs/base_types.properties")
-interface PrimitiveCharError
+interface TypeCharError
 {
 	@BoundProperty(name = "type.char.wrong")
 	char getWrongValue();
@@ -219,7 +294,7 @@ interface PrimitiveCharError
 }
 
 @BoundObject(sourcePath = "./configs/base_types.properties")
-interface PrimitiveShort
+interface TypeShort
 {
 	@BoundProperty(name = "type.short")
 	short getValue();
@@ -229,7 +304,7 @@ interface PrimitiveShort
 }
 
 @BoundObject(sourcePath = "./configs/base_types.properties")
-interface PrimitiveShortError
+interface TypeShortError
 {
 	@BoundProperty(name = "type.short.wrong")
 	short getWrongValue();
@@ -239,7 +314,7 @@ interface PrimitiveShortError
 }
 
 @BoundObject(sourcePath = "./configs/base_types.properties")
-interface PrimitiveInt
+interface TypeInt
 {
 	@BoundProperty(name = "type.int.dec")
 	int getIntFromDecimal();
@@ -249,12 +324,84 @@ interface PrimitiveInt
 }
 
 @BoundObject(sourcePath = "./configs/base_types.properties")
-interface PrimitiveIntError
+interface TypeIntError
 {
 	@BoundProperty(name = "type.int.dec.wrong")
-	int getIntFromDecimal();
+	int getWrongIntFromDecimal();
 	
 	@BoundProperty(name = "type.int.dec.wrong")
-	String getIntFromDecimalAsString();
+	String getWrongIntFromDecimalAsString();
+}
+
+@BoundObject(sourcePath = "./configs/base_types.properties")
+interface TypeLong
+{
+	@BoundProperty(name = "type.long")
+	long getValue();
+	
+	@BoundProperty(name = "type.long")
+	String getValueAsString();
+}
+
+@BoundObject(sourcePath = "./configs/base_types.properties")
+interface TypeLongError
+{
+	@BoundProperty(name = "type.long.wrong")
+	long getWrongValue();
+	
+	@BoundProperty(name = "type.long.wrong")
+	String getWrongValueAsString();
+}
+
+@BoundObject(sourcePath = "./configs/base_types.properties")
+interface TypeFloat
+{
+	@BoundProperty(name = "type.float")
+	float getValue();
+	
+	@BoundProperty(name = "type.float")
+	String getValueAsString();
+	
+	@BoundProperty(name = "type.float.exponent")
+	float getValueWithExponent();
+	
+	@BoundProperty(name = "type.float.exponent")
+	String getValueWithExponentAsString();
+}
+
+@BoundObject(sourcePath = "./configs/base_types.properties")
+interface TypeFloatError
+{
+	@BoundProperty(name = "type.float.wrong")
+	float getWrongValue();
+	
+	@BoundProperty(name = "type.float.wrong")
+	String getWrongValueAsString();
+}
+
+@BoundObject(sourcePath = "./configs/base_types.properties")
+interface TypeDouble
+{
+	@BoundProperty(name = "type.double")
+	double getValue();
+	
+	@BoundProperty(name = "type.double")
+	String getValueAsString();
+	
+	@BoundProperty(name = "type.double.exponent")
+	double getValueWithExponent();
+	
+	@BoundProperty(name = "type.double.exponent")
+	String getValueWithExponentAsString();
+}
+
+@BoundObject(sourcePath = "./configs/base_types.properties")
+interface TypeDoubleError
+{
+	@BoundProperty(name = "type.double.wrong")
+	double getWrongValue();
+	
+	@BoundProperty(name = "type.double.wrong")
+	String getWrongValueAsString();
 }
 
