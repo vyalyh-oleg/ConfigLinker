@@ -15,7 +15,7 @@ import java.util.Set;
 
 
 @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
-class TypesTest
+class BasicTypesTest
 {
 	private ConfigSet getConfigSet(Class<?>... interfaceType)
 	{
