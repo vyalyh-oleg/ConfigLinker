@@ -92,8 +92,7 @@ class BasicTypesTest
 		
 		Assertions.assertEquals("Given string instead of char.", exception.getMessage());
 		Throwable baseCause = exception.getCause().getCause();
-		Assertions.assertEquals(baseCause.getClass(), NumberFormatException.class);
-		Assertions.assertEquals("Value out of range.", baseCause.getMessage());
+
 	}
 	
 	@Test

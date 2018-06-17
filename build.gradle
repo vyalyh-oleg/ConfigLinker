@@ -77,7 +77,7 @@ dependencies {
 	testRuntimeOnly group: 'org.junit.platform', name: 'junit-platform-launcher', version: project.properties['junit.platform.version']
 //	testRuntimeOnly group: 'org.junit.platform', name: 'junit-platform-console', version: project.properties['junit.platform.version']
 //	testRuntimeOnly group: 'org.junit.platform', name: 'junit-platform-runner', version: project.properties['junit.platform.version']
-//	testRuntimeOnly group: 'org.junit.vintage', name: 'junit-vintage-engine', version: project.properties['4.12.1']
+//	testRuntimeOnly group: 'org.junit.vintage', name: 'junit-vintage-engine', version: project.properties['junit.jupiter.version']
 }
 
 
