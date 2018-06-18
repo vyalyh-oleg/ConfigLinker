@@ -214,6 +214,18 @@ class BasicTypesTest
 		Assertions.assertEquals(baseCause.getClass(), NumberFormatException.class);
 		Assertions.assertEquals("For input string: \"2.040332-101\"", baseCause.getMessage());
 	}
+	
+	@Test
+	void test_typeString()
+	{
+		TypeString typeString = getSingleConfigInstance(TypeString.class);
+		Assertions.assertEquals("Just a simple multiline text", typeString.getValue1());
+		Assertions.assertEquals("Just a simplemultiline text", typeString.getValue2());
+		Assertions.assertEquals("Just a simple \n multiline text", typeString.getValue3());
+		Assertions.assertEquals("Just a simple \r multiline text", typeString.getValue4());
+		Assertions.assertEquals("Just a simple b multiline text", typeString.getValue5());
+		Assertions.assertEquals("Just a simple \f multiline text", typeString.getValue6());
+	}
 }
 
 // --------------------------------------------------------------------------------
@@ -404,3 +416,24 @@ interface TypeDoubleError
 	String getWrongValueAsString();
 }
 
+@BoundObject(sourcePath = "./configs/base_types.properties")
+interface TypeString
+{
+	@BoundProperty(name = "type.String.1")
+	String getValue1();
+	
+	@BoundProperty(name = "type.String.2")
+	String getValue2();
+	
+	@BoundProperty(name = "type.String.3")
+	String getValue3();
+	
+	@BoundProperty(name = "type.String.4")
+	String getValue4();
+	
+	@BoundProperty(name = "type.String.5")
+	String getValue5();
+	
+	@BoundProperty(name = "type.String.6")
+	String getValue6();
+}
