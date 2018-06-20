@@ -2,6 +2,7 @@ package com.configlinker.tests.basetypes;
 
 import com.configlinker.ConfigSet;
 import com.configlinker.ConfigSetFactory;
+import com.configlinker.FactoryConfigBuilder;
 import com.configlinker.annotations.BoundObject;
 import com.configlinker.annotations.BoundProperty;
 import com.configlinker.exceptions.PropertyMapException;

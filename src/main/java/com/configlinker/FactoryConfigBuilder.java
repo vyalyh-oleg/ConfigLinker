@@ -135,7 +135,7 @@ public final class FactoryConfigBuilder {
 	}
 
 	/**
-	 * @param errorBehavior See {@link ErrorBehavior} and {@link BoundObject#errorBehavior()}
+	 * @param errorBehavior See {@link BoundObject#errorBehavior()}. Default value {@link ErrorBehavior#THROW_EXCEPTION}.
 	 * @return this
 	 * @throws FactoryConfigBuilderClosedException -
 	 */
