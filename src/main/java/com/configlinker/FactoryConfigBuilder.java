@@ -147,35 +147,35 @@ public final class FactoryConfigBuilder {
 	}
 
 
-	Map<String, String> getParameters() {
-		return parameters;
+	public Map<String, String> getParameters() {
+		return Collections.unmodifiableMap(parameters);
 	}
 
-	BoundObject.SourceScheme getSourceScheme() {
+	public BoundObject.SourceScheme getSourceScheme() {
 		return sourceScheme;
 	}
 
-	Map<String, String> getHttpHeaders() {
-		return httpHeaders;
+	public Map<String, String> getHttpHeaders() {
+		return Collections.unmodifiableMap(httpHeaders);
 	}
 
-	BoundObject.TrackPolicy getTrackPolicy() {
+	public BoundObject.TrackPolicy getTrackPolicy() {
 		return trackPolicy;
 	}
 
-	int getTrackingInterval() {
+	public int getTrackingInterval() {
 		return trackingInterval;
 	}
 
-	Charset getCharset() {
+	public Charset getCharset() {
 		return charset;
 	}
 
-	boolean isIgnoreWhitespaces() {
+	public boolean isIgnoreWhitespaces() {
 		return ignoreWhitespaces;
 	}
 
-	ErrorBehavior getErrorBehavior() {
+	public ErrorBehavior getErrorBehavior() {
 		return errorBehavior;
 	}
 
@@ -183,5 +183,6 @@ public final class FactoryConfigBuilder {
 	void close() {
 		this.closed = true;
 		this.parameters = Collections.unmodifiableMap(this.parameters);
+		this.httpHeaders = Collections.unmodifiableMap(this.httpHeaders);
 	}
 }

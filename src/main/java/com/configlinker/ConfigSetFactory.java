@@ -6,6 +6,7 @@ import com.configlinker.loaders.LoaderService;
 import com.configlinker.proxy.ConfigProxyFactory;
 
 import java.lang.reflect.Proxy;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,12 +17,25 @@ public final class ConfigSetFactory {
 
 	private ConfigSetFactory() {
 	}
-
-	public static ConfigSet create(Set<Class<?>> configInterfaces) throws AnnotationAnalyzeException, PropertyMapException {
-		return create(configInterfaces, FactoryConfigBuilder.create());
+	
+	public static ConfigSet create(Class<?>... configInterfaces) throws AnnotationAnalyzeException, PropertyMapException
+	{
+		HashSet<Class<?>> setConfigInterfaces = new HashSet<>(Arrays.asList(configInterfaces));
+		return create(FactoryConfigBuilder.create(), setConfigInterfaces);
 	}
-
-	public static ConfigSet create(Set<Class<?>> configInterfaces, FactoryConfigBuilder builder) throws PropertyMapException, AnnotationAnalyzeException {
+	
+	public static ConfigSet create(FactoryConfigBuilder builder, Class<?>... configInterfaces) throws AnnotationAnalyzeException, PropertyMapException
+	{
+		HashSet<Class<?>> setConfigInterfaces = new HashSet<>(Arrays.asList(configInterfaces));
+		return create(builder, setConfigInterfaces);
+	}
+	
+	public static ConfigSet create(Set<Class<?>> configInterfaces) throws AnnotationAnalyzeException, PropertyMapException {
+		return create(FactoryConfigBuilder.create(), configInterfaces);
+	}
+	
+	public static ConfigSet create(FactoryConfigBuilder builder, Set<Class<?>> configInterfaces) throws PropertyMapException, AnnotationAnalyzeException
+	{
 		builder.close();
 		configInterfaces = Collections.unmodifiableSet(new HashSet<>(configInterfaces));
 		AnnotationScanner annotationScanner = new AnnotationScanner(builder);
@@ -31,5 +45,5 @@ public final class ConfigSetFactory {
 
 		return new ConfigSet(configProxy);
 	}
-
+	
 }
