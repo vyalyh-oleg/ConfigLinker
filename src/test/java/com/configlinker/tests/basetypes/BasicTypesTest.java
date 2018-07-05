@@ -1,42 +1,18 @@
 package com.configlinker.tests.basetypes;
 
-import com.configlinker.ConfigSet;
-import com.configlinker.ConfigSetFactory;
 import com.configlinker.FactoryConfigBuilder;
 import com.configlinker.annotations.BoundObject;
 import com.configlinker.annotations.BoundProperty;
 import com.configlinker.exceptions.PropertyMapException;
+import com.configlinker.tests.AbstractBaseTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 
 @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
-class BasicTypesTest
+class BasicTypesTest extends AbstractBaseTest
 {
-	private ConfigSet getConfigSet(FactoryConfigBuilder configBuilder, Class<?>... interfaceType)
-	{
-		Set<Class<?>> configClasses = new HashSet<>(Arrays.asList(interfaceType));
-		if (configBuilder == null)
-			return ConfigSetFactory.create(configClasses);
-		else
-			return ConfigSetFactory.create(configBuilder, configClasses);
-	}
-	
-	private <T> T getSingleConfigInstance(Class<T> interfaceType)
-	{
-		return getConfigSet(null, interfaceType).getConfigObject(interfaceType);
-	}
-	
-	private <T> T getSingleConfigInstance(FactoryConfigBuilder configBuilder, Class<T> interfaceType)
-	{
-		return getConfigSet(configBuilder, interfaceType).getConfigObject(interfaceType);
-	}
-	
 	@Test
 	void test_typeBoolean()
 	{
@@ -77,7 +53,7 @@ class BasicTypesTest
 		
 		Assertions.assertEquals("Cannot interpret return type for method 'java.lang.Byte::valueOf'.", exception.getMessage());
 		Throwable baseCause = exception.getCause().getCause();
-		Assertions.assertEquals(baseCause.getClass(), NumberFormatException.class);
+		Assertions.assertEquals(NumberFormatException.class, baseCause.getClass());
 		Assertions.assertEquals("Value out of range. Value:\"128\" Radix:10", baseCause.getMessage());
 	}
 	
@@ -100,7 +76,7 @@ class BasicTypesTest
 		
 		Assertions.assertEquals("Given string instead of char.", exception.getMessage());
 		Throwable baseCause = exception.getCause().getCause();
-
+		// TODO
 	}
 	
 	@Test
@@ -122,7 +98,7 @@ class BasicTypesTest
 		
 		Assertions.assertEquals("Cannot interpret return type for method 'java.lang.Short::valueOf'.", exception.getMessage());
 		Throwable baseCause = exception.getCause().getCause();
-		Assertions.assertEquals(baseCause.getClass(), NumberFormatException.class);
+		Assertions.assertEquals(NumberFormatException.class, baseCause.getClass());
 		Assertions.assertEquals("Value out of range. Value:\"-33000\" Radix:10", baseCause.getMessage());
 	}
 	
@@ -145,7 +121,7 @@ class BasicTypesTest
 		
 		Assertions.assertEquals("Cannot interpret return type for method 'java.lang.Integer::valueOf'.", exception.getMessage());
 		Throwable baseCause = exception.getCause().getCause();
-		Assertions.assertEquals(baseCause.getClass(), NumberFormatException.class);
+		Assertions.assertEquals(NumberFormatException.class, baseCause.getClass());
 		Assertions.assertEquals("For input string: \"2245968711\"", baseCause.getMessage());
 	}
 	
@@ -168,7 +144,7 @@ class BasicTypesTest
 		
 		Assertions.assertEquals("Cannot interpret return type for method 'java.lang.Long::valueOf'.", exception.getMessage());
 		Throwable baseCause = exception.getCause().getCause();
-		Assertions.assertEquals(baseCause.getClass(), NumberFormatException.class);
+		Assertions.assertEquals(NumberFormatException.class, baseCause.getClass());
 		Assertions.assertEquals("For input string: \"19234567890987654321\"", baseCause.getMessage());
 	}
 	
@@ -194,7 +170,7 @@ class BasicTypesTest
 		
 		Assertions.assertEquals("Cannot interpret return type for method 'java.lang.Float::valueOf'.", exception.getMessage());
 		Throwable baseCause = exception.getCause().getCause();
-		Assertions.assertEquals(baseCause.getClass(), NumberFormatException.class);
+		Assertions.assertEquals(NumberFormatException.class, baseCause.getClass());
 		Assertions.assertEquals("For input string: \"2.04e+!13\"", baseCause.getMessage());
 	}
 	
@@ -219,7 +195,7 @@ class BasicTypesTest
 		
 		Assertions.assertEquals("Cannot interpret return type for method 'java.lang.Double::valueOf'.", exception.getMessage());
 		Throwable baseCause = exception.getCause().getCause();
-		Assertions.assertEquals(baseCause.getClass(), NumberFormatException.class);
+		Assertions.assertEquals(NumberFormatException.class, baseCause.getClass());
 		Assertions.assertEquals("For input string: \"2.040332-101\"", baseCause.getMessage());
 	}
 	

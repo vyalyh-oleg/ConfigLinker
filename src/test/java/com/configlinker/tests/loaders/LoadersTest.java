@@ -1,49 +1,33 @@
 package com.configlinker.tests.loaders;
 
-import com.configlinker.ConfigSet;
-import com.configlinker.ConfigSetFactory;
 import com.configlinker.annotations.BoundObject;
 import com.configlinker.annotations.BoundProperty;
+import com.configlinker.tests.AbstractBaseTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashSet;
-import java.util.Set;
 
-
-class LoadersTest
+class LoadersTest extends AbstractBaseTest
 {
 	@Test
 	void test_ClasspathLoader()
 	{
-		Set<Class<?>> configClasses = new HashSet<>();
-		configClasses.add(LoadFromClasspath.class);
-		ConfigSet configs = ConfigSetFactory.create(configClasses);
-		
-		LoadFromClasspath loadFromClasspath = configs.getConfigObject(LoadFromClasspath.class);
+		LoadFromClasspath loadFromClasspath = getSingleConfigInstance(LoadFromClasspath.class);
 		Assertions.assertEquals("classpath_config.properties", loadFromClasspath.getConfigName());
 	}
 	
 	@Test
 	void test_PropertyFileLoader()
 	{
-		Set<Class<?>> configClasses = new HashSet<>();
-		configClasses.add(LoadFromFile.class);
-		ConfigSet configs = ConfigSetFactory.create(configClasses);
-		
-		LoadFromFile loadFromFile = configs.getConfigObject(LoadFromFile.class);
+		LoadFromFile loadFromFile = getSingleConfigInstance(LoadFromFile.class);
 		Assertions.assertEquals("workdir_config.properties", loadFromFile.getConfigName());
 	}
 	
 	@Test
 	void test_HttpLoader()
 	{
-		Set<Class<?>> configClasses = new HashSet<>();
-		configClasses.add(LoadFromHttp.class);
-		ConfigSet configs = ConfigSetFactory.create(configClasses);
-		
-		LoadFromHttp loadFromHttp = configs.getConfigObject(LoadFromHttp.class);
+		LoadFromHttp loadFromHttp = getSingleConfigInstance(LoadFromHttp.class);
 		Assertions.assertEquals("http_config.properties", loadFromHttp.getConfigName());
 	}
 	
