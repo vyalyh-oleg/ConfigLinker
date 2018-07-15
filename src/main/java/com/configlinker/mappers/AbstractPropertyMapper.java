@@ -15,7 +15,8 @@ import java.lang.reflect.Modifier;
 import java.util.regex.Pattern;
 
 
-abstract class AbstractPropertyMapper<RAW_TYPE, MAPPED_TYPE> implements PropertyMapper<MAPPED_TYPE> {
+abstract class AbstractPropertyMapper<RAW_TYPE, MAPPED_TYPE> implements PropertyMapper<MAPPED_TYPE>
+{
 	protected final PropertyParser<RAW_TYPE> propertyParser;
 	private final boolean ignoreWhitespaces;
 	protected final Class<?> returnType;
@@ -24,8 +25,10 @@ abstract class AbstractPropertyMapper<RAW_TYPE, MAPPED_TYPE> implements Property
 	protected final Executable executable;
 	protected final Pattern regexpPattern;
 	private final PropertyValidator validator;
-
-	AbstractPropertyMapper(Class<?> returnType, PropertyParser<RAW_TYPE> propertyParser, boolean ignoreWhitespaces, Executable executable, Pattern regexpPattern, PropertyValidator validator, String delimiterForList, String delimiterForKeyValue) {
+	
+	AbstractPropertyMapper(Class<?> returnType, PropertyParser<RAW_TYPE> propertyParser, boolean ignoreWhitespaces, Executable executable,
+	  Pattern regexpPattern, PropertyValidator validator, String delimiterForList, String delimiterForKeyValue)
+	{
 		this.returnType = returnType;
 		this.propertyParser = propertyParser;
 		this.ignoreWhitespaces = ignoreWhitespaces;
@@ -35,16 +38,19 @@ abstract class AbstractPropertyMapper<RAW_TYPE, MAPPED_TYPE> implements Property
 		this.executable = executable;
 		this.validator = validator;
 	}
-
+	
 	@Override
-	public final MAPPED_TYPE mapFromString(String rawStringValue) throws PropertyMatchException, PropertyValidateException, PropertyMapException {
+	public final MAPPED_TYPE mapFromString(String rawStringValue) throws PropertyMatchException, PropertyValidateException, PropertyMapException
+	{
 		MAPPED_TYPE mappedValue = mapFrom(propertyParser.parse(rawStringValue, ignoreWhitespaces, this.regexpPattern, delimiterForList, delimiterForKeyValue));
 		if (mappedValue == null)
-			throw new PropertyMapException("Cannot create mapped value from raw string '" + rawStringValue + "' for method '" + this.executable.getDeclaringClass().getName() + "::" + this.executable.getName() + "'.").logAndReturn();
-
+			throw new PropertyMapException(
+			  "Cannot create mapped value from raw string '" + rawStringValue + "' for method '" + this.executable.getDeclaringClass()
+				.getName() + "::" + this.executable.getName() + "'.").logAndReturn();
+		
 		return mappedValue;
 	}
-
+	
 	protected final <RETURN> RETURN createObjectFromString(String elementStringValue)
 	{
 		// TODO: additional check for generic type (customTypeOrDeserializer), if return type is List, Set or Map
@@ -52,51 +58,62 @@ abstract class AbstractPropertyMapper<RAW_TYPE, MAPPED_TYPE> implements Property
 		//PropertyParser propertyParser = ParserFactory.create(returnType, deserializationMethod);
 		return null;
 	}
-
+	
 	@SuppressWarnings("unchecked")
-	final <SRC_TYPE, RETURN_TYPE> RETURN_TYPE createObject(SRC_TYPE elementValue) throws PropertyValidateException, PropertyMapException {
-		RETURN_TYPE returnElement;
-		try {
-			if (Deserializer.class.isAssignableFrom(this.executable.getDeclaringClass())) {
+	final <SRC_TYPE, RETURN_TYPE> RETURN_TYPE createObject(SRC_TYPE elementValue) throws PropertyValidateException, PropertyMapException
+	{
+		RETURN_TYPE returnElement = null;
+		try
+		{
+			if (Deserializer.class.isAssignableFrom(this.executable.getDeclaringClass()))
+			{
 				Object deserizlizerInstance = this.executable.getDeclaringClass().newInstance();
 				returnElement = (RETURN_TYPE) ((Method) this.executable).invoke(deserizlizerInstance, elementValue);
 			}
-
+			
 			// implementation for specific type methods
-			returnElement = getMethodForPredefinedType(elementValue);
-			if (returnElement != null)
-				return returnElement;
-
-			if (this.executable instanceof Constructor)
+			if (returnElement == null)
+				returnElement = getReturnElementForPredefinedType(elementValue);
+			
+			if (returnElement == null && this.executable instanceof Constructor)
 				returnElement = ((Constructor<RETURN_TYPE>) this.executable).newInstance(elementValue);
-
-			if (Modifier.isStatic(this.executable.getModifiers()))
+			
+			if (returnElement == null && Modifier.isStatic(this.executable.getModifiers()))
 				returnElement = (RETURN_TYPE) ((Method) this.executable).invoke(null, elementValue);
-		} catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-			throw new PropertyMapException("Cannot interpret return type for method '" + this.executable.getDeclaringClass().getName() + "::" + this.executable.getName() + "'.", e).logAndReturn();
 		}
-
+		catch (InstantiationException | IllegalAccessException | InvocationTargetException e)
+		{
+			throw new PropertyMapException(
+			  "Cannot interpret return type for method '" + this.executable.getDeclaringClass().getName() + "::" + this.executable.getName() + "'.", e)
+			  .logAndReturn();
+		}
+		
 		if (returnElement == null)
-			throw new PropertyMapException("Cannot interpret return type for method '" + this.executable.getDeclaringClass().getName() + "::" + this.executable.getName() + "'.").logAndReturn();
-
+			throw new PropertyMapException(
+			  "Cannot interpret return type for method '" + this.executable.getDeclaringClass().getName() + "::" + this.executable.getName() + "'.")
+			  .logAndReturn();
+		
 		if (this.validator != null)
 			this.validator.validate(returnElement);
-
+		
 		return returnElement;
 	}
-
-	// maybe it will be needed to change MapperFactory.getMethodForPredefinedType() method.
+	
+	// maybe it will be needed to change MapperFactory.getReturnElementForPredefinedType() method.
 	@SuppressWarnings("unchecked")
-	private <SRC_TYPE, RETURN_TYPE> RETURN_TYPE getMethodForPredefinedType(SRC_TYPE elementValue) throws InvocationTargetException, IllegalAccessException {
+	private <SRC_TYPE, RETURN_TYPE> RETURN_TYPE getReturnElementForPredefinedType(SRC_TYPE elementValue) throws InvocationTargetException,
+	  IllegalAccessException
+	{
 		RETURN_TYPE returnElement;
-
-		if (this.executable.getDeclaringClass() == String.class && this.executable.getName().equals("charAt")) {
+		
+		if (this.executable.getDeclaringClass() == String.class && this.executable.getName().equals("charAt"))
+		{
 			returnElement = (RETURN_TYPE) ((Method) this.executable).invoke(elementValue, 0);
 			return returnElement;
 		}
-
+		
 		return null;
 	}
-
+	
 	abstract protected MAPPED_TYPE mapFrom(RAW_TYPE valueFromParser) throws PropertyValidateException, PropertyMapException;
 }

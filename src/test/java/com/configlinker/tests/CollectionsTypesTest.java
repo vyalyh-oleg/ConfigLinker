@@ -1,4 +1,4 @@
-package com.configlinker.tests.basetypes;
+package com.configlinker.tests;
 
 
 import com.configlinker.tests.AbstractBaseTest;
@@ -6,4 +6,5 @@ import com.configlinker.tests.AbstractBaseTest;
 
 public class CollectionsTypesTest extends AbstractBaseTest
 {
+
 }

@@ -1,10 +1,9 @@
-package com.configlinker.tests.basetypes;
+package com.configlinker.tests;
 
 import com.configlinker.FactoryConfigBuilder;
 import com.configlinker.annotations.BoundObject;
 import com.configlinker.annotations.BoundProperty;
 import com.configlinker.exceptions.PropertyMapException;
-import com.configlinker.tests.AbstractBaseTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -48,7 +47,6 @@ class BasicTypesTest extends AbstractBaseTest
 	{
 		PropertyMapException exception = Assertions.assertThrows(PropertyMapException.class, () -> {
 			TypeByteError typeByteError = getSingleConfigInstance(TypeByteError.class);
-			Assertions.fail("This should be unreachable code point.");
 		});
 		
 		Assertions.assertEquals("Cannot interpret return type for method 'java.lang.Byte::valueOf'.", exception.getMessage());
@@ -71,7 +69,6 @@ class BasicTypesTest extends AbstractBaseTest
 	{
 		PropertyMapException exception = Assertions.assertThrows(PropertyMapException.class, () -> {
 			TypeCharError typeCharError = getSingleConfigInstance(TypeCharError.class);
-			Assertions.fail("This should be unreachable code point.");
 		});
 		
 		Assertions.assertEquals("Given string instead of char.", exception.getMessage());
@@ -93,7 +90,6 @@ class BasicTypesTest extends AbstractBaseTest
 	{
 		PropertyMapException exception = Assertions.assertThrows(PropertyMapException.class, () -> {
 			TypeShortError typeShortError = getSingleConfigInstance(TypeShortError.class);
-			Assertions.fail("This should be unreachable code point.");
 		});
 		
 		Assertions.assertEquals("Cannot interpret return type for method 'java.lang.Short::valueOf'.", exception.getMessage());
@@ -116,7 +112,6 @@ class BasicTypesTest extends AbstractBaseTest
 	{
 		PropertyMapException exception = Assertions.assertThrows(PropertyMapException.class, () -> {
 			TypeIntError typeIntError = getSingleConfigInstance(TypeIntError.class);
-			Assertions.fail("This should be unreachable code point.");
 		});
 		
 		Assertions.assertEquals("Cannot interpret return type for method 'java.lang.Integer::valueOf'.", exception.getMessage());
@@ -139,7 +134,6 @@ class BasicTypesTest extends AbstractBaseTest
 	{
 		PropertyMapException exception = Assertions.assertThrows(PropertyMapException.class, () -> {
 			TypeLongError typeLongError = getSingleConfigInstance(TypeLongError.class);
-			Assertions.fail("This should be unreachable code point.");
 		});
 		
 		Assertions.assertEquals("Cannot interpret return type for method 'java.lang.Long::valueOf'.", exception.getMessage());
@@ -165,7 +159,6 @@ class BasicTypesTest extends AbstractBaseTest
 	{
 		PropertyMapException exception = Assertions.assertThrows(PropertyMapException.class, () -> {
 			TypeFloatError typeFloatError = getSingleConfigInstance(TypeFloatError.class);
-			Assertions.fail("This should be unreachable code point.");
 		});
 		
 		Assertions.assertEquals("Cannot interpret return type for method 'java.lang.Float::valueOf'.", exception.getMessage());
@@ -190,7 +183,6 @@ class BasicTypesTest extends AbstractBaseTest
 	{
 		PropertyMapException exception = Assertions.assertThrows(PropertyMapException.class, () -> {
 			TypeDoubleError typeDoubleError = getSingleConfigInstance(TypeDoubleError.class);
-			Assertions.fail("This should be unreachable code point.");
 		});
 		
 		Assertions.assertEquals("Cannot interpret return type for method 'java.lang.Double::valueOf'.", exception.getMessage());

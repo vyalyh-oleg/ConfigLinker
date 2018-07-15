@@ -88,7 +88,9 @@ public final class MapperFactory {
 
 		if (customTypeOrDeserializer == Object.class && (List.class.isAssignableFrom(returnType) || Set.class.isAssignableFrom(returnType) || Map.class.isAssignableFrom(returnType)))
 			throw new PropertyMapException("For type '" + returnType.getName() + "' you must specify its generic type in '@BoundProperty.customTypeOrDeserializer' and choose '@BoundProperty.deserializationMethod'; method leading to error: '" + propertyMethod.getDeclaringClass().getName() + "." + propertyMethod.getName() + "()'.").logAndReturn();
-
+		
+		if (customTypeOrDeserializer == Object.class)
+			customTypeOrDeserializer = returnType;
 
 		// --------------------------------------------------------------------------------
 
@@ -137,7 +139,7 @@ public final class MapperFactory {
 			if (executable != null)
 				return executable;
 
-			// This is done in order to remove the implementation details out of the public api
+			// This have done in order to remove the implementation details out of the public api
 			switch (deserializationMethod) {
 				case CONSTRUCTOR_STRING:
 					return customTypeOrDeserializer.getDeclaredConstructor(String.class);
@@ -170,9 +172,9 @@ public final class MapperFactory {
 
 		if (customTypeOrDeserializer == URL.class)
 			executable = URL.class.getConstructor(String.class);
-
+		
 		if (customTypeOrDeserializer == URI.class)
-			executable = URI.class.getMethod("create", String.class);
+			executable = URI.class.getConstructor(String.class);
 
 		if (InetAddress.class.isAssignableFrom(customTypeOrDeserializer))
 			executable = InetAddress.class.getDeclaredMethod("getByName", String.class);

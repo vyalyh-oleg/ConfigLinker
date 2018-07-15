@@ -1,8 +1,7 @@
-package com.configlinker.tests.loaders;
+package com.configlinker.tests;
 
 import com.configlinker.annotations.BoundObject;
 import com.configlinker.annotations.BoundProperty;
-import com.configlinker.tests.AbstractBaseTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;

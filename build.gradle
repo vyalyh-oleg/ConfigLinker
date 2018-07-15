@@ -145,7 +145,7 @@ junitPlatform {
 
 /*
 cleanJunitPlatformTest {
-	delete "./test_workdir"
+	delete "./test_workdir.tmp"
 }
 */
 
