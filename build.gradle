@@ -117,9 +117,19 @@ task sourcesJar(type: Jar) {
 }
 
 
+/*
+tasks.withType(JavaExec) {
+	if (System.getProperty('debug', 'false') == 'true') {
+		jvmArgs '-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=9009'
+	}
+}
+*/
+
 test {
 	workingDir "./test_workdir"
 	useJUnitPlatform()
+//	debug=true
+//	failFast = true
 }
 
 junitPlatform {
@@ -161,6 +171,7 @@ junitPlatformTest.doFirst {
 }
 
 junitPlatformTest {
+//	debug=true
 //	systemProperty 'org.slf4j.simpleLogger.defaultLogLevel', 'info'
 	workingDir "./test_workdir"
 }
