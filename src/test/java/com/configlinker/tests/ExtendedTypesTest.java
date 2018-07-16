@@ -164,7 +164,6 @@ class ExtendedTypesTest extends AbstractBaseTest
 		Throwable baseCause = exception.getCause().getCause();
 		Assertions.assertEquals(UnknownHostException.class, baseCause.getClass());
 		Assertions.assertEquals("192.256.12.10: Name or service not known", baseCause.getMessage());
-		
 	}
 	
 	@Test
@@ -178,10 +177,13 @@ class ExtendedTypesTest extends AbstractBaseTest
 		Throwable baseCause = exception.getCause().getCause();
 		Assertions.assertEquals(UnknownHostException.class, baseCause.getClass());
 		Assertions.assertEquals(":::123: invalid IPv6 address", baseCause.getMessage());
-		
 	}
 	
 	
+	void test_Dates()
+	{
+	
+	}
 }
 
 
@@ -347,4 +349,9 @@ interface TypeInetAddressIPv6Error
 {
 	@BoundProperty(name = "type.InetAddress.IPv6.wrong")
 	InetAddress getInetAddress();
+}
+
+interface TypeDate
+{
+
 }

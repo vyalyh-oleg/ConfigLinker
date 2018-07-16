@@ -1,9 +1,10 @@
 package com.configlinker.tests;
 
 
-import com.configlinker.tests.AbstractBaseTest;
+import org.junit.jupiter.api.TestInstance;
 
 
+@TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
 public class ComplexTypesTest extends AbstractBaseTest
 {
 
