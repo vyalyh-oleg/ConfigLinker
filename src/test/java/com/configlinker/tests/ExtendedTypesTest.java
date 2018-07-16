@@ -8,10 +8,15 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
+import java.net.Inet4Address;
+import java.net.Inet6Address;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.UnknownHostException;
+import java.util.UUID;
 
 
 @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
@@ -86,7 +91,7 @@ class ExtendedTypesTest extends AbstractBaseTest
 	void test_typeURIError()
 	{
 		PropertyMapException exception = Assertions.assertThrows(PropertyMapException.class, () -> {
-			TypeURIError typeURIError  = getSingleConfigInstance(TypeURIError.class);
+			TypeURIError typeURIError = getSingleConfigInstance(TypeURIError.class);
 		});
 		
 		Assertions.assertEquals("Cannot interpret return type for method 'java.net.URI::java.net.URI'.", exception.getMessage());
@@ -94,6 +99,89 @@ class ExtendedTypesTest extends AbstractBaseTest
 		Assertions.assertEquals(URISyntaxException.class, baseCause.getClass());
 		Assertions.assertEquals("Expected scheme name at index 0: :mailto:John.Doe@example.com", baseCause.getMessage());
 	}
+	
+	@Test
+	void test_typeUUID()
+	{
+		TypeUUID typeURIError = getSingleConfigInstance(TypeUUID.class);
+		
+		Assertions.assertEquals("1711e708-a486-4dc5-8dbe-f275b601064f", typeURIError.getUUIDAsString());
+		Assertions.assertEquals("1711e708-a486-4dc5-8dbe-f275b601064f", typeURIError.getUUID().toString());
+	}
+	
+	@Test
+	void test_typeUUIDError1()
+	{
+		PropertyMapException exception = Assertions.assertThrows(PropertyMapException.class, () -> {
+			TypeUUIDError1 typeURIError = getSingleConfigInstance(TypeUUIDError1.class);
+		});
+		
+		Assertions.assertEquals("Cannot interpret return type for method 'java.util.UUID::fromString'.", exception.getMessage());
+		Throwable baseCause = exception.getCause().getCause();
+		Assertions.assertEquals(NumberFormatException.class, baseCause.getClass());
+		Assertions.assertEquals("For input string: \"4du5\"", baseCause.getMessage());
+	}
+	
+	@Test
+	void test_typeUUIDError2()
+	{
+		TypeUUIDError2 typeURIError = getSingleConfigInstance(TypeUUIDError2.class);
+		
+		Assertions.assertEquals("1711e708-a4864dc5-8dbe-f275b601-064f", typeURIError.getUUIDAsString());
+		Assertions.assertEquals("1711e78e-4dc5-8dbe-b601-00000000064f", typeURIError.getUUID().toString());
+	}
+	
+	@Test
+	void test_InetAddress()
+	{
+		TypeInetAddress typeInetAddress = getSingleConfigInstance(TypeInetAddress.class);
+		
+		Assertions.assertEquals("192.168.12.10", typeInetAddress.getInetAddressIPv4AsString());
+		Assertions.assertEquals("192.168.12.10", typeInetAddress.getInetAddressIPv4().getHostAddress());
+		Assertions.assertEquals("192.168.12.10", typeInetAddress.getInetAddressIPv4_().getHostAddress());
+		
+		Assertions.assertEquals("::123", typeInetAddress.getInetAddressIPv6AsString_1());
+		Assertions.assertEquals("0:0:0:0:0:0:0:123", typeInetAddress.getInetAddressIPv6_1().getHostAddress());
+		Assertions.assertEquals("0:0:0:0:0:0:0:123", typeInetAddress.getInetAddressIPv6_11().getHostAddress());
+		
+		Assertions.assertEquals("::ffff", typeInetAddress.getInetAddressIPv6AsString_2());
+		Assertions.assertEquals("0:0:0:0:0:0:0:ffff", typeInetAddress.getInetAddressIPv6_2().getHostAddress());
+		Assertions.assertEquals("0:0:0:0:0:0:0:ffff", typeInetAddress.getInetAddressIPv6_22().getHostAddress());
+		
+		Assertions.assertEquals("fe80::fc02:bcff:fea3:919b", typeInetAddress.getInetAddressIPv6AsString_3());
+		Assertions.assertEquals("fe80:0:0:0:fc02:bcff:fea3:919b", typeInetAddress.getInetAddressIPv6_3().getHostAddress());
+		Assertions.assertEquals("fe80:0:0:0:fc02:bcff:fea3:919b", typeInetAddress.getInetAddressIPv6_33().getHostAddress());
+	}
+	
+	@Test
+	void test_InetAddressIPv4Error()
+	{
+		PropertyMapException exception = Assertions.assertThrows(PropertyMapException.class, () -> {
+			TypeInetAddressIPv4Error typeInetAddressIPv4Error = getSingleConfigInstance(TypeInetAddressIPv4Error.class);
+		});
+		
+		Assertions.assertEquals("Cannot interpret return type for method 'java.net.InetAddress::getByName'.", exception.getMessage());
+		Throwable baseCause = exception.getCause().getCause();
+		Assertions.assertEquals(UnknownHostException.class, baseCause.getClass());
+		Assertions.assertEquals("192.256.12.10: Name or service not known", baseCause.getMessage());
+		
+	}
+	
+	@Test
+	void test_InetAddressIPv6Error()
+	{
+		PropertyMapException exception = Assertions.assertThrows(PropertyMapException.class, () -> {
+			TypeInetAddressIPv6Error typeInetAddressIPv6Error = getSingleConfigInstance(TypeInetAddressIPv6Error.class);
+		});
+		
+		Assertions.assertEquals("Cannot interpret return type for method 'java.net.InetAddress::getByName'.", exception.getMessage());
+		Throwable baseCause = exception.getCause().getCause();
+		Assertions.assertEquals(UnknownHostException.class, baseCause.getClass());
+		Assertions.assertEquals(":::123: invalid IPv6 address", baseCause.getMessage());
+		
+	}
+	
+	
 }
 
 
@@ -102,7 +190,7 @@ enum NumberNames
 	one, two, three, four, five
 }
 
-@BoundObject(sourcePath = "configs/extended_types.properties" )
+@BoundObject(sourcePath = "configs/extended_types.properties")
 interface TypeEnum
 {
 	@BoundProperty(name = "type.Enum.numberName")
@@ -112,7 +200,7 @@ interface TypeEnum
 	String getNumberAsString();
 }
 
-@BoundObject(sourcePath = "configs/extended_types.properties" )
+@BoundObject(sourcePath = "configs/extended_types.properties")
 interface TypeEnumError
 {
 	@BoundProperty(name = "type.Enum.numberName.wrong")
@@ -122,7 +210,7 @@ interface TypeEnumError
 	String getNumberAsString();
 }
 
-@BoundObject(sourcePath = "configs/extended_types.properties" )
+@BoundObject(sourcePath = "configs/extended_types.properties")
 interface TypeURL
 {
 	@BoundProperty(name = "type.URL")
@@ -132,7 +220,7 @@ interface TypeURL
 	String getURLAsString();
 }
 
-@BoundObject(sourcePath = "configs/extended_types.properties" )
+@BoundObject(sourcePath = "configs/extended_types.properties")
 interface TypeURLError
 {
 	@BoundProperty(name = "type.URL.wrong")
@@ -142,7 +230,7 @@ interface TypeURLError
 	String getURLAsString();
 }
 
-@BoundObject(sourcePath = "configs/extended_types.properties" )
+@BoundObject(sourcePath = "configs/extended_types.properties")
 interface TypeURI
 {
 	@BoundProperty(name = "type.URI.1")
@@ -170,7 +258,7 @@ interface TypeURI
 	String getURIAsString_4();
 }
 
-@BoundObject(sourcePath = "configs/extended_types.properties" )
+@BoundObject(sourcePath = "configs/extended_types.properties")
 interface TypeURIError
 {
 	@BoundProperty(name = "type.URI.wrong")
@@ -180,3 +268,83 @@ interface TypeURIError
 	String getNumberAsString();
 }
 
+@BoundObject(sourcePath = "configs/extended_types.properties")
+interface TypeUUID
+{
+	@BoundProperty(name = "type.UUID")
+	UUID getUUID();
+	
+	@BoundProperty(name = "type.UUID")
+	String getUUIDAsString();
+}
+
+@BoundObject(sourcePath = "configs/extended_types.properties")
+interface TypeUUIDError1
+{
+	@BoundProperty(name = "type.UUID.wrong.1")
+	UUID getUUID();
+}
+
+@BoundObject(sourcePath = "configs/extended_types.properties")
+interface TypeUUIDError2
+{
+	@BoundProperty(name = "type.UUID.wrong.2")
+	UUID getUUID();
+	
+	@BoundProperty(name = "type.UUID.wrong.2")
+	String getUUIDAsString();
+}
+
+@BoundObject(sourcePath = "configs/extended_types.properties")
+interface TypeInetAddress
+{
+	@BoundProperty(name = "type.InetAddress.IPv4")
+	String getInetAddressIPv4AsString();
+	
+	@BoundProperty(name = "type.InetAddress.IPv4")
+	InetAddress getInetAddressIPv4();
+	
+	@BoundProperty(name = "type.InetAddress.IPv4")
+	Inet4Address getInetAddressIPv4_();
+	
+	@BoundProperty(name = "type.InetAddress.IPv6.1")
+	String getInetAddressIPv6AsString_1();
+	
+	@BoundProperty(name = "type.InetAddress.IPv6.1")
+	InetAddress getInetAddressIPv6_1();
+	
+	@BoundProperty(name = "type.InetAddress.IPv6.1")
+	Inet6Address getInetAddressIPv6_11();
+	
+	@BoundProperty(name = "type.InetAddress.IPv6.2")
+	String getInetAddressIPv6AsString_2();
+	
+	@BoundProperty(name = "type.InetAddress.IPv6.2")
+	InetAddress getInetAddressIPv6_2();
+	
+	@BoundProperty(name = "type.InetAddress.IPv6.2")
+	Inet6Address getInetAddressIPv6_22();
+	
+	@BoundProperty(name = "type.InetAddress.IPv6.3")
+	String getInetAddressIPv6AsString_3();
+	
+	@BoundProperty(name = "type.InetAddress.IPv6.3")
+	InetAddress getInetAddressIPv6_3();
+	
+	@BoundProperty(name = "type.InetAddress.IPv6.3")
+	Inet6Address getInetAddressIPv6_33();
+}
+
+@BoundObject(sourcePath = "configs/extended_types.properties")
+interface TypeInetAddressIPv4Error
+{
+	@BoundProperty(name = "type.InetAddress.IPv4.wrong")
+	InetAddress getInetAddress();
+}
+
+@BoundObject(sourcePath = "configs/extended_types.properties")
+interface TypeInetAddressIPv6Error
+{
+	@BoundProperty(name = "type.InetAddress.IPv6.wrong")
+	InetAddress getInetAddress();
+}
