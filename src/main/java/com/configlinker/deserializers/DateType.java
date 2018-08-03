@@ -21,7 +21,7 @@ public enum DateType {
 	RFC_850_1036("EEEEE, dd-MMM-yy HH:mm:ss zz", TimestampRFC_850_1036.class),;
 
 	private final String pattern;
-	private final Class<? extends Deserializer<Date>> deserializerClass;
+	public final Class<? extends Deserializer<Date>> deserializerClass;
 
 	DateType(String pattern, Class<? extends Deserializer<Date>> deserializerClass) {
 		this.pattern = pattern;
@@ -97,7 +97,7 @@ public enum DateType {
 
 	/**
 	 * <p>Time as "HH:mm:ss"
-	 * <p>Example: {@code '08:56'}.
+	 * <p>Example: {@code '08:56:32'}.
 	 */
 	static final public class TimeOnly extends AbstractDateTimeParser {
 		TimeOnly() {

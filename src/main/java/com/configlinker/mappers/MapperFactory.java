@@ -11,6 +11,7 @@ import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -91,10 +92,16 @@ public final class MapperFactory {
 		
 		if (customTypeOrDeserializer == Object.class)
 			customTypeOrDeserializer = returnType;
-
+		
+//		if (deserializationMethod == BoundProperty.DeserializationMethod.AUTO)
+//			deserializationMethod = determineDeserializationMethod(customTypeOrDeserializer);
+		
 		// --------------------------------------------------------------------------------
-
-		PropertyParser propertyParser = ParserFactory.create(returnType, deserializationMethod);
+		
+		Executable executable = getMethodForPredefinedType(customTypeOrDeserializer);
+		  
+		  PropertyParser propertyParser = ParserFactory.create(returnType, deserializationMethod);
+		
 		Executable executable = getMethodForType(customTypeOrDeserializer, deserializationMethod);
 
 		// TODO: Additional check for 'customTypeOrDeserializer', if return type is List, Set or Map and the Generic type is one of the List, Set or Map too.
@@ -132,7 +139,61 @@ public final class MapperFactory {
 
 		return new CustomObjectMapper(returnType, propertyParser, ignoreWhitespaces, executable, regexpPattern, validator, delimiterForList, delimiterForKeyValue);
 	}
-
+	
+	private static BoundProperty.DeserializationMethod determineDeserializationMethod(Class<?> customTypeOrDeserializer) throws PropertyMapException
+	{
+		BoundProperty.DeserializationMethod result = null;
+		HashSet<Executable> methods = new HashSet<>();
+		
+		try
+		{
+			methods.add(customTypeOrDeserializer.getDeclaredConstructor(String.class));
+			result = BoundProperty.DeserializationMethod.CONSTRUCTOR_STRING;
+		}
+		catch (NoSuchMethodException ignore) { }
+		
+		try
+		{
+			methods.add(customTypeOrDeserializer.getDeclaredConstructor(Map.class));
+			result = BoundProperty.DeserializationMethod.CONSTRUCTOR_MAP;
+		}
+		catch (NoSuchMethodException ignore) { }
+		
+		try
+		{
+			methods.add(customTypeOrDeserializer.getDeclaredMethod("valueOf", String.class));
+			result = BoundProperty.DeserializationMethod.VALUEOF_STRING;
+		}
+		catch (NoSuchMethodException ignore) { }
+		
+		try
+		{
+			methods.add(customTypeOrDeserializer.getDeclaredMethod("valueOf", Map.class));
+			result = BoundProperty.DeserializationMethod.VALUEOF_MAP;
+		}
+		catch (NoSuchMethodException ignore) { }
+		
+		try
+		{
+			methods.add(customTypeOrDeserializer.getDeclaredMethod("deserialize", String.class));
+			result = BoundProperty.DeserializationMethod.DESERIALIZER_STRING;
+		}
+		catch (NoSuchMethodException ignore) { }
+		
+		try
+		{
+			methods.add(customTypeOrDeserializer.getDeclaredMethod("deserialize", Map.class));
+			result = BoundProperty.DeserializationMethod.DESERIALIZER_MAP;
+		}
+		catch (NoSuchMethodException ignore) { }
+		
+		methods.remove(null);
+		if (methods.size() > 1)
+			throw new PropertyMapException("'" + customTypeOrDeserializer.getName() + "' contains more than one deserialization implementation, while @BoundProperty.deserializationMethod() set to AUTO. See  class 'BoundProperty.DeserializationMethod' for more details.").logAndReturn();
+		
+		return result;
+	}
+	
 	private static Executable getMethodForType(Class<?> customTypeOrDeserializer, BoundProperty.DeserializationMethod deserializationMethod) throws PropertyMapException {
 		try {
 			Executable executable = getMethodForPredefinedType(customTypeOrDeserializer);
@@ -165,7 +226,7 @@ public final class MapperFactory {
 	private static Executable getMethodForPredefinedType(Class<?> customTypeOrDeserializer) throws NoSuchMethodException {
 		Executable executable = null;
 		if (customTypeOrDeserializer == Character.class)
-			executable = String.class.getDeclaredMethod("charAt", int.class);
+			executable = CharacterMapper.class.getDeclaredMethod("valueOf", String.class);
 
 		if (customTypeOrDeserializer == String.class)
 			executable = String.class.getDeclaredMethod("valueOf", Object.class);

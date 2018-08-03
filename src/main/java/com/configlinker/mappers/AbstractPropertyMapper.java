@@ -106,11 +106,14 @@ abstract class AbstractPropertyMapper<RAW_TYPE, MAPPED_TYPE> implements Property
 	{
 		RETURN_TYPE returnElement;
 		
+		// an example of how to use non predefined methods for specific type
+/*
 		if (this.executable.getDeclaringClass() == String.class && this.executable.getName().equals("charAt"))
 		{
 			returnElement = (RETURN_TYPE) ((Method) this.executable).invoke(elementValue, 0);
 			return returnElement;
 		}
+*/
 		
 		return null;
 	}

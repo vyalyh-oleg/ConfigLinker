@@ -3,6 +3,7 @@ package com.configlinker.tests;
 
 import com.configlinker.annotations.BoundObject;
 import com.configlinker.annotations.BoundProperty;
+import com.configlinker.deserializers.DateType;
 import com.configlinker.exceptions.PropertyMapException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.Date;
 import java.util.UUID;
 
 
@@ -179,8 +181,30 @@ class ExtendedTypesTest extends AbstractBaseTest
 		Assertions.assertEquals(":::123: invalid IPv6 address", baseCause.getMessage());
 	}
 	
-	
+	@Test
 	void test_Dates()
+	{
+		/*
+* type.Date.milliseconds = 12345678909876
+# seconds from epoch
+type.Date.seconds = 1530375271
+type.Date.year = 1999
+type.Date.date = 2015-07-14
+type.Date.time = 18:56:47
+type.Date.date-time = 2014-08-01T19:01:37
+type.Date.date-time-zone = 2014-08-01T19:01:37+0230
+type.Date.RFC_3339 = 2001-12-19T16:39:57.523-08:00
+type.Date.RFC_822_1123 = Sun, 06 Nov 1994 08:49:37 UTC
+type.Date.RFC_850_1036 = 06-Nov-94 08:49:37 UTC
+* */
+		TypeDate typeDate = getSingleConfigInstance(TypeDate.class);
+		
+		Assertions.assertEquals(new Date(12345678909876L), typeDate.getDateTimeFromMilliseconds());
+		
+		
+	}
+	
+	void test_DatesError()
 	{
 	
 	}
@@ -351,7 +375,36 @@ interface TypeInetAddressIPv6Error
 	InetAddress getInetAddress();
 }
 
+@BoundObject(sourcePath = "configs/extended_types.properties")
 interface TypeDate
 {
-
+	@BoundProperty(name = "type.Date.milliseconds", customTypeOrDeserializer = DateType.Milliseconds.class)
+	Date getDateTimeFromMilliseconds();
+	
+	@BoundProperty(name = "type.Date.seconds", customTypeOrDeserializer = DateType.Seconds.class)
+	Date getDateTimeFromSeconds();
+	
+	@BoundProperty(name = "type.Date.year", customTypeOrDeserializer = DateType.Year.class)
+	Date getYearOnly();
+	
+	@BoundProperty(name = "type.Date.date", customTypeOrDeserializer = DateType.DateOnly.class)
+	Date getDateOnly();
+	
+	@BoundProperty(name = "type.Date.time", customTypeOrDeserializer = DateType.TimeOnly.class)
+	Date getTimeOnly();
+	
+	@BoundProperty(name = "type.Date.date-time", customTypeOrDeserializer = DateType.DateTime.class)
+	Date getDateTime();
+	
+	@BoundProperty(name = "type.Date.date-time-zone", customTypeOrDeserializer = DateType.DateTimeZone.class)
+	Date getDateTimeWithZone();
+	
+	@BoundProperty(name = "type.Date.RFC_3339", customTypeOrDeserializer = DateType.TimestampRFC_3339.class)
+	Date getDateTime_RFC_3339();
+	
+	@BoundProperty(name = "type.Date.RFC_822_1123", customTypeOrDeserializer = DateType.TimestampRFC_822_1123.class)
+	Date getDateTime_RFC_822_1123();
+	
+	@BoundProperty(name = "type.Date.RFC_850_1036", customTypeOrDeserializer = DateType.TimestampRFC_850_1036.class)
+	Date getDateTime_RFC_850_1036();
 }

@@ -71,9 +71,10 @@ class BasicTypesTest extends AbstractBaseTest
 			TypeCharError typeCharError = getSingleConfigInstance(TypeCharError.class);
 		});
 		
-		Assertions.assertEquals("Given string instead of char.", exception.getMessage());
+		Assertions.assertEquals("Cannot interpret return type for method 'com.configlinker.mappers.CharacterMapper::valueOf'.", exception.getMessage());
 		Throwable baseCause = exception.getCause().getCause();
-		// TODO
+		Assertions.assertEquals(IllegalArgumentException.class, baseCause.getClass());
+		Assertions.assertEquals("Given string 'rb' instead of a single char.", baseCause.getMessage());
 	}
 	
 	@Test

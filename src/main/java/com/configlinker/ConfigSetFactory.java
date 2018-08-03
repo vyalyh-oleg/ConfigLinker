@@ -20,13 +20,13 @@ public final class ConfigSetFactory {
 	
 	public static ConfigSet create(Class<?>... configInterfaces) throws AnnotationAnalyzeException, PropertyMapException
 	{
-		HashSet<Class<?>> setConfigInterfaces = new HashSet<>(Arrays.asList(configInterfaces));
-		return create(FactoryConfigBuilder.create(), setConfigInterfaces);
+		return create(FactoryConfigBuilder.create(), configInterfaces);
 	}
 	
 	public static ConfigSet create(FactoryConfigBuilder builder, Class<?>... configInterfaces) throws AnnotationAnalyzeException, PropertyMapException
 	{
 		HashSet<Class<?>> setConfigInterfaces = new HashSet<>(Arrays.asList(configInterfaces));
+		// TODO: check on duplicate interfaces and throw an error if any found
 		return create(builder, setConfigInterfaces);
 	}
 	

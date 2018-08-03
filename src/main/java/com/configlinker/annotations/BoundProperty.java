@@ -100,7 +100,7 @@ public @interface BoundProperty {
 	 * <p>If return type for you configuration method is List, Set or Map, then only {@link DeserializationMethod#CONSTRUCTOR_STRING}, {@link DeserializationMethod#VALUEOF_STRING}, {@link DeserializationMethod#DESERIALIZER_STRING} allowed as deserialization method for it's values.
 	 * @return -
 	 */
-	DeserializationMethod deserializationMethod() default DeserializationMethod.CONSTRUCTOR_STRING;
+	DeserializationMethod deserializationMethod() default DeserializationMethod.AUTO;
 
 	/**
 	 * <p>Custom validator for returned value. By default no validators are used.
@@ -119,8 +119,9 @@ public @interface BoundProperty {
 	/**
 	 * <p>Values:
 	 * <ul>
+	 * <li>{@link #AUTO} - default for {@link #deserializationMethod()}</li>
 	 * <li>{@link #CONSTRUCTOR_STRING}</li>
-	 * <li>{@link #CONSTRUCTOR_MAP} - default for {@link #deserializationMethod()}</li>
+	 * <li>{@link #CONSTRUCTOR_MAP}</li>
 	 * <li>{@link #VALUEOF_STRING}</li>
 	 * <li>{@link #VALUEOF_MAP}</li>
 	 * <li>{@link #DESERIALIZER_STRING}</li>
@@ -133,6 +134,11 @@ public @interface BoundProperty {
 	 *
 	 */
 	enum DeserializationMethod {
+		/**
+		 * <p>The default value. The appropriate deserialization method will be tried to found automatically.
+		 * <p>If you occasionally implement multiple deserialization variants, the exception will be thrown.
+		 */
+		AUTO,
 		/**
 		 * <p>Chose this variant if you implement special constructor for your class:
 		 * <p>{@code 'public/private <CustomReturnType>(String raw)'}
