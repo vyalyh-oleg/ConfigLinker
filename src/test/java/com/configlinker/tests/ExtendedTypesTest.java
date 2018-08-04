@@ -8,6 +8,7 @@ import com.configlinker.exceptions.PropertyMapException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestReporter;
 
 import java.net.Inet4Address;
 import java.net.Inet6Address;
@@ -17,8 +18,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 
 @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
@@ -134,7 +137,7 @@ class ExtendedTypesTest extends AbstractBaseTest
 	}
 	
 	@Test
-	void test_InetAddress()
+	void test_typeInetAddress()
 	{
 		TypeInetAddress typeInetAddress = getSingleConfigInstance(TypeInetAddress.class);
 		
@@ -156,7 +159,7 @@ class ExtendedTypesTest extends AbstractBaseTest
 	}
 	
 	@Test
-	void test_InetAddressIPv4Error()
+	void test_typeInetAddressIPv4Error()
 	{
 		PropertyMapException exception = Assertions.assertThrows(PropertyMapException.class, () -> {
 			TypeInetAddressIPv4Error typeInetAddressIPv4Error = getSingleConfigInstance(TypeInetAddressIPv4Error.class);
@@ -169,7 +172,7 @@ class ExtendedTypesTest extends AbstractBaseTest
 	}
 	
 	@Test
-	void test_InetAddressIPv6Error()
+	void test_testInetAddressIPv6Error()
 	{
 		PropertyMapException exception = Assertions.assertThrows(PropertyMapException.class, () -> {
 			TypeInetAddressIPv6Error typeInetAddressIPv6Error = getSingleConfigInstance(TypeInetAddressIPv6Error.class);
@@ -182,31 +185,60 @@ class ExtendedTypesTest extends AbstractBaseTest
 	}
 	
 	@Test
-	void test_Dates()
+	void test_typeDate(TestReporter testReporter)
 	{
-		/*
-* type.Date.milliseconds = 12345678909876
-# seconds from epoch
-type.Date.seconds = 1530375271
-type.Date.year = 1999
-type.Date.date = 2015-07-14
-type.Date.time = 18:56:47
-type.Date.date-time = 2014-08-01T19:01:37
-type.Date.date-time-zone = 2014-08-01T19:01:37+0230
-type.Date.RFC_3339 = 2001-12-19T16:39:57.523-08:00
-type.Date.RFC_822_1123 = Sun, 06 Nov 1994 08:49:37 UTC
-type.Date.RFC_850_1036 = 06-Nov-94 08:49:37 UTC
-* */
 		TypeDate typeDate = getSingleConfigInstance(TypeDate.class);
 		
 		Assertions.assertEquals(new Date(12345678909876L), typeDate.getDateTimeFromMilliseconds());
+		Assertions.assertEquals(new Date(1530375271000L), typeDate.getDateTimeFromSeconds());
+		Assertions.assertEquals(new Date(915141600000L), typeDate.getYearOnly());
+		Assertions.assertEquals(new Date(1436821200000L), typeDate.getDateOnly());
+		Assertions.assertEquals(new Date(57407000L), typeDate.getTimeOnly());
+		Assertions.assertEquals(new Date(1406908897000L), typeDate.getDateTime());
+		Assertions.assertEquals(new Date(1406910697000L), typeDate.getDateTimeWithZone());
+		Assertions.assertEquals(new Date(1008808797523L), typeDate.getDateTime_RFC_3339());
+		Assertions.assertEquals(new Date(784111777000L), typeDate.getDateTime_RFC_822_1123());
+		Assertions.assertEquals(new Date(784111777000L), typeDate.getDateTime_RFC_850_1036());
+	}
+	
+	@Test
+	void test_typeDateErrorMilliseconds()
+	{
+		PropertyMapException exception = Assertions.assertThrows(PropertyMapException.class, () -> {
+			TypeDateErrorMilliseconds typeInetAddressIPv6Error = getSingleConfigInstance(TypeDateErrorMilliseconds.class);
+		});
 		
+		Assertions.assertEquals("Cannot interpret return type for method 'com.configlinker.deserializers.DateType$Milliseconds::deserialize'.", exception.getMessage());
+		Throwable baseCause = exception.getCause().getCause();
+		Assertions.assertEquals(NumberFormatException.class, baseCause.getClass());
+		Assertions.assertEquals("For input string: \"123456O78909876\"", baseCause.getMessage());
 		
 	}
 	
-	void test_DatesError()
+	@Test
+	void test_typeDateErrorSeconds()
 	{
+		PropertyMapException exception = Assertions.assertThrows(PropertyMapException.class, () -> {
+			TypeDateErrorSeconds typeInetAddressIPv6Error = getSingleConfigInstance(TypeDateErrorSeconds.class);
+		});
+		
+		Assertions.assertEquals("Cannot interpret return type for method 'com.configlinker.deserializers.DateType$Seconds::deserialize'.", exception.getMessage());
+		Throwable baseCause = exception.getCause().getCause();
+		Assertions.assertEquals(NumberFormatException.class, baseCause.getClass());
+		Assertions.assertEquals("For input string: \"15303752711234567890\"", baseCause.getMessage());
+	}
 	
+	@Test
+	void test_typeDateError()
+	{
+		PropertyMapException exception = Assertions.assertThrows(PropertyMapException.class, () -> {
+			TypeDateError typeInetAddressIPv6Error = getSingleConfigInstance(TypeDateError.class);
+		});
+		
+		Assertions.assertEquals("Cannot interpret return type for method 'com.configlinker.deserializers.DateType$DateTime::deserialize'.", exception.getMessage());
+		Throwable baseCause = exception.getCause().getCause().getCause();
+		Assertions.assertEquals(ParseException.class, baseCause.getClass());
+		Assertions.assertEquals("Unparseable date: \"2014-08-01 19:01:37\"", baseCause.getMessage());
 	}
 }
 
@@ -407,4 +439,25 @@ interface TypeDate
 	
 	@BoundProperty(name = "type.Date.RFC_850_1036", customTypeOrDeserializer = DateType.TimestampRFC_850_1036.class)
 	Date getDateTime_RFC_850_1036();
+}
+
+@BoundObject(sourcePath = "configs/extended_types.properties")
+interface TypeDateErrorMilliseconds
+{
+	@BoundProperty(name = "type.Date.milliseconds.wrong", customTypeOrDeserializer = DateType.Milliseconds.class)
+	Date getDateTimeFromMilliseconds();
+}
+
+@BoundObject(sourcePath = "configs/extended_types.properties")
+interface TypeDateErrorSeconds
+{
+	@BoundProperty(name = "type.Date.seconds.wrong", customTypeOrDeserializer = DateType.Seconds.class)
+	Date getDateTimeFromSeconds();
+}
+
+@BoundObject(sourcePath = "configs/extended_types.properties")
+interface TypeDateError
+{
+	@BoundProperty(name = "type.Date.date-time.wrong", customTypeOrDeserializer = DateType.DateTime.class)
+	Date getDateTime();
 }
