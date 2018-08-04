@@ -65,9 +65,13 @@ abstract class AbstractPropertyMapper<RAW_TYPE, MAPPED_TYPE> implements Property
 		RETURN_TYPE returnElement = null;
 		try
 		{
+			this.executable.setAccessible(true);
+			
 			if (Deserializer.class.isAssignableFrom(this.executable.getDeclaringClass()))
 			{
-				Object deserizlizerInstance = this.executable.getDeclaringClass().newInstance();
+				Constructor constructor = this.executable.getDeclaringClass().getDeclaredConstructor();
+				constructor.setAccessible(true);
+				Object deserizlizerInstance = constructor.newInstance();
 				returnElement = (RETURN_TYPE) ((Method) this.executable).invoke(deserizlizerInstance, elementValue);
 			}
 			
@@ -81,7 +85,7 @@ abstract class AbstractPropertyMapper<RAW_TYPE, MAPPED_TYPE> implements Property
 			if (returnElement == null && Modifier.isStatic(this.executable.getModifiers()))
 				returnElement = (RETURN_TYPE) ((Method) this.executable).invoke(null, elementValue);
 		}
-		catch (InstantiationException | IllegalAccessException | InvocationTargetException e)
+		catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e)
 		{
 			throw new PropertyMapException(
 			  "Cannot interpret return type for method '" + this.executable.getDeclaringClass().getName() + "::" + this.executable.getName() + "'.", e)

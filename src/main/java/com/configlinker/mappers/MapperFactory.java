@@ -20,53 +20,66 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 
-public final class MapperFactory {
-
-	private MapperFactory() {
+public final class MapperFactory
+{
+	private MapperFactory()
+	{
 	}
-
+	
 	@SuppressWarnings("unchecked")
-	public static PropertyMapper create(BoundProperty boundPropertyAnnotation, Method propertyMethod, boolean ignoreWhitespaces) throws PropertyMapException {
-
+	public static PropertyMapper create(BoundProperty boundPropertyAnnotation, Method propertyMethod, boolean ignoreWhitespaces) throws PropertyMapException
+	{
+		
 		Class<?> returnType = propertyMethod.getReturnType();
-
+		
 		String strRegexpPattern = boundPropertyAnnotation.regexPattern();
 		Pattern regexpPattern = null;
 		if (strRegexpPattern.length() > 0)
-			try {
+			try
+			{
 				regexpPattern = Pattern.compile(strRegexpPattern);
-			} catch (PatternSyntaxException e) {
-				throw new PropertyMapException("Cannot compile regexp pattern for '" + propertyMethod.getDeclaringClass().getName() + "::" + propertyMethod.getName() + "'.", e);
 			}
-
+			catch (PatternSyntaxException e)
+			{
+				throw new PropertyMapException(
+				  "Cannot compile regexp pattern for '" + propertyMethod.getDeclaringClass().getName() + "::" + propertyMethod.getName() + "'.", e);
+			}
+		
 		Class<? extends PropertyValidator> validator_class = boundPropertyAnnotation.validator();
 		PropertyValidator validator = null;
 		if (validator_class != PropertyValidator.class)
-			try {
+			try
+			{
 				validator = validator_class.newInstance();
-			} catch (InstantiationException | IllegalAccessException e) {
-				throw new PropertyMapException("Cannot create validator for '" + propertyMethod.getDeclaringClass().getName() + "::" + propertyMethod.getName() + "'.", e).logAndReturn();
 			}
-
+			catch (InstantiationException | IllegalAccessException e)
+			{
+				throw new PropertyMapException(
+				  "Cannot create validator for '" + propertyMethod.getDeclaringClass().getName() + "::" + propertyMethod.getName() + "'.", e).logAndReturn();
+			}
+		
 		Class<?> customTypeOrDeserializer = boundPropertyAnnotation.customTypeOrDeserializer();
 		BoundProperty.DeserializationMethod deserializationMethod = boundPropertyAnnotation.deserializationMethod();
-
+		
 		String delimiterForList = boundPropertyAnnotation.delimiterForList();
 		String delimiterForKeyValue = boundPropertyAnnotation.delimiterForKeyValue();
-
+		
 		// --------------------------------------------------------------------------------
-
-		if (returnType.isPrimitive()) {
+		
+		if (returnType.isPrimitive())
+		{
 			customTypeOrDeserializer = ParserFactory.getWrapperForPrimitive(returnType);
 			deserializationMethod = BoundProperty.DeserializationMethod.VALUEOF_STRING;
 		}
-
-		if (ParserFactory.isPrimitiveWrapper(returnType) || returnType == String.class || returnType.isEnum()) {
+		
+		if (ParserFactory.isPrimitiveWrapper(returnType) || returnType == String.class || returnType.isEnum())
+		{
 			customTypeOrDeserializer = returnType;
 			deserializationMethod = BoundProperty.DeserializationMethod.VALUEOF_STRING;
 		}
-
-		if (returnType.isArray()) {
+		
+		if (returnType.isArray())
+		{
 			Class<?> arrayType = returnType.getComponentType();
 			if (arrayType.isPrimitive())
 				arrayType = ParserFactory.getWrapperForPrimitive(arrayType);
@@ -79,38 +92,50 @@ public final class MapperFactory {
 				if (customTypeOrDeserializer == Character.class)
 					regexpPattern = Pattern.compile(".");
 			}
-
+			
 			if (customTypeOrDeserializer == Object.class)
 				customTypeOrDeserializer = arrayType;
 		}
-
+		
 		if (customTypeOrDeserializer.isPrimitive())
-			throw new PropertyMapException("Value of '@BoundProperty.customTypeOrDeserializer' can not be a primitive type class, but current value is '" + customTypeOrDeserializer.getName() + "' and current return type is '" + returnType.getName() + "'.").logAndReturn();
-
-		if (customTypeOrDeserializer == Object.class && (List.class.isAssignableFrom(returnType) || Set.class.isAssignableFrom(returnType) || Map.class.isAssignableFrom(returnType)))
-			throw new PropertyMapException("For type '" + returnType.getName() + "' you must specify its generic type in '@BoundProperty.customTypeOrDeserializer' and choose '@BoundProperty.deserializationMethod'; method leading to error: '" + propertyMethod.getDeclaringClass().getName() + "." + propertyMethod.getName() + "()'.").logAndReturn();
+			throw new PropertyMapException(
+			  "Value of '@BoundProperty.customTypeOrDeserializer' can not be a primitive type class, but current value is '" + customTypeOrDeserializer
+				.getName() + "' and current return type is '" + returnType.getName() + "'.").logAndReturn();
+		
+		if (customTypeOrDeserializer == Object.class && (List.class.isAssignableFrom(returnType) || Set.class.isAssignableFrom(returnType) || Map.class
+		  .isAssignableFrom(returnType)))
+			throw new PropertyMapException("For type '" + returnType
+			  .getName() + "' you must specify its generic type in '@BoundProperty.customTypeOrDeserializer' and choose '@BoundProperty.deserializationMethod'; method leading to error: '" + propertyMethod
+			  .getDeclaringClass().getName() + "." + propertyMethod.getName() + "()'.").logAndReturn();
 		
 		if (customTypeOrDeserializer == Object.class)
 			customTypeOrDeserializer = returnType;
 		
-//		if (deserializationMethod == BoundProperty.DeserializationMethod.AUTO)
-//			deserializationMethod = determineDeserializationMethod(customTypeOrDeserializer);
+		// --------------------------------------------------------------------------------
+		
+		Executable executable;
+		
+		executable = getMethodForPredefinedType(customTypeOrDeserializer);
+		if (executable != null)
+			deserializationMethod = BoundProperty.DeserializationMethod.CONSTRUCTOR_STRING;
+		else
+		{
+			if (deserializationMethod == BoundProperty.DeserializationMethod.AUTO)
+				deserializationMethod = determineDeserializationMethod(customTypeOrDeserializer);
+			executable = getMethodForType(customTypeOrDeserializer, deserializationMethod);
+		}
+		
+		// TODO: Additional check for 'customTypeOrDeserializer', if return type is List, Set or Map and the Generic type is one of the List, Set or Map too.
 		
 		// --------------------------------------------------------------------------------
 		
-		Executable executable = getMethodForPredefinedType(customTypeOrDeserializer);
-		  
-		  PropertyParser propertyParser = ParserFactory.create(returnType, deserializationMethod);
-		
-		Executable executable = getMethodForType(customTypeOrDeserializer, deserializationMethod);
-
-		// TODO: Additional check for 'customTypeOrDeserializer', if return type is List, Set or Map and the Generic type is one of the List, Set or Map too.
-		executable.setAccessible(true);
+		PropertyParser propertyParser = ParserFactory.create(returnType, deserializationMethod);
 
 		if (returnType == String.class)
 			return new StringStubPropertyMapper(propertyParser, ignoreWhitespaces, executable, regexpPattern);
-
-		if (returnType.isArray()) {
+		
+		if (returnType.isArray())
+		{
 			if (customTypeOrDeserializer == String.class)
 				return new ArrayStringMapper(propertyParser, ignoreWhitespaces, executable, regexpPattern, delimiterForList);
 			if (returnType.getComponentType().isPrimitive())
@@ -118,26 +143,29 @@ public final class MapperFactory {
 			else
 				return new ArrayMapper(returnType, propertyParser, ignoreWhitespaces, executable, regexpPattern, validator, delimiterForList);
 		}
-
+		
 		if (List.class.isAssignableFrom(returnType))
 			if (customTypeOrDeserializer == String.class)
 				return new ListStringMapper(returnType, propertyParser, ignoreWhitespaces, executable, regexpPattern, delimiterForList);
 			else
 				return new ListObjectMapper(returnType, propertyParser, ignoreWhitespaces, executable, regexpPattern, validator, delimiterForList);
-
+		
 		if (Set.class.isAssignableFrom(returnType))
 			if (customTypeOrDeserializer == String.class)
 				return new SetStringMapper(returnType, propertyParser, ignoreWhitespaces, executable, regexpPattern, delimiterForList);
 			else
 				return new SetObjectMapper(returnType, propertyParser, ignoreWhitespaces, executable, regexpPattern, validator, delimiterForList);
-
+		
 		if (Map.class.isAssignableFrom(returnType))
 			if (customTypeOrDeserializer == String.class)
-				return new MapStringStringMapper(returnType, propertyParser, ignoreWhitespaces, executable, regexpPattern, delimiterForList, delimiterForKeyValue);
+				return new MapStringStringMapper(returnType, propertyParser, ignoreWhitespaces, executable, regexpPattern, delimiterForList,
+				  delimiterForKeyValue);
 			else
-				return new MapStringObjectMapper(returnType, propertyParser, ignoreWhitespaces, executable, regexpPattern, validator, delimiterForList, delimiterForKeyValue);
-
-		return new CustomObjectMapper(returnType, propertyParser, ignoreWhitespaces, executable, regexpPattern, validator, delimiterForList, delimiterForKeyValue);
+				return new MapStringObjectMapper(returnType, propertyParser, ignoreWhitespaces, executable, regexpPattern, validator, delimiterForList,
+				  delimiterForKeyValue);
+		
+		return new CustomObjectMapper(returnType, propertyParser, ignoreWhitespaces, executable, regexpPattern, validator, delimiterForList,
+		  delimiterForKeyValue);
 	}
 	
 	private static BoundProperty.DeserializationMethod determineDeserializationMethod(Class<?> customTypeOrDeserializer) throws PropertyMapException
@@ -189,63 +217,85 @@ public final class MapperFactory {
 		
 		methods.remove(null);
 		if (methods.size() > 1)
-			throw new PropertyMapException("'" + customTypeOrDeserializer.getName() + "' contains more than one deserialization implementation, while @BoundProperty.deserializationMethod() set to AUTO. See  class 'BoundProperty.DeserializationMethod' for more details.").logAndReturn();
+			throw new PropertyMapException("'" + customTypeOrDeserializer
+			  .getName() + "' contains more than one deserialization implementation, while @BoundProperty.deserializationMethod() set to AUTO. See  class 'BoundProperty.DeserializationMethod' for more details.")
+			  .logAndReturn();
 		
 		return result;
 	}
 	
-	private static Executable getMethodForType(Class<?> customTypeOrDeserializer, BoundProperty.DeserializationMethod deserializationMethod) throws PropertyMapException {
-		try {
-			Executable executable = getMethodForPredefinedType(customTypeOrDeserializer);
-			if (executable != null)
-				return executable;
-
+	private static Executable getMethodForType(Class<?> customTypeOrDeserializer, BoundProperty.DeserializationMethod deserializationMethod) throws
+	  PropertyMapException
+	{
+		try
+		{
+			Executable executable;
 			// This have done in order to remove the implementation details out of the public api
-			switch (deserializationMethod) {
+			switch (deserializationMethod)
+			{
 				case CONSTRUCTOR_STRING:
-					return customTypeOrDeserializer.getDeclaredConstructor(String.class);
+					executable = customTypeOrDeserializer.getDeclaredConstructor(String.class);
+					break;
 				case CONSTRUCTOR_MAP:
-					return customTypeOrDeserializer.getDeclaredConstructor(Map.class);
+					executable = customTypeOrDeserializer.getDeclaredConstructor(Map.class);
+					break;
 				case VALUEOF_STRING:
-					return customTypeOrDeserializer.getDeclaredMethod("valueOf", String.class);
+					executable = customTypeOrDeserializer.getDeclaredMethod("valueOf", String.class);
+					break;
 				case VALUEOF_MAP:
-					return customTypeOrDeserializer.getDeclaredMethod("valueOf", Map.class);
+					executable = customTypeOrDeserializer.getDeclaredMethod("valueOf", Map.class);
+					break;
 				case DESERIALIZER_STRING:
-					return customTypeOrDeserializer.getDeclaredMethod("deserialize", String.class);
+					executable = customTypeOrDeserializer.getDeclaredMethod("deserialize", String.class);
+					break;
 				case DESERIALIZER_MAP:
-					return customTypeOrDeserializer.getDeclaredMethod("deserialize", Map.class);
+					executable = customTypeOrDeserializer.getDeclaredMethod("deserialize", Map.class);
+					break;
 				default:
-					throw new PropertyMapException("There is no suitable version for @BoundProperty.DeserializationMethod='" + deserializationMethod.name() + "'; custom type or deserializer: '" + customTypeOrDeserializer.getName() + "'.").logAndReturn();
+					throw new PropertyMapException("There is no suitable version for @BoundProperty.DeserializationMethod='" + deserializationMethod
+					  .name() + "'; custom type or deserializer: '" + customTypeOrDeserializer.getName() + "'.").logAndReturn();
 			}
-		} catch (NoSuchMethodException e) {
-			throw new PropertyMapException("Can not find deserialization method in: '" + customTypeOrDeserializer.getName() + "'; @BoundProperty.DeserializationMethod='" + deserializationMethod.name() + "'.", e).logAndReturn();
+			return executable;
+		}
+		catch (NoSuchMethodException e)
+		{
+			throw new PropertyMapException("Can not find deserialization method in: '" + customTypeOrDeserializer
+			  .getName() + "'; @BoundProperty.DeserializationMethod='" + deserializationMethod.name() + "'.", e).logAndReturn();
 		}
 	}
-
+	
 	// maybe it will be needed to change AbstractPropertyMapper.createObject() method.
-	private static Executable getMethodForPredefinedType(Class<?> customTypeOrDeserializer) throws NoSuchMethodException {
+	private static Executable getMethodForPredefinedType(Class<?> customTypeOrDeserializer)
+	{
 		Executable executable = null;
-		if (customTypeOrDeserializer == Character.class)
-			executable = CharacterMapper.class.getDeclaredMethod("valueOf", String.class);
-
-		if (customTypeOrDeserializer == String.class)
-			executable = String.class.getDeclaredMethod("valueOf", Object.class);
-
-		if (customTypeOrDeserializer == URL.class)
-			executable = URL.class.getConstructor(String.class);
-		
-		if (customTypeOrDeserializer == URI.class)
-			executable = URI.class.getConstructor(String.class);
-
-		if (InetAddress.class.isAssignableFrom(customTypeOrDeserializer))
-			executable = InetAddress.class.getDeclaredMethod("getByName", String.class);
-
-		if (customTypeOrDeserializer == UUID.class)
-			executable = UUID.class.getMethod("fromString", String.class);
-
-		//if (customTypeOrDeserializer == YourType.class)
-		// implement for other types
-
+		try
+		{
+			if (customTypeOrDeserializer == Character.class)
+				executable = CharacterMapper.class.getDeclaredMethod("valueOf", String.class);
+			
+			if (customTypeOrDeserializer == String.class)
+				executable = String.class.getDeclaredMethod("valueOf", Object.class);
+			
+			if (customTypeOrDeserializer == URL.class)
+				executable = URL.class.getConstructor(String.class);
+			
+			if (customTypeOrDeserializer == URI.class)
+				executable = URI.class.getConstructor(String.class);
+			
+			if (InetAddress.class.isAssignableFrom(customTypeOrDeserializer))
+				executable = InetAddress.class.getDeclaredMethod("getByName", String.class);
+			
+			if (customTypeOrDeserializer == UUID.class)
+				executable = UUID.class.getMethod("fromString", String.class);
+			
+			//if (customTypeOrDeserializer == YourType.class)
+			// implement for other types
+		}
+		catch (NoSuchMethodException e)
+		{
+			throw new PropertyMapException("Can not find deserialization method for predefined type in: '" + customTypeOrDeserializer
+			  .getName() + "'.", e).logAndReturn();
+		}
 		return executable;
 	}
 }
