@@ -21,7 +21,6 @@ import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 
 @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
