@@ -31,8 +31,8 @@ class ExtendedTypesTest extends AbstractBaseTest
 	{
 		TypeEnum typeEnum = getSingleConfigInstance(TypeEnum.class);
 		
-		Assertions.assertEquals(NumberNames.three, typeEnum.getNumber());
-		Assertions.assertEquals(NumberNames.three.name(), typeEnum.getNumberAsString());
+		Assertions.assertEquals(NumberName.three, typeEnum.getNumber());
+		Assertions.assertEquals(NumberName.three.name(), typeEnum.getNumberAsString());
 	}
 	
 	@Test
@@ -42,10 +42,10 @@ class ExtendedTypesTest extends AbstractBaseTest
 			TypeEnumError typeEnumError = getSingleConfigInstance(TypeEnumError.class);
 		});
 		
-		Assertions.assertEquals("Cannot interpret return type for method 'com.configlinker.tests.NumberNames::valueOf'.", exception.getMessage());
+		Assertions.assertEquals("Cannot interpret return type for method 'com.configlinker.tests.NumberName::valueOf'.", exception.getMessage());
 		Throwable baseCause = exception.getCause().getCause();
 		Assertions.assertEquals(IllegalArgumentException.class, baseCause.getClass());
-		Assertions.assertEquals("No enum constant com.configlinker.tests.NumberNames.eleven", baseCause.getMessage());
+		Assertions.assertEquals("No enum constant com.configlinker.tests.NumberName.eleven", baseCause.getMessage());
 	}
 	
 	@Test
@@ -242,7 +242,7 @@ class ExtendedTypesTest extends AbstractBaseTest
 }
 
 
-enum NumberNames
+enum NumberName
 {
 	one, two, three, four, five
 }
@@ -251,7 +251,7 @@ enum NumberNames
 interface TypeEnum
 {
 	@BoundProperty(name = "type.Enum.numberName")
-	NumberNames getNumber();
+	NumberName getNumber();
 	
 	@BoundProperty(name = "type.Enum.numberName")
 	String getNumberAsString();
@@ -261,7 +261,7 @@ interface TypeEnum
 interface TypeEnumError
 {
 	@BoundProperty(name = "type.Enum.numberName.wrong")
-	NumberNames getNumber();
+	NumberName getNumber();
 	
 	@BoundProperty(name = "type.Enum.numberName.wrong")
 	String getNumberAsString();

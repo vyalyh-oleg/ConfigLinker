@@ -103,7 +103,7 @@ public @interface BoundProperty {
 	DeserializationMethod deserializationMethod() default DeserializationMethod.AUTO;
 
 	/**
-	 * <p>Custom validator for returned value. By default no validators are used.
+	 * <p>Custom validator for returned value. By default validators are not used.
 	 * <p>If you need additional checks just implement {@link PropertyValidator} interface and point class here.
 	 * @return -
 	 */

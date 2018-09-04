@@ -136,8 +136,6 @@ public final class MapperFactory
 		
 		if (returnType.isArray())
 		{
-			if (customTypeOrDeserializer == String.class)
-				return new ArrayStringMapper(propertyParser, ignoreWhitespaces, executable, regexpPattern, delimiterForList);
 			if (returnType.getComponentType().isPrimitive())
 				return new ArrayPrimitiveMapper(returnType, propertyParser, ignoreWhitespaces, executable, regexpPattern, validator, delimiterForList);
 			else
