@@ -105,7 +105,7 @@ public final class MapperFactory
 		if (customTypeOrDeserializer == Object.class && (List.class.isAssignableFrom(returnType) || Set.class.isAssignableFrom(returnType) || Map.class
 		  .isAssignableFrom(returnType)))
 			throw new PropertyMapException("For type '" + returnType
-			  .getName() + "' you must specify its generic type in '@BoundProperty.customTypeOrDeserializer' and choose '@BoundProperty.deserializationMethod'; method leading to error: '" + propertyMethod
+			  .getName() + "' you must specify its generic type in '@BoundProperty.customTypeOrDeserializer' and choose (for non predefined types) '@BoundProperty.deserializationMethod'; method leading to error: '" + propertyMethod
 			  .getDeclaringClass().getName() + "." + propertyMethod.getName() + "()'.").logAndReturn();
 		
 		if (customTypeOrDeserializer == Object.class)
@@ -117,6 +117,7 @@ public final class MapperFactory
 		
 		executable = getMethodForPredefinedType(customTypeOrDeserializer);
 		if (executable != null)
+			// because all predefined types are constructed from strings
 			deserializationMethod = BoundProperty.DeserializationMethod.CONSTRUCTOR_STRING;
 		else
 		{
@@ -266,24 +267,28 @@ public final class MapperFactory
 	private static Executable getMethodForPredefinedType(Class<?> customTypeOrDeserializer)
 	{
 		Executable executable = null;
+		
 		try
 		{
-			if (customTypeOrDeserializer == Character.class)
-				executable = CharacterMapper.class.getDeclaredMethod("valueOf", String.class);
-			
 			if (customTypeOrDeserializer == String.class)
 				executable = String.class.getDeclaredMethod("valueOf", Object.class);
 			
-			if (customTypeOrDeserializer == URL.class)
+			if (executable == null && customTypeOrDeserializer == Character.class)
+				executable = CharacterMapper.class.getDeclaredMethod("valueOf", String.class);
+			
+			if (executable == null && ParserFactory.isPrimitiveWrapper(customTypeOrDeserializer) || customTypeOrDeserializer.isEnum())
+				executable = customTypeOrDeserializer.getDeclaredMethod("valueOf", String.class);
+			
+			if (executable == null && customTypeOrDeserializer == URL.class)
 				executable = URL.class.getConstructor(String.class);
 			
-			if (customTypeOrDeserializer == URI.class)
+			if (executable == null && customTypeOrDeserializer == URI.class)
 				executable = URI.class.getConstructor(String.class);
 			
-			if (InetAddress.class.isAssignableFrom(customTypeOrDeserializer))
+			if (executable == null && InetAddress.class.isAssignableFrom(customTypeOrDeserializer))
 				executable = InetAddress.class.getDeclaredMethod("getByName", String.class);
 			
-			if (customTypeOrDeserializer == UUID.class)
+			if (executable == null && customTypeOrDeserializer == UUID.class)
 				executable = UUID.class.getMethod("fromString", String.class);
 			
 			//if (customTypeOrDeserializer == YourType.class)

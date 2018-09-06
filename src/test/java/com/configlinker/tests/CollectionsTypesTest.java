@@ -7,7 +7,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
@@ -81,18 +84,284 @@ class CollectionsTypesTest extends AbstractBaseTest
 	@Test
 	void test_arrayOfEnums()
 	{
-		NumberNameEnumArray numberNames = getSingleConfigInstance(NumberNameEnumArray.class);
-		Assertions
-		  .assertArrayEquals(new NumberName[]{NumberName.three, NumberName.two, NumberName.one, NumberName.five, NumberName.two}, numberNames.getValues());
+		NumberNameEnumArray enumArray = getSingleConfigInstance(NumberNameEnumArray.class);
+		Assertions.assertArrayEquals(
+		  new NumberName[]{NumberName.three, NumberName.two, NumberName.one, NumberName.five, NumberName.two},
+		  enumArray.getValues());
 	}
 	
 	
 	// ---------- lists ----------
 	
+	@Test
+	void test_listOfBooleans()
+	{
+		BooleanList booleanList = getSingleConfigInstance(BooleanList.class);
+		ArrayList<Boolean> booleansExpected = new ArrayList<>();
+		booleansExpected.add(false);
+		booleansExpected.add(true);
+		booleansExpected.add(false);
+		Assertions.assertEquals(booleansExpected, booleanList.getValues());
+	}
 	
+	@Test
+	void test_listOfBytes()
+	{
+		ByteList byteList = getSingleConfigInstance(ByteList.class);
+		ArrayList<Byte> bytesExpected = new ArrayList<>();
+		bytesExpected.add((byte) 100);
+		bytesExpected.add((byte) 23);
+		bytesExpected.add((byte) -122);
+		bytesExpected.add((byte) -80);
+		bytesExpected.add((byte) 100);
+		Assertions.assertEquals(bytesExpected, byteList.getValues());
+	}
+	
+	@Test
+	void test_listOfChars()
+	{
+		CharList charList = getSingleConfigInstance(CharList.class);
+		ArrayList<Character> charsExpected = new ArrayList<>();
+		charsExpected.add('w');
+		charsExpected.add('8');
+		charsExpected.add('h');
+		charsExpected.add('&');
+		charsExpected.add('\\');
+		charsExpected.add('*');
+		charsExpected.add('h');
+		charsExpected.add('`');
+		Assertions.assertEquals(charsExpected, charList.getValues());
+	}
+	
+	@Test
+	void test_listOfShorts()
+	{
+		ShortList shortList = getSingleConfigInstance(ShortList.class);
+		ArrayList<Short> shortsExpected = new ArrayList<>();
+		shortsExpected.add((short) 22000);
+		shortsExpected.add((short) 3456);
+		shortsExpected.add((short) -18000);
+		shortsExpected.add((short) 32000);
+		shortsExpected.add((short) +32050);
+		shortsExpected.add((short) +3456);
+		Assertions.assertEquals(shortsExpected, shortList.getValues());
+	}
+	
+	@Test
+	void test_listOfInts()
+	{
+		IntList intList = getSingleConfigInstance(IntList.class);
+		ArrayList<Integer> intsExpected = new ArrayList<>();
+		intsExpected.add(123456098);
+		intsExpected.add(8479893);
+		intsExpected.add(981753);
+		intsExpected.add(+1792364978);
+		intsExpected.add(-2132364978);
+		intsExpected.add(981753);
+		Assertions.assertEquals(intsExpected, intList.getValues());
+	}
+	
+	@Test
+	void test_listOfLongs()
+	{
+		LongList longList = getSingleConfigInstance(LongList.class);
+		ArrayList<Long> longsExpeted = new ArrayList<>();
+		longsExpeted.add(22345778909876L);
+		longsExpeted.add(1542375271000L);
+		longsExpeted.add(1407110697000L);
+		longsExpeted.add(-1531375271200L);
+		longsExpeted.add(22345778909876L);
+		Assertions.assertEquals(longsExpeted, longList.getValues());
+	}
+	
+	@Test
+	void test_listOfFloats()
+	{
+		FloatList floatList = getSingleConfigInstance(FloatList.class);
+		ArrayList<Float> floatsExpected = new ArrayList<>();
+		floatsExpected.add(3.1415926545f);
+		floatsExpected.add(2.0333f);
+		floatsExpected.add(0.123456789f);
+		floatsExpected.add(0.000003e-14f);
+		floatsExpected.add(-2.03311f);
+		floatsExpected.add(3.1415926545f);
+		Assertions.assertEquals(floatsExpected, floatList.getValues());
+	}
+	
+	@Test
+	void test_listOfDoubles()
+	{
+		DoubleList doubleList = getSingleConfigInstance(DoubleList.class);
+		ArrayList<Double> doublesExpected = new ArrayList<>();
+		doublesExpected.add(2.040336982365);
+		doublesExpected.add(2.040336982365);
+		doublesExpected.add(2.140382e-101);
+		doublesExpected.add(98765.34567896567);
+		doublesExpected.add(2.140382e+122);
+		Assertions.assertEquals(doublesExpected, doubleList.getValues());
+	}
+	
+	@Test
+	void test_listOfStrings()
+	{
+		StringList stringList = getSingleConfigInstance(StringList.class);
+		ArrayList<String> stringsExpected = new ArrayList<>();
+		stringsExpected.add("horns.hooves@great.org");
+		stringsExpected.add("director@great.org");
+		stringsExpected.add("horns.hooves@great.org");
+		Assertions.assertEquals(stringsExpected, stringList.getValues());
+	}
+	
+	@Test
+	void test_listOfEnums()
+	{
+		NumberNameEnumList enumsList = getSingleConfigInstance(NumberNameEnumList.class);
+		ArrayList<NumberName> enumsExpected = new ArrayList<>();
+		enumsExpected.add(NumberName.three);
+		enumsExpected.add(NumberName.two);
+		enumsExpected.add(NumberName.one);
+		enumsExpected.add(NumberName.five);
+		enumsExpected.add(NumberName.two);
+		Assertions.assertEquals(enumsExpected, enumsList.getValues());
+	}
 	
 	
 	// ---------- sets ----------
+	
+	@Test
+	void test_setOfBooleans()
+	{
+		BooleanSet booleanSet = getSingleConfigInstance(BooleanSet.class);
+		HashSet<Boolean> booleansExpected = new HashSet<>();
+		booleansExpected.add(false);
+		booleansExpected.add(true);
+		booleansExpected.add(false);
+		Assertions.assertEquals(booleansExpected, booleanSet.getValues());
+	}
+	
+	@Test
+	void test_setOfBytes()
+	{
+		ByteSet byteSet = getSingleConfigInstance(ByteSet.class);
+		HashSet<Byte> bytesExpected = new HashSet<>();
+		bytesExpected.add((byte) 100);
+		bytesExpected.add((byte) 23);
+		bytesExpected.add((byte) -122);
+		bytesExpected.add((byte) -80);
+		bytesExpected.add((byte) 100);
+		Assertions.assertEquals(bytesExpected, byteSet.getValues());
+	}
+	
+	@Test
+	void test_setOfChars()
+	{
+		CharSet charSet = getSingleConfigInstance(CharSet.class);
+		HashSet<Character> charsExpected = new HashSet<>();
+		charsExpected.add('w');
+		charsExpected.add('8');
+		charsExpected.add('h');
+		charsExpected.add('&');
+		charsExpected.add('\\');
+		charsExpected.add('*');
+		charsExpected.add('h');
+		charsExpected.add('`');
+		Assertions.assertEquals(charsExpected, charSet.getValues());
+	}
+	
+	@Test
+	void test_setOfShorts()
+	{
+		ShortSet shortSet = getSingleConfigInstance(ShortSet.class);
+		HashSet<Short> shortsExpected = new HashSet<>();
+		shortsExpected.add((short) 22000);
+		shortsExpected.add((short) 3456);
+		shortsExpected.add((short) -18000);
+		shortsExpected.add((short) 32000);
+		shortsExpected.add((short) +32050);
+		shortsExpected.add((short) +3456);
+		Assertions.assertEquals(shortsExpected, shortSet.getValues());
+	}
+	
+	@Test
+	void test_setOfInts()
+	{
+		IntSet intSet = getSingleConfigInstance(IntSet.class);
+		HashSet<Integer> intsExpected = new HashSet<>();
+		intsExpected.add(123456098);
+		intsExpected.add(8479893);
+		intsExpected.add(981753);
+		intsExpected.add(+1792364978);
+		intsExpected.add(-2132364978);
+		intsExpected.add(981753);
+		Assertions.assertEquals(intsExpected, intSet.getValues());
+	}
+	
+	@Test
+	void test_setOfLongs()
+	{
+		LongSet longSet = getSingleConfigInstance(LongSet.class);
+		HashSet<Long> longsExpeted = new HashSet<>();
+		longsExpeted.add(22345778909876L);
+		longsExpeted.add(1542375271000L);
+		longsExpeted.add(1407110697000L);
+		longsExpeted.add(-1531375271200L);
+		longsExpeted.add(22345778909876L);
+		Assertions.assertEquals(longsExpeted, longSet.getValues());
+	}
+	
+	@Test
+	void test_setOfFloats()
+	{
+		FloatSet floatSet = getSingleConfigInstance(FloatSet.class);
+		HashSet<Float> floatsExpected = new HashSet<>();
+		floatsExpected.add(3.1415926545f);
+		floatsExpected.add(2.0333f);
+		floatsExpected.add(0.123456789f);
+		floatsExpected.add(0.000003e-14f);
+		floatsExpected.add(-2.03311f);
+		floatsExpected.add(3.1415926545f);
+		Assertions.assertEquals(floatsExpected, floatSet.getValues());
+	}
+	
+	@Test
+	void test_setOfDoubles()
+	{
+		DoubleSet doubleSet = getSingleConfigInstance(DoubleSet.class);
+		HashSet<Double> doublesExpected = new HashSet<>();
+		doublesExpected.add(2.040336982365);
+		doublesExpected.add(2.040336982365);
+		doublesExpected.add(2.140382e-101);
+		doublesExpected.add(98765.34567896567);
+		doublesExpected.add(2.140382e+122);
+		Assertions.assertEquals(doublesExpected, doubleSet.getValues());
+	}
+	
+	@Test
+	void test_setOfStrings()
+	{
+		StringSet stringSet = getSingleConfigInstance(StringSet.class);
+		HashSet<String> stringsExpected = new HashSet<>();
+		stringsExpected.add("horns.hooves@great.org");
+		stringsExpected.add("director@great.org");
+		stringsExpected.add("horns.hooves@great.org");
+		Assertions.assertEquals(stringsExpected, stringSet.getValues());
+	}
+	
+	@Test
+	void test_setOfEnums()
+	{
+		NumberNameEnumSet enumsSet = getSingleConfigInstance(NumberNameEnumSet.class);
+		HashSet<NumberName> enumsExpected = new HashSet<>();
+		enumsExpected.add(NumberName.three);
+		enumsExpected.add(NumberName.two);
+		enumsExpected.add(NumberName.one);
+		enumsExpected.add(NumberName.five);
+		enumsExpected.add(NumberName.two);
+		Assertions.assertEquals(enumsExpected, enumsSet.getValues());
+	}
+	
+	
+	// ---------- maps ----------
 	
 	
 }
@@ -176,73 +445,146 @@ interface NumberNameEnumArray
 @BoundObject(sourcePath = "configs/collections.properties")
 interface BooleanList
 {
-	@BoundProperty(name = "collection.of.boolean")
+	@BoundProperty(name = "collection.of.boolean", customTypeOrDeserializer = Boolean.class)
 	List<Boolean> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface ByteList
 {
-	@BoundProperty(name = "collection.of.byte")
+	@BoundProperty(name = "collection.of.byte", customTypeOrDeserializer = Byte.class)
 	List<Byte> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface CharList
 {
-	@BoundProperty(name = "collection.of.char")
+	@BoundProperty(name = "collection.of.char", customTypeOrDeserializer = Character.class)
 	List<Character> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface ShortList
 {
-	@BoundProperty(name = "collection.of.short")
+	@BoundProperty(name = "collection.of.short", customTypeOrDeserializer = Short.class)
 	List<Short> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface IntList
 {
-	@BoundProperty(name = "collection.of.int")
+	@BoundProperty(name = "collection.of.int", customTypeOrDeserializer = Integer.class)
 	List<Integer> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface LongList
 {
-	@BoundProperty(name = "collection.of.long")
+	@BoundProperty(name = "collection.of.long", customTypeOrDeserializer = Long.class)
 	List<Long> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface FloatList
 {
-	@BoundProperty(name = "collection.of.float")
+	@BoundProperty(name = "collection.of.float", customTypeOrDeserializer = Float.class)
 	List<Float> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface DoubleList
 {
-	@BoundProperty(name = "collection.of.double")
+	@BoundProperty(name = "collection.of.double", customTypeOrDeserializer = Double.class)
 	List<Double> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface StringList
 {
-	@BoundProperty(name = "collection.of.string")
+	@BoundProperty(name = "collection.of.string", customTypeOrDeserializer = String.class)
 	List<String> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface NumberNameEnumList
 {
-	@BoundProperty(name = "collection.of.enum.numberNames")
+	@BoundProperty(name = "collection.of.enum.numberNames", customTypeOrDeserializer = NumberName.class)
 	List<NumberName> getValues();
 }
 
 
 // ---------- sets ----------
+
+@BoundObject(sourcePath = "configs/collections.properties")
+interface BooleanSet
+{
+	@BoundProperty(name = "collection.of.boolean", customTypeOrDeserializer = Boolean.class)
+	Set<Boolean> getValues();
+}
+
+@BoundObject(sourcePath = "configs/collections.properties")
+interface ByteSet
+{
+	@BoundProperty(name = "collection.of.byte", customTypeOrDeserializer = Byte.class)
+	Set<Byte> getValues();
+}
+
+@BoundObject(sourcePath = "configs/collections.properties")
+interface CharSet
+{
+	@BoundProperty(name = "collection.of.char", customTypeOrDeserializer = Character.class)
+	Set<Character> getValues();
+}
+
+@BoundObject(sourcePath = "configs/collections.properties")
+interface ShortSet
+{
+	@BoundProperty(name = "collection.of.short", customTypeOrDeserializer = Short.class)
+	Set<Short> getValues();
+}
+
+@BoundObject(sourcePath = "configs/collections.properties")
+interface IntSet
+{
+	@BoundProperty(name = "collection.of.int", customTypeOrDeserializer = Integer.class)
+	Set<Integer> getValues();
+}
+
+@BoundObject(sourcePath = "configs/collections.properties")
+interface LongSet
+{
+	@BoundProperty(name = "collection.of.long", customTypeOrDeserializer = Long.class)
+	Set<Long> getValues();
+}
+
+@BoundObject(sourcePath = "configs/collections.properties")
+interface FloatSet
+{
+	@BoundProperty(name = "collection.of.float", customTypeOrDeserializer = Float.class)
+	Set<Float> getValues();
+}
+
+@BoundObject(sourcePath = "configs/collections.properties")
+interface DoubleSet
+{
+	@BoundProperty(name = "collection.of.double", customTypeOrDeserializer = Double.class)
+	Set<Double> getValues();
+}
+
+@BoundObject(sourcePath = "configs/collections.properties")
+interface StringSet
+{
+	@BoundProperty(name = "collection.of.string", customTypeOrDeserializer = String.class)
+	Set<String> getValues();
+}
+
+@BoundObject(sourcePath = "configs/collections.properties")
+interface NumberNameEnumSet
+{
+	@BoundProperty(name = "collection.of.enum.numberNames", customTypeOrDeserializer = NumberName.class)
+	Set<NumberName> getValues();
+}
+
+
+// ---------- maps ----------
 

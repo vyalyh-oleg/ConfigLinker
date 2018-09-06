@@ -33,6 +33,7 @@ public final class ParserFactory {
 		if (Map.class.isAssignableFrom(returnType))
 			return MAP_PROPERTY_PARSER;
 
+		// when the user used custom deserializer
 		if (deserializationMethod == BoundProperty.DeserializationMethod.CONSTRUCTOR_STRING ||
 				deserializationMethod == BoundProperty.DeserializationMethod.VALUEOF_STRING ||
 				deserializationMethod == BoundProperty.DeserializationMethod.DESERIALIZER_STRING)
