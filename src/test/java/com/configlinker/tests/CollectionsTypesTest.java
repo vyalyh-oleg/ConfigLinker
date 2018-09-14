@@ -8,8 +8,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -36,7 +38,7 @@ class CollectionsTypesTest extends AbstractBaseTest
 	void test_arrayOfChars()
 	{
 		CharArray charArray = getSingleConfigInstance(CharArray.class);
-		Assertions.assertArrayEquals(new char[]{'w', '8', 'h', '&', '\\', '*', 'h', '`'}, charArray.getValues());
+		Assertions.assertArrayEquals(new char[]{'w', '8', 'h', '&', '\\', '*', 'h', '\u1234', 'ሴ'}, charArray.getValues());
 	}
 	
 	@Test
@@ -129,7 +131,8 @@ class CollectionsTypesTest extends AbstractBaseTest
 		charsExpected.add('\\');
 		charsExpected.add('*');
 		charsExpected.add('h');
-		charsExpected.add('`');
+		charsExpected.add('\u1234');
+		charsExpected.add('ሴ');
 		Assertions.assertEquals(charsExpected, charList.getValues());
 	}
 	
@@ -264,7 +267,8 @@ class CollectionsTypesTest extends AbstractBaseTest
 		charsExpected.add('\\');
 		charsExpected.add('*');
 		charsExpected.add('h');
-		charsExpected.add('`');
+		charsExpected.add('\u1234');
+		charsExpected.add('ሴ');
 		Assertions.assertEquals(charsExpected, charSet.getValues());
 	}
 	
@@ -363,7 +367,138 @@ class CollectionsTypesTest extends AbstractBaseTest
 	
 	// ---------- maps ----------
 	
+	@Test
+	void test_mapOfBooleans()
+	{
+		BooleanMap booleanMap = getSingleConfigInstance(BooleanMap.class);
+		HashMap<String, Boolean> booleansExpected = new HashMap<>();
+		booleansExpected.put("boolean-1", false);
+		booleansExpected.put("boolean-2", true);
+		booleansExpected.put("boolean-3", false);
+		Assertions.assertEquals(booleansExpected, booleanMap.getValues());
+	}
 	
+	@Test
+	void test_mapOfBytes()
+	{
+		ByteMap byteMap = getSingleConfigInstance(ByteMap.class);
+		HashMap<String, Byte> bytesExpected = new HashMap<>();
+		bytesExpected.put("byte-1", (byte) 100);
+		bytesExpected.put("byte-2", (byte) 23);
+		bytesExpected.put("byte-3", (byte) -122);
+		bytesExpected.put("byte-4", (byte) -80);
+		bytesExpected.put("byte-5", (byte) 100);
+		Assertions.assertEquals(bytesExpected, byteMap.getValues());
+	}
+	
+	@Test
+	void test_mapOfChars()
+	{
+		CharMap charMap = getSingleConfigInstance(CharMap.class);
+		HashMap<String, Character> charsExpected = new HashMap<>();
+		charsExpected.put("char-1", 'w');
+		charsExpected.put("char-2", '8');
+		charsExpected.put("char-3", 'h');
+		charsExpected.put("char-4", '&');
+		charsExpected.put("char-5", '\\');
+		charsExpected.put("char-6", '*');
+		charsExpected.put("char-7", 'h');
+		charsExpected.put("char-8", '\u1234');
+		charsExpected.put("char-9", 'ሴ');
+		Assertions.assertEquals(charsExpected, charMap.getValues());
+	}
+	
+	@Test
+	void test_mapOfShorts()
+	{
+		ShortMap shortMap = getSingleConfigInstance(ShortMap.class);
+		HashMap<String, Short> shortsExpected = new HashMap<>();
+		shortsExpected.put("short-1", (short) 22000);
+		shortsExpected.put("short-2", (short) 3456);
+		shortsExpected.put("short-3", (short) -18000);
+		shortsExpected.put("short-4", (short) 32000);
+		shortsExpected.put("short-5", (short) +32050);
+		shortsExpected.put("short-6", (short) +3456);
+		Assertions.assertEquals(shortsExpected, shortMap.getValues());
+	}
+	
+	@Test
+	void test_mapOfInts()
+	{
+		IntMap intMap = getSingleConfigInstance(IntMap.class);
+		HashMap<String, Integer> intsExpected = new HashMap<>();
+		intsExpected.put("int-1", 123456098);
+		intsExpected.put("int-2", 8479893);
+		intsExpected.put("int-3", 981753);
+		intsExpected.put("int-4", +1792364978);
+		intsExpected.put("int-5", -2132364978);
+		intsExpected.put("int-6", 981753);
+		Assertions.assertEquals(intsExpected, intMap.getValues());
+	}
+	
+	@Test
+	void test_mapOfLongs()
+	{
+		LongMap longMap = getSingleConfigInstance(LongMap.class);
+		HashMap<String, Long> longsExpeted = new HashMap<>();
+		longsExpeted.put("long-1", 22345778909876L);
+		longsExpeted.put("long-2", 1542375271000L);
+		longsExpeted.put("long-3", 1407110697000L);
+		longsExpeted.put("long-4", -1531375271200L);
+		longsExpeted.put("long-5", 22345778909876L);
+		Assertions.assertEquals(longsExpeted, longMap.getValues());
+	}
+	
+	@Test
+	void test_mapOfFloats()
+	{
+		FloatMap floatMap = getSingleConfigInstance(FloatMap.class);
+		HashMap<String, Float> floatsExpected = new HashMap<>();
+		floatsExpected.put("float-1", 3.1415926545f);
+		floatsExpected.put("float-2", 2.0333f);
+		floatsExpected.put("float-3", 0.123456789f);
+		floatsExpected.put("float-4", 0.000003e-14f);
+		floatsExpected.put("float-5", -2.03311f);
+		floatsExpected.put("float-6", 3.1415926545f);
+		Assertions.assertEquals(floatsExpected, floatMap.getValues());
+	}
+	
+	@Test
+	void test_mapOfDoubles()
+	{
+		DoubleMap doubleMap = getSingleConfigInstance(DoubleMap.class);
+		HashMap<String, Double> doublesExpected = new HashMap<>();
+		doublesExpected.put("double-1", 2.040336982365);
+		doublesExpected.put("double-2", 2.040336982365);
+		doublesExpected.put("double-3", 2.140382e-101);
+		doublesExpected.put("double-4", 98765.34567896567);
+		doublesExpected.put("double-5", 2.140382e+122);
+		Assertions.assertEquals(doublesExpected, doubleMap.getValues());
+	}
+	
+	@Test
+	void test_mapOfStrings()
+	{
+		StringMap stringMap = getSingleConfigInstance(StringMap.class);
+		HashMap<String, String> stringsExpected = new HashMap<>();
+		stringsExpected.put("string-1", "horns.hooves@great.org");
+		stringsExpected.put("string-2", "director@great.org");
+		stringsExpected.put("string-3", "horns.hooves@great.org");
+		Assertions.assertEquals(stringsExpected, stringMap.getValues());
+	}
+	
+	@Test
+	void test_mapOfEnums()
+	{
+		NumberNameEnumMap enumsMap = getSingleConfigInstance(NumberNameEnumMap.class);
+		HashMap<String, NumberName> enumsExpected = new HashMap<>();
+		enumsExpected.put("enum-1", NumberName.three);
+		enumsExpected.put("enum-2", NumberName.two);
+		enumsExpected.put("enum-3", NumberName.one);
+		enumsExpected.put("enum-4", NumberName.five);
+		enumsExpected.put("enum-5", NumberName.two);
+		Assertions.assertEquals(enumsExpected, enumsMap.getValues());
+	}
 }
 
 
@@ -588,3 +723,72 @@ interface NumberNameEnumSet
 
 // ---------- maps ----------
 
+@BoundObject(sourcePath = "configs/collections.properties")
+interface BooleanMap
+{
+	@BoundProperty(name = "collection.of.boolean", customTypeOrDeserializer = Boolean.class)
+	Map<String, Boolean> getValues();
+}
+
+@BoundObject(sourcePath = "configs/collections.properties")
+interface ByteMap
+{
+	@BoundProperty(name = "collection.of.byte", customTypeOrDeserializer = Byte.class)
+	Map<String, Byte> getValues();
+}
+
+@BoundObject(sourcePath = "configs/collections.properties")
+interface CharMap
+{
+	@BoundProperty(name = "collection.of.char", customTypeOrDeserializer = Character.class)
+	Map<String, Character> getValues();
+}
+
+@BoundObject(sourcePath = "configs/collections.properties")
+interface ShortMap
+{
+	@BoundProperty(name = "collection.of.short", customTypeOrDeserializer = Short.class)
+	Map<String,Short> getValues();
+}
+
+@BoundObject(sourcePath = "configs/collections.properties")
+interface IntMap
+{
+	@BoundProperty(name = "collection.of.int", customTypeOrDeserializer = Integer.class)
+	Map<String,Integer> getValues();
+}
+
+@BoundObject(sourcePath = "configs/collections.properties")
+interface LongMap
+{
+	@BoundProperty(name = "collection.of.long", customTypeOrDeserializer = Long.class)
+	Map<String,Long> getValues();
+}
+
+@BoundObject(sourcePath = "configs/collections.properties")
+interface FloatMap
+{
+	@BoundProperty(name = "collection.of.float", customTypeOrDeserializer = Float.class)
+	Map<String,Float> getValues();
+}
+
+@BoundObject(sourcePath = "configs/collections.properties")
+interface DoubleMap
+{
+	@BoundProperty(name = "collection.of.double", customTypeOrDeserializer = Double.class)
+	Map<String,Double> getValues();
+}
+
+@BoundObject(sourcePath = "configs/collections.properties")
+interface StringMap
+{
+	@BoundProperty(name = "collection.of.string", customTypeOrDeserializer = String.class)
+	Map<String,String> getValues();
+}
+
+@BoundObject(sourcePath = "configs/collections.properties")
+interface NumberNameEnumMap
+{
+	@BoundProperty(name = "collection.of.enum.numberNames", customTypeOrDeserializer = NumberName.class)
+	Map<String,NumberName> getValues();
+}
