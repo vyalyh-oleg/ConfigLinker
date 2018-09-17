@@ -726,69 +726,69 @@ interface NumberNameEnumSet
 @BoundObject(sourcePath = "configs/collections.properties")
 interface BooleanMap
 {
-	@BoundProperty(name = "collection.of.boolean", customTypeOrDeserializer = Boolean.class)
+	@BoundProperty(name = "map.of.boolean", customTypeOrDeserializer = Boolean.class)
 	Map<String, Boolean> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface ByteMap
 {
-	@BoundProperty(name = "collection.of.byte", customTypeOrDeserializer = Byte.class)
+	@BoundProperty(name = "map.of.byte", customTypeOrDeserializer = Byte.class)
 	Map<String, Byte> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface CharMap
 {
-	@BoundProperty(name = "collection.of.char", customTypeOrDeserializer = Character.class)
+	@BoundProperty(name = "map.of.char", customTypeOrDeserializer = Character.class)
 	Map<String, Character> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface ShortMap
 {
-	@BoundProperty(name = "collection.of.short", customTypeOrDeserializer = Short.class)
+	@BoundProperty(name = "map.of.short", customTypeOrDeserializer = Short.class)
 	Map<String,Short> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface IntMap
 {
-	@BoundProperty(name = "collection.of.int", customTypeOrDeserializer = Integer.class)
+	@BoundProperty(name = "map.of.int", customTypeOrDeserializer = Integer.class)
 	Map<String,Integer> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface LongMap
 {
-	@BoundProperty(name = "collection.of.long", customTypeOrDeserializer = Long.class)
+	@BoundProperty(name = "map.of.long", customTypeOrDeserializer = Long.class)
 	Map<String,Long> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface FloatMap
 {
-	@BoundProperty(name = "collection.of.float", customTypeOrDeserializer = Float.class)
+	@BoundProperty(name = "map.of.float", customTypeOrDeserializer = Float.class)
 	Map<String,Float> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface DoubleMap
 {
-	@BoundProperty(name = "collection.of.double", customTypeOrDeserializer = Double.class)
+	@BoundProperty(name = "map.of.double", customTypeOrDeserializer = Double.class)
 	Map<String,Double> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface StringMap
 {
-	@BoundProperty(name = "collection.of.string", customTypeOrDeserializer = String.class)
+	@BoundProperty(name = "map.of.string", customTypeOrDeserializer = String.class)
 	Map<String,String> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface NumberNameEnumMap
 {
-	@BoundProperty(name = "collection.of.enum.numberNames", customTypeOrDeserializer = NumberName.class)
+	@BoundProperty(name = "map.of.enum.numberNames", customTypeOrDeserializer = NumberName.class)
 	Map<String,NumberName> getValues();
 }

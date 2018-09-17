@@ -2,6 +2,8 @@ package com.configlinker.tests;
 
 import com.configlinker.annotations.BoundObject;
 import com.configlinker.annotations.BoundProperty;
+import com.configlinker.tests.httpserver.DownloadFileHandler;
+import com.configlinker.tests.httpserver.SimpleHttpServer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -26,8 +28,18 @@ class LoadersTest extends AbstractBaseTest
 	@Test
 	void test_HttpLoader()
 	{
-		LoadFromHttp loadFromHttp = getSingleConfigInstance(LoadFromHttp.class);
-		Assertions.assertEquals("http_config.properties", loadFromHttp.getConfigName());
+		try
+		{
+			SimpleHttpServer.prepare();
+			SimpleHttpServer.start();
+			
+			LoadFromHttp loadFromHttp = getSingleConfigInstance(LoadFromHttp.class);
+			Assertions.assertEquals("http_config.properties", loadFromHttp.getConfigName());
+		}
+		finally
+		{
+			SimpleHttpServer.shutdown();
+		}
 	}
 	
 	@Disabled
@@ -54,7 +66,7 @@ interface LoadFromClasspath
 	String getConfigName();
 }
 
-@BoundObject(sourcePath = "http://localhost:5050/configs/http_config.properties", sourceScheme = BoundObject.SourceScheme.HTTP)
+@BoundObject(sourcePath = "http://" + SimpleHttpServer.hostName + ":" + SimpleHttpServer.port + DownloadFileHandler.PATH + "http_config.properties", sourceScheme = BoundObject.SourceScheme.HTTP)
 interface LoadFromHttp
 {
 	@BoundProperty(name = "config.name")
