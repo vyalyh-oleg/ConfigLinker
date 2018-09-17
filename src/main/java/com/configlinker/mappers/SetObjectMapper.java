@@ -6,7 +6,7 @@ import com.configlinker.exceptions.PropertyValidateException;
 import com.configlinker.parsers.PropertyParser;
 
 import java.lang.reflect.Executable;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -19,7 +19,7 @@ class SetObjectMapper<ELEMENT> extends AbstractPropertyMapper<List<String>, Set<
 
 	@Override
 	protected Set<ELEMENT> mapFrom(List<String> valueFromParser)  throws PropertyValidateException, PropertyMapException {
-		HashSet<ELEMENT> set = new HashSet<>();
+		LinkedHashSet<ELEMENT> set = new LinkedHashSet<>();
 		valueFromParser.stream().map(this::<String, ELEMENT>createObject).forEach(set::add);
 		return set;
 	}
