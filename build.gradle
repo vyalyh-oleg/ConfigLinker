@@ -24,7 +24,7 @@ buildscript {
 //		jcenter()
 	}
 	dependencies {
-		classpath group: 'org.junit.platform', name: 'junit-platform-gradle-plugin', version: project.properties['junit.platform.version']
+		
 	}
 }
 
@@ -32,7 +32,6 @@ buildscript {
 apply plugin: 'java-library'
 apply plugin: 'maven'
 //apply plugin: 'application'
-apply plugin: 'org.junit.platform.gradle.plugin'
 
 
 repositories {
@@ -127,41 +126,31 @@ tasks.withType(JavaExec) {
 */
 
 test {
+	//debug=true
+	//failFast = true
+
+	systemProperty 'java.util.logging.config.file', 'logging.properties'
+	systemProperty 'org.slf4j.simpleLogger.defaultLogLevel', 'TRACE'
+	//systemProperty 'java.util.logging.manager', 'org.apache.logging.log4j.jul.LogManager'
+
 	workingDir "./test_workdir"
-	useJUnitPlatform()
-//	debug=true
-//	failFast = true
-}
-
-junitPlatform {
-//	details 'tree'
-//	platformVersion 1.0
-//	logManager "org.apache.logging.log4j.jul.LogManager"
-	reportsDir "build/test-results/junit-platform" // this is the default
-//	 enableStandardTestTask true
-/*
-	engines {
-		include 'junit-jupiter'
-		// exclude 'junit-vintage'
+	
+	useJUnitPlatform{
+		// includeTags 'fast', 'smoke & feature-a'
+		// excludeTags 'slow', 'ci'
+		// includeEngines 'junit-jupiter'
+		// excludeEngines 'junit-vintage'
 	}
-*/
-/*
-	tags {
-		include 'fast', 'smoke'
-		// exclude 'slow', 'ci'
-	}
-*/
-//	includeClassNamePattern '.*Tests'
 }
 
 /*
-cleanJunitPlatformTest {
+cleanTest {
 	delete "./test_workdir.tmp"
 }
 */
 
-junitPlatformTest.doFirst {
-	println "See reports here: '" + junitPlatform.reportsDir + "'."
+test.doFirst {
+	println "See reports here: '" + reportsDir + "'."
 /*
 	mkdir("./test_workdir")
 	copy {
@@ -169,11 +158,4 @@ junitPlatformTest.doFirst {
 		into "./test_workdir"
 	}
 */
-}
-
-junitPlatformTest {
-//	debug=true
-	systemProperty 'java.util.logging.config.file', 'logging.properties'
-	systemProperty 'org.slf4j.simpleLogger.defaultLogLevel', 'TRACE'
-	workingDir "./test_workdir"
 }
