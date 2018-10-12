@@ -67,23 +67,23 @@ abstract class AbstractPropertyMapper<RAW_TYPE, MAPPED_TYPE> implements Property
 		{
 			this.executable.setAccessible(true);
 			
-			if (Deserializer.class.isAssignableFrom(this.executable.getDeclaringClass()))
+			if (this.executable instanceof Constructor)
+				returnElement = ((Constructor<RETURN_TYPE>) this.executable).newInstance(elementValue);
+			
+			// implementation for specific type methods
+			if (returnElement == null)
+				returnElement = getReturnElementForPredefinedType(elementValue);
+			
+			if (returnElement == null && Modifier.isStatic(this.executable.getModifiers()))
+				returnElement = (RETURN_TYPE) ((Method) this.executable).invoke(null, elementValue);
+			
+			if (returnElement == null && Deserializer.class.isAssignableFrom(this.executable.getDeclaringClass()))
 			{
 				Constructor constructor = this.executable.getDeclaringClass().getDeclaredConstructor();
 				constructor.setAccessible(true);
 				Object deserizlizerInstance = constructor.newInstance();
 				returnElement = (RETURN_TYPE) ((Method) this.executable).invoke(deserizlizerInstance, elementValue);
 			}
-			
-			// implementation for specific type methods
-			if (returnElement == null)
-				returnElement = getReturnElementForPredefinedType(elementValue);
-			
-			if (returnElement == null && this.executable instanceof Constructor)
-				returnElement = ((Constructor<RETURN_TYPE>) this.executable).newInstance(elementValue);
-			
-			if (returnElement == null && Modifier.isStatic(this.executable.getModifiers()))
-				returnElement = (RETURN_TYPE) ((Method) this.executable).invoke(null, elementValue);
 		}
 		catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e)
 		{

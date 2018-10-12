@@ -118,6 +118,7 @@ public final class MapperFactory
 		executable = getMethodForPredefinedType(customTypeOrDeserializer);
 		if (executable != null)
 			// because all predefined types are constructed from strings
+			// TODO: should be added properly 'deserializationMethod' determinatioin
 			deserializationMethod = BoundProperty.DeserializationMethod.CONSTRUCTOR_STRING;
 		else
 		{
