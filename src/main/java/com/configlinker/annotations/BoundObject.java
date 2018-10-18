@@ -87,7 +87,7 @@ public @interface BoundObject {
 	 * <p>Used only if here or in {@link FactoryConfigBuilder#setTrackPolicy(BoundObject.TrackPolicy)} specified {@link TrackPolicy#ENABLE}, and the {@link SourceScheme#HTTP}.
 	 * <p>Otherwise this parameter ignored.
 	 * <p>Default value is '0' which mean inherited behaviour (will be used value from {@code FactoryConfigBuilder} (equal '60' seconds).
-	 * <p>MIN value = 15 seconds, MAX value = 86400 seconds (24 hours = 24*3600 seconds).
+	 * <p>MIN value = 15 seconds, MAX value = 86400 seconds (1 day = 24 hours * 3600 seconds).
 	 * @return -
 	 */
 	int trackingInterval() default 0;

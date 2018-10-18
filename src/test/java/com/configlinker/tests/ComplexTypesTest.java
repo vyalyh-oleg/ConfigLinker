@@ -52,8 +52,8 @@ class ComplexTypesTest extends AbstractBaseTest
 	@Test
 	void test_getWithStringDeserializer()
 	{
-		TypeCompany_fromDeserializerString typeCompany_fromDeserializer = getSingleConfigInstance(TypeCompany_fromDeserializerString.class);
-		Company company = typeCompany_fromDeserializer.getCompany();
+		TypeCompany_fromDeserializerString typeCompany_fromDeserializerString = getSingleConfigInstance(TypeCompany_fromDeserializerString.class);
+		Company company = typeCompany_fromDeserializerString.getCompany();
 		Assertions.assertEquals(companyInConfigFile, company);
 		Assertions.assertEquals(BoundProperty.DeserializationMethod.DESERIALIZER_STRING, company.deserializationMethod);
 	}
@@ -76,7 +76,53 @@ class ComplexTypesTest extends AbstractBaseTest
 		Assertions.assertEquals(BoundProperty.DeserializationMethod.DESERIALIZER_STRING, companyFromDeserizlizer.deserializationMethod);
 	}
 	
+	@Test
+	void test_getWithMapConstructor()
+	{
+		TypeCompany_fromConstructorMap typeCompany_fromConstructorMap = getSingleConfigInstance(TypeCompany_fromConstructorMap.class);
+		Company company = typeCompany_fromConstructorMap.getCompany();
+		Assertions.assertEquals(companyInConfigFile, company);
+		Assertions.assertEquals(BoundProperty.DeserializationMethod.CONSTRUCTOR_MAP, company.deserializationMethod);
+	}
 	
+	@Test
+	void test_getWithMapValueOf()
+	{
+		TypeCompany_fromValueOfMap typeCompany_fromValueOfMap = getSingleConfigInstance(TypeCompany_fromValueOfMap.class);
+		Company company = typeCompany_fromValueOfMap.getCompany();
+		Assertions.assertEquals(companyInConfigFile, company);
+		Assertions.assertEquals(BoundProperty.DeserializationMethod.VALUEOF_MAP, company.deserializationMethod);
+	}
+	
+	@Test
+	void test_getWithMapDeserializer()
+	{
+		TypeCompany_fromDeserializerMap typeCompany_fromDeserializerMap = getSingleConfigInstance(TypeCompany_fromDeserializerMap.class);
+		Company company = typeCompany_fromDeserializerMap.getCompany();
+		Assertions.assertEquals(companyInConfigFile, company);
+		Assertions.assertEquals(BoundProperty.DeserializationMethod.DESERIALIZER_MAP, company.deserializationMethod);
+	}
+	
+	@Test
+	void test_getWithMapMixedWaysSimultaneously()
+	{
+		TypeCompany_MixedMap typeCompany_mixedMap = getSingleConfigInstance(TypeCompany_MixedMap.class);
+		
+		Company companyFromConstructor = typeCompany_mixedMap.getCompany_fromConstructorMap();
+		Assertions.assertEquals(companyInConfigFile, companyFromConstructor);
+		Assertions.assertEquals(BoundProperty.DeserializationMethod.CONSTRUCTOR_MAP, companyFromConstructor.deserializationMethod);
+		
+		Company companyFromValueOf = typeCompany_mixedMap.getCompany_fromValueOfMap();
+		Assertions.assertEquals(companyInConfigFile, companyFromValueOf);
+		Assertions.assertEquals(BoundProperty.DeserializationMethod.VALUEOF_MAP, companyFromValueOf.deserializationMethod);
+		
+		Company companyFromDeserizlizer = typeCompany_mixedMap.getCompany_fromDeserializerMap();
+		Assertions.assertEquals(companyInConfigFile, companyFromDeserizlizer);
+		Assertions.assertEquals(BoundProperty.DeserializationMethod.DESERIALIZER_MAP, companyFromDeserizlizer.deserializationMethod);
+	}
+	
+	
+	// TODO: collection of complex types
 }
 
 
@@ -117,35 +163,35 @@ interface TypeCompany_MixedString
 @BoundObject(sourcePath = "configs/complex_types.properties")
 interface TypeCompany_fromConstructorMap
 {
-	@BoundProperty(name = "com.mycompany.info", deserializationMethod = BoundProperty.DeserializationMethod.CONSTRUCTOR_MAP)
+	@BoundProperty(name = "com.mycompany.info.map", deserializationMethod = BoundProperty.DeserializationMethod.CONSTRUCTOR_MAP)
 	Company getCompany();
 }
 
 @BoundObject(sourcePath = "configs/complex_types.properties")
 interface TypeCompany_fromValueOfMap
 {
-	@BoundProperty(name = "com.mycompany.info", deserializationMethod = BoundProperty.DeserializationMethod.VALUEOF_MAP)
+	@BoundProperty(name = "com.mycompany.info.map", deserializationMethod = BoundProperty.DeserializationMethod.VALUEOF_MAP)
 	Company getCompany();
 }
 
 @BoundObject(sourcePath = "configs/complex_types.properties")
 interface TypeCompany_fromDeserializerMap
 {
-	@BoundProperty(name = "com.mycompany.info", deserializationMethod = BoundProperty.DeserializationMethod.DESERIALIZER_MAP)
+	@BoundProperty(name = "com.mycompany.info.map", deserializationMethod = BoundProperty.DeserializationMethod.DESERIALIZER_MAP)
 	Company getCompany();
 }
 
 @BoundObject(sourcePath = "configs/complex_types.properties")
 interface TypeCompany_MixedMap
 {
-	@BoundProperty(name = "com.mycompany.info", deserializationMethod = BoundProperty.DeserializationMethod.CONSTRUCTOR_MAP)
-	Company getCompany_fromConstructorString();
+	@BoundProperty(name = "com.mycompany.info.map", deserializationMethod = BoundProperty.DeserializationMethod.CONSTRUCTOR_MAP)
+	Company getCompany_fromConstructorMap();
 	
-	@BoundProperty(name = "com.mycompany.info", deserializationMethod = BoundProperty.DeserializationMethod.VALUEOF_MAP)
-	Company getCompany_fromValueOfString();
+	@BoundProperty(name = "com.mycompany.info.map", deserializationMethod = BoundProperty.DeserializationMethod.VALUEOF_MAP)
+	Company getCompany_fromValueOfMap();
 	
-	@BoundProperty(name = "com.mycompany.info", deserializationMethod = BoundProperty.DeserializationMethod.DESERIALIZER_MAP)
-	Company getCompany_fromDeserializerString();
+	@BoundProperty(name = "com.mycompany.info.map", deserializationMethod = BoundProperty.DeserializationMethod.DESERIALIZER_MAP)
+	Company getCompany_fromDeserializerMap();
 }
 
 class Company implements Deserializer<Company>
@@ -192,8 +238,8 @@ class Company implements Deserializer<Company>
 	private static void parseFromMap(Company company, Map<String, String> rawKeyValues)
 	{
 		company.name = rawKeyValues.get("name");
-		company.emails = Arrays.stream(rawKeyValues.get("emails").split(",")).map(String::trim).toArray(String[]::new);
-		company.phoneNumbers = Arrays.stream(rawKeyValues.get("phoneNumbers").split(",")).map(String::trim).toArray(String[]::new);
+		company.emails = Arrays.stream(rawKeyValues.get("emails").split(";")).map(String::trim).toArray(String[]::new);
+		company.phoneNumbers = Arrays.stream(rawKeyValues.get("phoneNumbers").split(";")).map(String::trim).toArray(String[]::new);
 		company.ceo = rawKeyValues.get("ceo");
 		company.dateFoundation = Short.parseShort(rawKeyValues.get("dateFoundation"));
 		company.authorizedCapital = Double.parseDouble(rawKeyValues.get("authorizedCapital"));
@@ -221,10 +267,10 @@ class Company implements Deserializer<Company>
 	}
 	
 	@Override
-	public Company deserialize(Map<String, String> rawValue)
+	public Company deserialize(Map<String, String> stringValues)
 	{
 		Company newCompany = new Company();
-		parseFromMap(newCompany, rawValue);
+		parseFromMap(newCompany, stringValues);
 		newCompany.deserializationMethod = BoundProperty.DeserializationMethod.DESERIALIZER_MAP;
 		return newCompany;
 	}

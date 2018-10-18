@@ -78,18 +78,19 @@ public @interface BoundProperty {
 	 * <li>{@code Set<String>}</li>
 	 * <li>{@code Map<String,String>}</li>
 	 * </ul>
-	 * <p>If you want to use custom return type (or array of custom types), you must just implement deserialization logic for it and point choice in {@link #deserializationMethod()}. And no need any changes in the current parameter.
-	 * <p>If you want to use custom return type as generic type for {@code List}, {@code Set} or {@code Map} (only for value), you must indicate here it {@code Class}.
+	 * <p>If you want to use <b>custom return type (or array of custom types)</b>, you must just implement deserialization logic for it and point choice in {@link #deserializationMethod()}. And no need any changes in the current parameter.
+	 * <br/>
+	 * <p>If you want to use <b>custom return type as generic type</b> for {@code List}, {@code Set} or {@code Map} (only for value), you must indicate here it generic {@code Class}.
+	 * <br/>
 	 * <p>If you write own deserializer implementation of {@link Deserializer}, it {@code Class} must be specified here instead of return type class.
 	 * <p>
-	 * <br>
 	 * <p>Pay attention, you have different ways to implement deserialization logic, which are described in ({@link DeserializationMethod}):
 	 * <ul>
-	 * <li>write special constructor for your class, see {@link DeserializationMethod#CONSTRUCTOR_STRING}, {@link DeserializationMethod#CONSTRUCTOR_MAP};</li>
-	 * <li>write static instance generator method in your class, see {@link DeserializationMethod#VALUEOF_STRING}, {@link DeserializationMethod#VALUEOF_MAP};</li>
-	 * <li>write separate deserializer class, see {@link DeserializationMethod#DESERIALIZER_STRING}, {@link DeserializationMethod#DESERIALIZER_MAP}.</li>
+	 * <li>write special constructor for your class, see <br/>{@link DeserializationMethod#CONSTRUCTOR_STRING}, {@link DeserializationMethod#CONSTRUCTOR_MAP};</li>
+	 * <li>write static instance generator method in your class, see <br/> {@link DeserializationMethod#VALUEOF_STRING}, {@link DeserializationMethod#VALUEOF_MAP};</li>
+	 * <li>write separate deserializer class, see <br/> {@link DeserializationMethod#DESERIALIZER_STRING}, {@link DeserializationMethod#DESERIALIZER_MAP}.</li>
 	 * </ul>
-	 * <p>If return type for you configuration method is List, Set or Map, then only {@link DeserializationMethod#CONSTRUCTOR_STRING}, {@link DeserializationMethod#VALUEOF_STRING}, {@link DeserializationMethod#DESERIALIZER_STRING} allowed as deserialization method for it's values.
+	 * <p>If return type for you configuration method is List, Set or Map, then only <br/> {@link DeserializationMethod#CONSTRUCTOR_STRING}, {@link DeserializationMethod#VALUEOF_STRING}, {@link DeserializationMethod#DESERIALIZER_STRING} <br/> allowed as deserialization method for their values.
 	 * @return -
 	 */
 	Class<?> customTypeOrDeserializer() default Object.class;
@@ -128,9 +129,8 @@ public @interface BoundProperty {
 	 * <li>{@link #DESERIALIZER_MAP}</li>
 	 * </ul>
 	 * <p>By default, the appropriate deserialization method will be tried to found out automatically.
-	 * <p>If you occasionally implement multiple deserialization variants, you must choose appropriate value manually.
+	 * <p>If your class implements multiple deserialization variants, you must choose appropriate value manually.
 	 * <p>If return type for you configuration method is List, Set or Map, then only {@link #CONSTRUCTOR_STRING}, {@link #VALUEOF_STRING}, {@link #DESERIALIZER_STRING} allowed as deserialization method for it's values.
-	 * <p>If you implemented custom deserializer, use {@link DeserializationMethod#DESERIALIZER_STRING}, {@link DeserializationMethod#DESERIALIZER_MAP}.</p>
 	 * <br>
 	 * <p><b>See also:</b> {@link BoundProperty#customTypeOrDeserializer()} and {@link BoundProperty#deserializationMethod()}</p>
 	 *
@@ -162,11 +162,11 @@ public @interface BoundProperty {
 		 */
 		VALUEOF_MAP,
 		/**
-		 * <p>Chose this variant if you implement {@link Deserializer#deserialize(String)}.
+		 * <p>Chose this variant if your class implements interface {@link Deserializer} and method {@link Deserializer#deserialize(String rawValue)}.
 		 */
 		DESERIALIZER_STRING,
 		/**
-		 * <p>Chose this variant if you implement {@link Deserializer#deserialize(Map)}.
+		 * <p>Chose this variant if your class implements interface {@link Deserializer} and method {@link Deserializer#deserialize(Map stringValues)}.
 		 */
 		DESERIALIZER_MAP
 		;
