@@ -1,6 +1,6 @@
 package com.configlinker.annotations;
 
-import com.configlinker.ConfigChangeListener;
+import com.configlinker.IConfigChangeListener;
 import com.configlinker.ErrorBehavior;
 import com.configlinker.FactoryConfigBuilder;
 
@@ -96,7 +96,7 @@ public @interface BoundObject {
 	 *
 	 * @return -
 	 */
-	Class<? extends ConfigChangeListener> changeListener() default ConfigChangeListener.class;
+	Class<? extends IConfigChangeListener> changeListener() default IConfigChangeListener.class;
 
 	/**
 	 * <p>

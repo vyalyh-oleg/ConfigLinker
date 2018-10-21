@@ -1,6 +1,6 @@
 package com.configlinker.loaders;
 
-import com.configlinker.ConfigChangeListener;
+import com.configlinker.IConfigChangeListener;
 import com.configlinker.ConfigChangedEvent;
 import com.configlinker.ConfigDescription;
 import com.configlinker.ErrorBehavior;
@@ -88,7 +88,7 @@ abstract class AbstractLoader {
 	}
 
 	/**
-	 * <p>Suppress all exceptions, because this methods is called during runtime when configuration is refreshed. If exception appear during refreshing ConfigLinker just send {@link ConfigChangedEvent} to all {@link ConfigChangeListener}s.
+	 * <p>Suppress all exceptions, because this methods is called during runtime when configuration is refreshed. If exception appear during refreshing ConfigLinker just send {@link ConfigChangedEvent} to all {@link IConfigChangeListener}s.
 	 * @param configDescriptions -
 	 */
 	final protected void refreshProperties(Set<ConfigDescription> configDescriptions) {
