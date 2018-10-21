@@ -9,15 +9,25 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 
 @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
 class ComplexTypesTest extends AbstractBaseTest
 {
 	private Company companyInConfigFile;
+	
+	// affiliates.info.list = Horns and hooves // horns.hooves@great.org, director@great.org // 456-876-876, 764-143-078 // Peter Jackson // 1993 // 140500.82 ,\
+	//                       Moon Light // admin@moonlight.org, review@moonlight.org // (122) 544-56-78, 7648 // Peter Jackson // 1985 // 1000.00 ,\
+	//                       Simple and Affordable // director@simpaff.org, feedback@simpaff.org // (556) 44-55-987, 98-55 // Peter Jackson // 2008 // 12500. ,\
+	//                       Moon Light // admin@moonlight.org, review@moonlight.org // (122) 544-56-78, 7648 // Peter Jackson // 1985 // 1000.00
+	
+	private List<Company> companiesInConfigFile;
 	
 	@BeforeAll
 	void initHardcodedValues()
@@ -29,6 +39,10 @@ class ComplexTypesTest extends AbstractBaseTest
 		companyInConfigFile.ceo = "Peter Jackson";
 		companyInConfigFile.dateFoundation = 1993;
 		companyInConfigFile.authorizedCapital = 140500.82;
+		
+		companiesInConfigFile = new ArrayList<>();
+		
+		
 	}
 	
 	@Test
@@ -123,76 +137,207 @@ class ComplexTypesTest extends AbstractBaseTest
 	
 	
 	// TODO: collection of complex types
+	
+	@Test
+	void test_getWithStringMixedWaysForArray()
+	{
+		TypeCompany_array typeCompany_mixedMap = getSingleConfigInstance(TypeCompany_array.class);
+		
+		Company companyFromConstructor = typeCompany_mixedMap.getCompany_fromConstructorMap();
+		Assertions.assertEquals(companyInConfigFile, companyFromConstructor);
+		Assertions.assertEquals(BoundProperty.DeserializationMethod.CONSTRUCTOR_MAP, companyFromConstructor.deserializationMethod);
+		
+		Company companyFromValueOf = typeCompany_mixedMap.getCompany_fromValueOfMap();
+		Assertions.assertEquals(companyInConfigFile, companyFromValueOf);
+		Assertions.assertEquals(BoundProperty.DeserializationMethod.VALUEOF_MAP, companyFromValueOf.deserializationMethod);
+		
+		Company companyFromDeserizlizer = typeCompany_mixedMap.getCompany_fromDeserializerMap();
+		Assertions.assertEquals(companyInConfigFile, companyFromDeserizlizer);
+		Assertions.assertEquals(BoundProperty.DeserializationMethod.DESERIALIZER_MAP, companyFromDeserizlizer.deserializationMethod);
+	}
+	
+	@Test
+	void test_getWithStringMixedWaysForList()
+	{
+		TypeCompany_list typeCompany_mixedMap = getSingleConfigInstance(TypeCompany_list.class);
+		
+		Company companyFromConstructor = typeCompany_mixedMap.getCompany_fromConstructorMap();
+		Assertions.assertEquals(companyInConfigFile, companyFromConstructor);
+		Assertions.assertEquals(BoundProperty.DeserializationMethod.CONSTRUCTOR_MAP, companyFromConstructor.deserializationMethod);
+		
+		Company companyFromValueOf = typeCompany_mixedMap.getCompany_fromValueOfMap();
+		Assertions.assertEquals(companyInConfigFile, companyFromValueOf);
+		Assertions.assertEquals(BoundProperty.DeserializationMethod.VALUEOF_MAP, companyFromValueOf.deserializationMethod);
+		
+		Company companyFromDeserizlizer = typeCompany_mixedMap.getCompany_fromDeserializerMap();
+		Assertions.assertEquals(companyInConfigFile, companyFromDeserizlizer);
+		Assertions.assertEquals(BoundProperty.DeserializationMethod.DESERIALIZER_MAP, companyFromDeserizlizer.deserializationMethod);
+	}
+	
+	@Test
+	void test_getWithStringMixedWaysForSet()
+	{
+		TypeCompany_set typeCompany_mixedMap = getSingleConfigInstance(TypeCompany_set.class);
+		
+		Company companyFromConstructor = typeCompany_mixedMap.getCompany_fromConstructorMap();
+		Assertions.assertEquals(companyInConfigFile, companyFromConstructor);
+		Assertions.assertEquals(BoundProperty.DeserializationMethod.CONSTRUCTOR_MAP, companyFromConstructor.deserializationMethod);
+		
+		Company companyFromValueOf = typeCompany_mixedMap.getCompany_fromValueOfMap();
+		Assertions.assertEquals(companyInConfigFile, companyFromValueOf);
+		Assertions.assertEquals(BoundProperty.DeserializationMethod.VALUEOF_MAP, companyFromValueOf.deserializationMethod);
+		
+		Company companyFromDeserizlizer = typeCompany_mixedMap.getCompany_fromDeserializerMap();
+		Assertions.assertEquals(companyInConfigFile, companyFromDeserizlizer);
+		Assertions.assertEquals(BoundProperty.DeserializationMethod.DESERIALIZER_MAP, companyFromDeserizlizer.deserializationMethod);
+	}
+	
+	@Test
+	void test_getWithStringMixedWaysForMap()
+	{
+		TypeCompany_map typeCompany_mixedMap = getSingleConfigInstance(TypeCompany_map.class);
+		
+		Company companyFromConstructor = typeCompany_mixedMap.getCompany_fromConstructorMap();
+		Assertions.assertEquals(companyInConfigFile, companyFromConstructor);
+		Assertions.assertEquals(BoundProperty.DeserializationMethod.CONSTRUCTOR_MAP, companyFromConstructor.deserializationMethod);
+		
+		Company companyFromValueOf = typeCompany_mixedMap.getCompany_fromValueOfMap();
+		Assertions.assertEquals(companyInConfigFile, companyFromValueOf);
+		Assertions.assertEquals(BoundProperty.DeserializationMethod.VALUEOF_MAP, companyFromValueOf.deserializationMethod);
+		
+		Company companyFromDeserizlizer = typeCompany_mixedMap.getCompany_fromDeserializerMap();
+		Assertions.assertEquals(companyInConfigFile, companyFromDeserizlizer);
+		Assertions.assertEquals(BoundProperty.DeserializationMethod.DESERIALIZER_MAP, companyFromDeserizlizer.deserializationMethod);
+	}
+	
+	// autorecognize generics
+	// default values ? (like a fallback config)
+	// variables in configs
 }
 
 
 @BoundObject(sourcePath = "configs/complex_types.properties")
 interface TypeCompany_fromConstructorString
 {
-	@BoundProperty(name = "com.mycompany.info", deserializationMethod = BoundProperty.DeserializationMethod.CONSTRUCTOR_STRING)
+	@BoundProperty(name = "affiliate.horns-and-hooves.info.string", deserializationMethod = BoundProperty.DeserializationMethod.CONSTRUCTOR_STRING)
 	Company getCompany();
 }
 
 @BoundObject(sourcePath = "configs/complex_types.properties")
 interface TypeCompany_fromValueOfString
 {
-	@BoundProperty(name = "com.mycompany.info", deserializationMethod = BoundProperty.DeserializationMethod.VALUEOF_STRING)
+	@BoundProperty(name = "affiliate.horns-and-hooves.info.string", deserializationMethod = BoundProperty.DeserializationMethod.VALUEOF_STRING)
 	Company getCompany();
 }
 
 @BoundObject(sourcePath = "configs/complex_types.properties")
 interface TypeCompany_fromDeserializerString
 {
-	@BoundProperty(name = "com.mycompany.info", deserializationMethod = BoundProperty.DeserializationMethod.DESERIALIZER_STRING)
+	@BoundProperty(name = "affiliate.horns-and-hooves.info.string", deserializationMethod = BoundProperty.DeserializationMethod.DESERIALIZER_STRING)
 	Company getCompany();
 }
 
 @BoundObject(sourcePath = "configs/complex_types.properties")
 interface TypeCompany_MixedString
 {
-	@BoundProperty(name = "com.mycompany.info", deserializationMethod = BoundProperty.DeserializationMethod.CONSTRUCTOR_STRING)
+	@BoundProperty(name = "affiliate.horns-and-hooves.info.string", deserializationMethod = BoundProperty.DeserializationMethod.CONSTRUCTOR_STRING)
 	Company getCompany_fromConstructorString();
 	
-	@BoundProperty(name = "com.mycompany.info", deserializationMethod = BoundProperty.DeserializationMethod.VALUEOF_STRING)
+	@BoundProperty(name = "affiliate.horns-and-hooves.info.string", deserializationMethod = BoundProperty.DeserializationMethod.VALUEOF_STRING)
 	Company getCompany_fromValueOfString();
 	
-	@BoundProperty(name = "com.mycompany.info", deserializationMethod = BoundProperty.DeserializationMethod.DESERIALIZER_STRING)
+	@BoundProperty(name = "affiliate.horns-and-hooves.info.string", deserializationMethod = BoundProperty.DeserializationMethod.DESERIALIZER_STRING)
 	Company getCompany_fromDeserializerString();
 }
+
 
 @BoundObject(sourcePath = "configs/complex_types.properties")
 interface TypeCompany_fromConstructorMap
 {
-	@BoundProperty(name = "com.mycompany.info.map", deserializationMethod = BoundProperty.DeserializationMethod.CONSTRUCTOR_MAP)
+	@BoundProperty(name = "affiliate.horns-and-hooves.info.map", deserializationMethod = BoundProperty.DeserializationMethod.CONSTRUCTOR_MAP)
 	Company getCompany();
 }
 
 @BoundObject(sourcePath = "configs/complex_types.properties")
 interface TypeCompany_fromValueOfMap
 {
-	@BoundProperty(name = "com.mycompany.info.map", deserializationMethod = BoundProperty.DeserializationMethod.VALUEOF_MAP)
+	@BoundProperty(name = "affiliate.horns-and-hooves.info.map", deserializationMethod = BoundProperty.DeserializationMethod.VALUEOF_MAP)
 	Company getCompany();
 }
 
 @BoundObject(sourcePath = "configs/complex_types.properties")
 interface TypeCompany_fromDeserializerMap
 {
-	@BoundProperty(name = "com.mycompany.info.map", deserializationMethod = BoundProperty.DeserializationMethod.DESERIALIZER_MAP)
+	@BoundProperty(name = "affiliate.horns-and-hooves.info.map", deserializationMethod = BoundProperty.DeserializationMethod.DESERIALIZER_MAP)
 	Company getCompany();
 }
 
 @BoundObject(sourcePath = "configs/complex_types.properties")
 interface TypeCompany_MixedMap
 {
-	@BoundProperty(name = "com.mycompany.info.map", deserializationMethod = BoundProperty.DeserializationMethod.CONSTRUCTOR_MAP)
+	@BoundProperty(name = "affiliate.horns-and-hooves.info.map", deserializationMethod = BoundProperty.DeserializationMethod.CONSTRUCTOR_MAP)
 	Company getCompany_fromConstructorMap();
 	
-	@BoundProperty(name = "com.mycompany.info.map", deserializationMethod = BoundProperty.DeserializationMethod.VALUEOF_MAP)
+	@BoundProperty(name = "affiliate.horns-and-hooves.info.map", deserializationMethod = BoundProperty.DeserializationMethod.VALUEOF_MAP)
 	Company getCompany_fromValueOfMap();
 	
-	@BoundProperty(name = "com.mycompany.info.map", deserializationMethod = BoundProperty.DeserializationMethod.DESERIALIZER_MAP)
+	@BoundProperty(name = "affiliate.horns-and-hooves.info.map", deserializationMethod = BoundProperty.DeserializationMethod.DESERIALIZER_MAP)
 	Company getCompany_fromDeserializerMap();
 }
+
+
+@BoundObject(sourcePath = "configs/complex_types.properties")
+interface TypeCompany_array
+{
+	@BoundProperty(name = "affiliates.info.list", deserializationMethod = BoundProperty.DeserializationMethod.CONSTRUCTOR_STRING)
+	Company[] getArrayCompanies_fromConstructorString();
+	
+	@BoundProperty(name = "affiliates.info.list", deserializationMethod = BoundProperty.DeserializationMethod.VALUEOF_STRING)
+	Company[] getArrayCompanies_fromValueOfString();
+	
+	@BoundProperty(name = "affiliates.info.list", deserializationMethod = BoundProperty.DeserializationMethod.DESERIALIZER_STRING)
+	Company[] getArrayCompanies_fromDeserializerString();
+}
+
+@BoundObject(sourcePath = "configs/complex_types.properties")
+interface TypeCompany_list
+{
+	@BoundProperty(name = "affiliates.info.list", customTypeOrDeserializer = Company.class, deserializationMethod = BoundProperty.DeserializationMethod.CONSTRUCTOR_STRING)
+	List<Company> getListCompanies_fromConstructorString();
+	
+	@BoundProperty(name = "affiliates.info.list", customTypeOrDeserializer = Company.class, deserializationMethod = BoundProperty.DeserializationMethod.VALUEOF_STRING)
+	List<Company> getListCompanies_fromValueOfString();
+	
+	@BoundProperty(name = "affiliates.info.list", customTypeOrDeserializer = Company.class, deserializationMethod = BoundProperty.DeserializationMethod.DESERIALIZER_STRING)
+	List<Company> getListCompanies_fromDeserializerString();
+}
+
+@BoundObject(sourcePath = "configs/complex_types.properties")
+interface TypeCompany_set
+{
+	@BoundProperty(name = "affiliates.info.list", customTypeOrDeserializer = Company.class, deserializationMethod = BoundProperty.DeserializationMethod.CONSTRUCTOR_STRING)
+	Set<Company> getSetCompanies_fromConstructorString();
+	
+	@BoundProperty(name = "affiliates.info.list", customTypeOrDeserializer = Company.class, deserializationMethod = BoundProperty.DeserializationMethod.VALUEOF_STRING)
+	Set<Company> getSetCompanies_fromValueOfString();
+	
+	@BoundProperty(name = "affiliates.info.list", customTypeOrDeserializer = Company.class, deserializationMethod = BoundProperty.DeserializationMethod.DESERIALIZER_STRING)
+	Set<Company> getSetCompanies_fromDeserializerString();
+}
+
+@BoundObject(sourcePath = "configs/complex_types.properties")
+interface TypeCompany_map
+{
+	@BoundProperty(name = "affiliates.info.map", customTypeOrDeserializer = Company.class, deserializationMethod = BoundProperty.DeserializationMethod.CONSTRUCTOR_STRING)
+	Map<String, Company> getMapCompanies_fromConstructorString();
+	
+	@BoundProperty(name = "affiliates.info.map", customTypeOrDeserializer = Company.class, deserializationMethod = BoundProperty.DeserializationMethod.VALUEOF_STRING)
+	Map<String, Company> getMapCompanies_fromValueOfString();
+	
+	@BoundProperty(name = "affiliates.info.map", customTypeOrDeserializer = Company.class, deserializationMethod = BoundProperty.DeserializationMethod.DESERIALIZER_STRING)
+	Map<String, Company> getMapCompanies_fromDeserializerString();
+}
+
 
 class Company implements Deserializer<Company>
 {

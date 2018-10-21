@@ -1,6 +1,7 @@
 package com.configlinker;
 
 
-public interface ConfigChangeListener {
+public interface ConfigChangeListener
+{
 	void configChanged(ConfigChangedEvent configChangedEvent);
 }
