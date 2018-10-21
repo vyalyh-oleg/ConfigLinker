@@ -1,7 +1,7 @@
 package com.configlinker.mappers;
 
-import com.configlinker.Deserializer;
-import com.configlinker.PropertyValidator;
+import com.configlinker.IDeserializer;
+import com.configlinker.IPropertyValidator;
 import com.configlinker.exceptions.PropertyMapException;
 import com.configlinker.exceptions.PropertyMatchException;
 import com.configlinker.exceptions.PropertyValidateException;
@@ -15,7 +15,7 @@ import java.lang.reflect.Modifier;
 import java.util.regex.Pattern;
 
 
-abstract class AbstractPropertyMapper<RAW_TYPE, MAPPED_TYPE> implements PropertyMapper<MAPPED_TYPE>
+abstract class AbstractPropertyMapper<RAW_TYPE, MAPPED_TYPE> implements IPropertyMapper<MAPPED_TYPE>
 {
 	protected final PropertyParser<RAW_TYPE> propertyParser;
 	private final boolean ignoreWhitespaces;
@@ -24,10 +24,10 @@ abstract class AbstractPropertyMapper<RAW_TYPE, MAPPED_TYPE> implements Property
 	private String delimiterForKeyValue;
 	protected final Executable executable;
 	protected final Pattern regexpPattern;
-	private final PropertyValidator validator;
+	private final IPropertyValidator validator;
 	
 	AbstractPropertyMapper(Class<?> returnType, PropertyParser<RAW_TYPE> propertyParser, boolean ignoreWhitespaces, Executable executable,
-	  Pattern regexpPattern, PropertyValidator validator, String delimiterForList, String delimiterForKeyValue)
+	  Pattern regexpPattern, IPropertyValidator validator, String delimiterForList, String delimiterForKeyValue)
 	{
 		this.returnType = returnType;
 		this.propertyParser = propertyParser;
@@ -77,7 +77,7 @@ abstract class AbstractPropertyMapper<RAW_TYPE, MAPPED_TYPE> implements Property
 			if (returnElement == null && Modifier.isStatic(this.executable.getModifiers()))
 				returnElement = (RETURN_TYPE) ((Method) this.executable).invoke(null, elementValue);
 			
-			if (returnElement == null && Deserializer.class.isAssignableFrom(this.executable.getDeclaringClass()))
+			if (returnElement == null && IDeserializer.class.isAssignableFrom(this.executable.getDeclaringClass()))
 			{
 				Constructor constructor = this.executable.getDeclaringClass().getDeclaredConstructor();
 				constructor.setAccessible(true);

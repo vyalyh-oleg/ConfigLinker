@@ -1,7 +1,7 @@
 package com.configlinker;
 
 import com.configlinker.annotations.BoundObject;
-import com.configlinker.mappers.PropertyMapper;
+import com.configlinker.mappers.IPropertyMapper;
 
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
@@ -19,7 +19,7 @@ public final class ConfigDescription
 	private String propertyNamePrefix;
 	private BoundObject.TrackPolicy trackPolicy;
 	private int trackingInterval;
-	private ConfigChangeListener configChangeListener;
+	private IConfigChangeListener configChangeListener;
 	private ErrorBehavior errorBehavior;
 	private Map<Method, PropertyDescription> boundPropertyMethods;
 	
@@ -80,7 +80,7 @@ public final class ConfigDescription
 	/**
 	 * @return Object that implements of the same name interface.
 	 */
-	public ConfigChangeListener getConfigChangeListener()
+	public IConfigChangeListener getConfigChangeListener()
 	{
 		return configChangeListener;
 	}
@@ -136,7 +136,7 @@ public final class ConfigDescription
 		this.trackingInterval = trackingInterval;
 	}
 	
-	void setConfigChangeListener(ConfigChangeListener configChangeListener)
+	void setConfigChangeListener(IConfigChangeListener configChangeListener)
 	{
 		this.configChangeListener = configChangeListener;
 	}
@@ -163,10 +163,10 @@ public final class ConfigDescription
 	{
 		private final String name;
 		private final String[] dynamicVariableNames; // can be null
-		private final PropertyMapper mapper;
+		private final IPropertyMapper mapper;
 		private final ErrorBehavior errorBehavior;
 		
-		public PropertyDescription(String name, String[] dynamicVariableNames, PropertyMapper propertyMapper, ErrorBehavior errorBehavior)
+		public PropertyDescription(String name, String[] dynamicVariableNames, IPropertyMapper propertyMapper, ErrorBehavior errorBehavior)
 		{
 			this.name = name;
 			this.dynamicVariableNames = dynamicVariableNames;
@@ -190,7 +190,7 @@ public final class ConfigDescription
 			return dynamicVariableNames;
 		}
 		
-		public PropertyMapper getMapper()
+		public IPropertyMapper getMapper()
 		{
 			return mapper;
 		}

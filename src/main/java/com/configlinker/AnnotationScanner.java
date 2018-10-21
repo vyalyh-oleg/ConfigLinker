@@ -4,8 +4,8 @@ import com.configlinker.annotations.BoundObject;
 import com.configlinker.annotations.BoundProperty;
 import com.configlinker.exceptions.AnnotationAnalyzeException;
 import com.configlinker.exceptions.PropertyMapException;
+import com.configlinker.mappers.IPropertyMapper;
 import com.configlinker.mappers.MapperFactory;
-import com.configlinker.mappers.PropertyMapper;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -287,7 +287,7 @@ final class AnnotationScanner {
 		if (errorBehavior == ErrorBehavior.INHERITED)
 			errorBehavior = configDescription.getErrorBehavior();
 
-		PropertyMapper propertyMapper = MapperFactory.create(boundPropertyAnnotation, propertyMethod, configDescription.isIgnoreWhitespaces());
+		IPropertyMapper propertyMapper = MapperFactory.create(boundPropertyAnnotation, propertyMethod, configDescription.isIgnoreWhitespaces());
 
 		ConfigDescription.PropertyDescription propertyMethodDescription = configDescription.new PropertyDescription(propertyNameTemplate, propertyDynamicVariableNames, propertyMapper, errorBehavior);
 

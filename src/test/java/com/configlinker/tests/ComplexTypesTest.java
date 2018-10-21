@@ -1,7 +1,7 @@
 package com.configlinker.tests;
 
 
-import com.configlinker.Deserializer;
+import com.configlinker.IDeserializer;
 import com.configlinker.annotations.BoundObject;
 import com.configlinker.annotations.BoundProperty;
 import org.junit.jupiter.api.Assertions;
@@ -339,7 +339,7 @@ interface TypeCompany_map
 }
 
 
-class Company implements Deserializer<Company>
+class Company implements IDeserializer<Company>
 {
 	String name;
 	String[] emails;

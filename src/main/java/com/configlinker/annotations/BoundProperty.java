@@ -1,9 +1,9 @@
 package com.configlinker.annotations;
 
-import com.configlinker.Deserializer;
+import com.configlinker.IDeserializer;
 import com.configlinker.ErrorBehavior;
 import com.configlinker.FactoryConfigBuilder;
-import com.configlinker.PropertyValidator;
+import com.configlinker.IPropertyValidator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -82,7 +82,7 @@ public @interface BoundProperty {
 	 * <br/>
 	 * <p>If you want to use <b>custom return type as generic type</b> for {@code List}, {@code Set} or {@code Map} (only for value), you must indicate here it generic {@code Class}.
 	 * <br/>
-	 * <p>If you write own deserializer implementation of {@link Deserializer}, it {@code Class} must be specified here instead of return type class.
+	 * <p>If you write own deserializer implementation of {@link IDeserializer}, it {@code Class} must be specified here instead of return type class.
 	 * <p>
 	 * <p>Pay attention, you have different ways to implement deserialization logic, which are described in ({@link DeserializationMethod}):
 	 * <ul>
@@ -105,10 +105,10 @@ public @interface BoundProperty {
 
 	/**
 	 * <p>Custom validator for returned value. By default validators are not used.
-	 * <p>If you need additional checks just implement {@link PropertyValidator} interface and point class here.
+	 * <p>If you need additional checks just implement {@link IPropertyValidator} interface and point class here.
 	 * @return -
 	 */
-	Class<? extends PropertyValidator> validator() default PropertyValidator.class;
+	Class<? extends IPropertyValidator> validator() default IPropertyValidator.class;
 
 	/**
 	 * What to do if the property value does not exist in underlying persistent store.
@@ -162,11 +162,11 @@ public @interface BoundProperty {
 		 */
 		VALUEOF_MAP,
 		/**
-		 * <p>Chose this variant if your class implements interface {@link Deserializer} and method {@link Deserializer#deserialize(String rawValue)}.
+		 * <p>Chose this variant if your class implements interface {@link IDeserializer} and method {@link IDeserializer#deserialize(String rawValue)}.
 		 */
 		DESERIALIZER_STRING,
 		/**
-		 * <p>Chose this variant if your class implements interface {@link Deserializer} and method {@link Deserializer#deserialize(Map stringValues)}.
+		 * <p>Chose this variant if your class implements interface {@link IDeserializer} and method {@link IDeserializer#deserialize(Map stringValues)}.
 		 */
 		DESERIALIZER_MAP
 		;
