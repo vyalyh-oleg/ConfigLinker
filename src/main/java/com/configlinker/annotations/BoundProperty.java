@@ -79,18 +79,18 @@ public @interface BoundProperty {
 	 * <li>{@code Map<String,String>}</li>
 	 * </ul>
 	 * <p>If you want to use <b>custom return type (or array of custom types)</b>, you must just implement deserialization logic for it and point choice in {@link #deserializationMethod()}. And no need any changes in the current parameter.
-	 * <br/>
+	 * <br>
 	 * <p>If you want to use <b>custom return type as generic type</b> for {@code List}, {@code Set} or {@code Map} (only for value), you must indicate here it generic {@code Class}.
-	 * <br/>
+	 * <br>
 	 * <p>If you write own deserializer implementation of {@link IDeserializer}, it {@code Class} must be specified here instead of return type class.
-	 * <p>
+	 * <p><br>
 	 * <p>Pay attention, you have different ways to implement deserialization logic, which are described in ({@link DeserializationMethod}):
 	 * <ul>
-	 * <li>write special constructor for your class, see <br/>{@link DeserializationMethod#CONSTRUCTOR_STRING}, {@link DeserializationMethod#CONSTRUCTOR_MAP};</li>
-	 * <li>write static instance generator method in your class, see <br/> {@link DeserializationMethod#VALUEOF_STRING}, {@link DeserializationMethod#VALUEOF_MAP};</li>
-	 * <li>write separate deserializer class, see <br/> {@link DeserializationMethod#DESERIALIZER_STRING}, {@link DeserializationMethod#DESERIALIZER_MAP}.</li>
+	 * <li>write special constructor for your class, see <br>{@link DeserializationMethod#CONSTRUCTOR_STRING}, {@link DeserializationMethod#CONSTRUCTOR_MAP};</li>
+	 * <li>write static instance generator method in your class, see <br> {@link DeserializationMethod#VALUEOF_STRING}, {@link DeserializationMethod#VALUEOF_MAP};</li>
+	 * <li>write separate deserializer class, see <br> {@link DeserializationMethod#DESERIALIZER_STRING}, {@link DeserializationMethod#DESERIALIZER_MAP}.</li>
 	 * </ul>
-	 * <p>If return type for you configuration method is List, Set or Map, then only <br/> {@link DeserializationMethod#CONSTRUCTOR_STRING}, {@link DeserializationMethod#VALUEOF_STRING}, {@link DeserializationMethod#DESERIALIZER_STRING} <br/> allowed as deserialization method for their values.
+	 * <p>If return type for you configuration method is List, Set or Map, then only <br> {@link DeserializationMethod#CONSTRUCTOR_STRING}, {@link DeserializationMethod#VALUEOF_STRING}, {@link DeserializationMethod#DESERIALIZER_STRING} <br> allowed as deserialization method for their values.
 	 * @return -
 	 */
 	Class<?> customTypeOrDeserializer() default Object.class;
