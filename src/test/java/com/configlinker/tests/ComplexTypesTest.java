@@ -11,21 +11,20 @@ import org.junit.jupiter.api.TestInstance;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Stream;
 
 
 @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
 class ComplexTypesTest extends AbstractBaseTest
 {
 	private Company companyInConfigFile;
-	
-	// affiliates.info.list = Horns and hooves // horns.hooves@great.org, director@great.org // 456-876-876, 764-143-078 // Peter Jackson // 1993 // 140500.82 ,\
-	//                       Moon Light // admin@moonlight.org, review@moonlight.org // (122) 544-56-78, 7648 // Peter Jackson // 1985 // 1000.00 ,\
-	//                       Simple and Affordable // director@simpaff.org, feedback@simpaff.org // (556) 44-55-987, 98-55 // Peter Jackson // 2008 // 12500. ,\
-	//                       Moon Light // admin@moonlight.org, review@moonlight.org // (122) 544-56-78, 7648 // Peter Jackson // 1985 // 1000.00
 	
 	private List<Company> companiesInConfigFile;
 	
@@ -34,15 +33,43 @@ class ComplexTypesTest extends AbstractBaseTest
 	{
 		companyInConfigFile = new Company();
 		companyInConfigFile.name = "Horns and hooves";
-		companyInConfigFile.emails = new String[] {"horns.hooves@great.org", "director@great.org"};
-		companyInConfigFile.phoneNumbers = new String[] {"456-876-876", "764-143-078"};
+		companyInConfigFile.emails = new String[]{"horns.hooves@great.org", "director@great.org"};
+		companyInConfigFile.phoneNumbers = new String[]{"456-876-876", "764-143-078"};
 		companyInConfigFile.ceo = "Peter Jackson";
 		companyInConfigFile.dateFoundation = 1993;
 		companyInConfigFile.authorizedCapital = 140500.82;
 		
-		companiesInConfigFile = new ArrayList<>();
+		ArrayList<Company> companies = new ArrayList<>();
+		companies.add(companyInConfigFile);
 		
+		Company company2 = new Company();
+		company2.name = "Moon Light";
+		company2.emails = new String[]{"admin@moonlight.org", "review@moonlight.org"};
+		company2.phoneNumbers = new String[]{"(122) 544-56-78", "7648"};
+		company2.ceo = "John Smith";
+		company2.dateFoundation = 1985;
+		company2.authorizedCapital = 1000.00;
+		companies.add(company2);
 		
+		Company company3 = new Company();
+		company3.name = "Simple and Affordable";
+		company3.emails = new String[]{"director@simpaff.org", "feedback@simpaff.org"};
+		company3.phoneNumbers = new String[]{"(556) 44-55-987", "98-55"};
+		company3.ceo = "Ethan Hunt";
+		company3.dateFoundation = 2008;
+		company3.authorizedCapital = 12500.;
+		companies.add(company3);
+		
+		Company company4 = new Company();
+		company4.name = "Moon Light";
+		company4.emails = new String[]{"admin@moonlight.org", "review@moonlight.org"};
+		company4.phoneNumbers = new String[]{"(122) 544-56-78", "7648"};
+		company4.ceo = "John Smith";
+		company4.dateFoundation = 1985;
+		company4.authorizedCapital = 1000.00;
+		companies.add(company4);
+		
+		companiesInConfigFile = Collections.unmodifiableList(companies);
 	}
 	
 	@Test
@@ -85,9 +112,9 @@ class ComplexTypesTest extends AbstractBaseTest
 		Assertions.assertEquals(companyInConfigFile, companyFromValueOf);
 		Assertions.assertEquals(BoundProperty.DeserializationMethod.VALUEOF_STRING, companyFromValueOf.deserializationMethod);
 		
-		Company companyFromDeserizlizer = typeCompany_mixedString.getCompany_fromDeserializerString();
-		Assertions.assertEquals(companyInConfigFile, companyFromDeserizlizer);
-		Assertions.assertEquals(BoundProperty.DeserializationMethod.DESERIALIZER_STRING, companyFromDeserizlizer.deserializationMethod);
+		Company companyFromDeserializer = typeCompany_mixedString.getCompany_fromDeserializerString();
+		Assertions.assertEquals(companyInConfigFile, companyFromDeserializer);
+		Assertions.assertEquals(BoundProperty.DeserializationMethod.DESERIALIZER_STRING, companyFromDeserializer.deserializationMethod);
 	}
 	
 	@Test
@@ -130,9 +157,9 @@ class ComplexTypesTest extends AbstractBaseTest
 		Assertions.assertEquals(companyInConfigFile, companyFromValueOf);
 		Assertions.assertEquals(BoundProperty.DeserializationMethod.VALUEOF_MAP, companyFromValueOf.deserializationMethod);
 		
-		Company companyFromDeserizlizer = typeCompany_mixedMap.getCompany_fromDeserializerMap();
-		Assertions.assertEquals(companyInConfigFile, companyFromDeserizlizer);
-		Assertions.assertEquals(BoundProperty.DeserializationMethod.DESERIALIZER_MAP, companyFromDeserizlizer.deserializationMethod);
+		Company companyFromDeserializer = typeCompany_mixedMap.getCompany_fromDeserializerMap();
+		Assertions.assertEquals(companyInConfigFile, companyFromDeserializer);
+		Assertions.assertEquals(BoundProperty.DeserializationMethod.DESERIALIZER_MAP, companyFromDeserializer.deserializationMethod);
 	}
 	
 	
@@ -141,73 +168,96 @@ class ComplexTypesTest extends AbstractBaseTest
 	@Test
 	void test_getWithStringMixedWaysForArray()
 	{
-		TypeCompany_array typeCompany_mixedMap = getSingleConfigInstance(TypeCompany_array.class);
+		TypeCompany_array typeCompany_array = getSingleConfigInstance(TypeCompany_array.class);
 		
-		Company companyFromConstructor = typeCompany_mixedMap.getCompany_fromConstructorMap();
-		Assertions.assertEquals(companyInConfigFile, companyFromConstructor);
-		Assertions.assertEquals(BoundProperty.DeserializationMethod.CONSTRUCTOR_MAP, companyFromConstructor.deserializationMethod);
+		Company[] arrayCompaniesFromConfig = companiesInConfigFile.toArray(new Company[companiesInConfigFile.size()]);
 		
-		Company companyFromValueOf = typeCompany_mixedMap.getCompany_fromValueOfMap();
-		Assertions.assertEquals(companyInConfigFile, companyFromValueOf);
-		Assertions.assertEquals(BoundProperty.DeserializationMethod.VALUEOF_MAP, companyFromValueOf.deserializationMethod);
+		Company[] arrayCompaniesFromConstructor = typeCompany_array.getArrayCompanies_fromConstructorString();
+		Assertions.assertArrayEquals(arrayCompaniesFromConfig, arrayCompaniesFromConstructor);
+		Stream.of(arrayCompaniesFromConstructor)
+		  .forEach(company -> Assertions.assertEquals(BoundProperty.DeserializationMethod.CONSTRUCTOR_STRING, company.deserializationMethod));
 		
-		Company companyFromDeserizlizer = typeCompany_mixedMap.getCompany_fromDeserializerMap();
-		Assertions.assertEquals(companyInConfigFile, companyFromDeserizlizer);
-		Assertions.assertEquals(BoundProperty.DeserializationMethod.DESERIALIZER_MAP, companyFromDeserizlizer.deserializationMethod);
+		Company[] arrayCompaniesFromValueOf = typeCompany_array.getArrayCompanies_fromValueOfString();
+		Assertions.assertArrayEquals(arrayCompaniesFromConfig, arrayCompaniesFromValueOf);
+		Stream.of(arrayCompaniesFromValueOf)
+		  .forEach(company -> Assertions.assertEquals(BoundProperty.DeserializationMethod.VALUEOF_STRING, company.deserializationMethod));
+		
+		Company[] arrayCompaniesFromDeserializer = typeCompany_array.getArrayCompanies_fromDeserializerString();
+		Assertions.assertArrayEquals(arrayCompaniesFromConfig, arrayCompaniesFromDeserializer);
+		Stream.of(arrayCompaniesFromDeserializer)
+		  .forEach(company -> Assertions.assertEquals(BoundProperty.DeserializationMethod.DESERIALIZER_STRING, company.deserializationMethod));
 	}
 	
 	@Test
 	void test_getWithStringMixedWaysForList()
 	{
-		TypeCompany_list typeCompany_mixedMap = getSingleConfigInstance(TypeCompany_list.class);
+		TypeCompany_list typeCompany_list = getSingleConfigInstance(TypeCompany_list.class);
 		
-		Company companyFromConstructor = typeCompany_mixedMap.getCompany_fromConstructorMap();
-		Assertions.assertEquals(companyInConfigFile, companyFromConstructor);
-		Assertions.assertEquals(BoundProperty.DeserializationMethod.CONSTRUCTOR_MAP, companyFromConstructor.deserializationMethod);
+		ArrayList<Company> listCompaniesFromConfig = new ArrayList<>(companiesInConfigFile);
 		
-		Company companyFromValueOf = typeCompany_mixedMap.getCompany_fromValueOfMap();
-		Assertions.assertEquals(companyInConfigFile, companyFromValueOf);
-		Assertions.assertEquals(BoundProperty.DeserializationMethod.VALUEOF_MAP, companyFromValueOf.deserializationMethod);
+		List<Company> listCompaniesFromConstructor = typeCompany_list.getListCompanies_fromConstructorString();
+		Assertions.assertEquals(listCompaniesFromConfig, listCompaniesFromConstructor);
+		listCompaniesFromConstructor
+		  .forEach(company -> Assertions.assertEquals(BoundProperty.DeserializationMethod.CONSTRUCTOR_STRING, company.deserializationMethod));
 		
-		Company companyFromDeserizlizer = typeCompany_mixedMap.getCompany_fromDeserializerMap();
-		Assertions.assertEquals(companyInConfigFile, companyFromDeserizlizer);
-		Assertions.assertEquals(BoundProperty.DeserializationMethod.DESERIALIZER_MAP, companyFromDeserizlizer.deserializationMethod);
+		List<Company> listCompaniesFromValueOf = typeCompany_list.getListCompanies_fromValueOfString();
+		Assertions.assertEquals(listCompaniesFromConfig, listCompaniesFromValueOf);
+		listCompaniesFromValueOf
+		  .forEach(company -> Assertions.assertEquals(BoundProperty.DeserializationMethod.VALUEOF_STRING, company.deserializationMethod));
+		
+		List<Company> listCompaniesFromDeserializer = typeCompany_list.getListCompanies_fromDeserializerString();
+		Assertions.assertEquals(listCompaniesFromConfig, listCompaniesFromDeserializer);
+		listCompaniesFromDeserializer
+		  .forEach(company -> Assertions.assertEquals(BoundProperty.DeserializationMethod.DESERIALIZER_STRING, company.deserializationMethod));
 	}
 	
 	@Test
 	void test_getWithStringMixedWaysForSet()
 	{
-		TypeCompany_set typeCompany_mixedMap = getSingleConfigInstance(TypeCompany_set.class);
+		TypeCompany_set typeCompany_set = getSingleConfigInstance(TypeCompany_set.class);
 		
-		Company companyFromConstructor = typeCompany_mixedMap.getCompany_fromConstructorMap();
-		Assertions.assertEquals(companyInConfigFile, companyFromConstructor);
-		Assertions.assertEquals(BoundProperty.DeserializationMethod.CONSTRUCTOR_MAP, companyFromConstructor.deserializationMethod);
+		HashSet<Company> setCompaniesFromConfig = new HashSet<>(companiesInConfigFile);
 		
-		Company companyFromValueOf = typeCompany_mixedMap.getCompany_fromValueOfMap();
-		Assertions.assertEquals(companyInConfigFile, companyFromValueOf);
-		Assertions.assertEquals(BoundProperty.DeserializationMethod.VALUEOF_MAP, companyFromValueOf.deserializationMethod);
+		Set<Company> setCompaniesFromConstructor = typeCompany_set.getSetCompanies_fromConstructorString();
+		Assertions.assertEquals(setCompaniesFromConfig, setCompaniesFromConstructor);
+		setCompaniesFromConstructor
+		  .forEach(company -> Assertions.assertEquals(BoundProperty.DeserializationMethod.CONSTRUCTOR_STRING, company.deserializationMethod));
 		
-		Company companyFromDeserizlizer = typeCompany_mixedMap.getCompany_fromDeserializerMap();
-		Assertions.assertEquals(companyInConfigFile, companyFromDeserizlizer);
-		Assertions.assertEquals(BoundProperty.DeserializationMethod.DESERIALIZER_MAP, companyFromDeserizlizer.deserializationMethod);
+		Set<Company> setCompaniesFromValueOf = typeCompany_set.getSetCompanies_fromValueOfString();
+		Assertions.assertEquals(setCompaniesFromConfig, setCompaniesFromValueOf);
+		setCompaniesFromValueOf
+		  .forEach(company -> Assertions.assertEquals(BoundProperty.DeserializationMethod.VALUEOF_STRING, company.deserializationMethod));
+		
+		Set<Company> setCompaniesFromDeserializer = typeCompany_set.getSetCompanies_fromDeserializerString();
+		Assertions.assertEquals(setCompaniesFromConfig, setCompaniesFromDeserializer);
+		setCompaniesFromDeserializer
+		  .forEach(company -> Assertions.assertEquals(BoundProperty.DeserializationMethod.DESERIALIZER_STRING, company.deserializationMethod));
 	}
 	
 	@Test
 	void test_getWithStringMixedWaysForMap()
 	{
-		TypeCompany_map typeCompany_mixedMap = getSingleConfigInstance(TypeCompany_map.class);
+		TypeCompany_map typeCompany_map = getSingleConfigInstance(TypeCompany_map.class);
 		
-		Company companyFromConstructor = typeCompany_mixedMap.getCompany_fromConstructorMap();
-		Assertions.assertEquals(companyInConfigFile, companyFromConstructor);
-		Assertions.assertEquals(BoundProperty.DeserializationMethod.CONSTRUCTOR_MAP, companyFromConstructor.deserializationMethod);
+		LinkedHashMap<String, Company> mapCompaniesFromConfig = new LinkedHashMap<>();
+		companiesInConfigFile.forEach(company ->
+		  mapCompaniesFromConfig.put(company.name, company)
+		);
 		
-		Company companyFromValueOf = typeCompany_mixedMap.getCompany_fromValueOfMap();
-		Assertions.assertEquals(companyInConfigFile, companyFromValueOf);
-		Assertions.assertEquals(BoundProperty.DeserializationMethod.VALUEOF_MAP, companyFromValueOf.deserializationMethod);
+		Map<String, Company> mapCompaniesFromConstructor = typeCompany_map.getMapCompanies_fromConstructorString();
+		Assertions.assertEquals(mapCompaniesFromConfig, mapCompaniesFromConstructor);
+		mapCompaniesFromConstructor
+		  .forEach((name, company) -> Assertions.assertEquals(BoundProperty.DeserializationMethod.CONSTRUCTOR_STRING, company.deserializationMethod));
 		
-		Company companyFromDeserizlizer = typeCompany_mixedMap.getCompany_fromDeserializerMap();
-		Assertions.assertEquals(companyInConfigFile, companyFromDeserizlizer);
-		Assertions.assertEquals(BoundProperty.DeserializationMethod.DESERIALIZER_MAP, companyFromDeserizlizer.deserializationMethod);
+		Map<String, Company> mapCompaniesFromValueOf = typeCompany_map.getMapCompanies_fromValueOfString();
+		Assertions.assertEquals(mapCompaniesFromConfig, mapCompaniesFromValueOf);
+		mapCompaniesFromValueOf
+		  .forEach((name, company) -> Assertions.assertEquals(BoundProperty.DeserializationMethod.VALUEOF_STRING, company.deserializationMethod));
+		
+		Map<String, Company> mapCompaniesFromDeserializer = typeCompany_map.getMapCompanies_fromDeserializerString();
+		Assertions.assertEquals(mapCompaniesFromConfig, mapCompaniesFromDeserializer);
+		mapCompaniesFromDeserializer
+		  .forEach((name, company) -> Assertions.assertEquals(BoundProperty.DeserializationMethod.DESERIALIZER_STRING, company.deserializationMethod));
 	}
 	
 	// autorecognize generics
