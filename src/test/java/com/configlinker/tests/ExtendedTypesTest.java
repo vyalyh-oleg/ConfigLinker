@@ -190,10 +190,10 @@ class ExtendedTypesTest extends AbstractBaseTest
 		
 		Assertions.assertEquals(new Date(12345678909876L), typeDate.getDateTimeFromMilliseconds());
 		Assertions.assertEquals(new Date(1530375271000L), typeDate.getDateTimeFromSeconds());
-		Assertions.assertEquals(new Date(915141600000L), typeDate.getYearOnly());
-		Assertions.assertEquals(new Date(1436821200000L), typeDate.getDateOnly());
-		Assertions.assertEquals(new Date(57407000L), typeDate.getTimeOnly());
-		Assertions.assertEquals(new Date(1406908897000L), typeDate.getDateTime());
+		Assertions.assertEquals(new Date(915148800000L), typeDate.getYearOnly());
+		Assertions.assertEquals(new Date(1436832000000L), typeDate.getDateOnly());
+		Assertions.assertEquals(new Date(68207000L), typeDate.getTimeOnly());
+		Assertions.assertEquals(new Date(1406919697000L), typeDate.getDateTime());
 		Assertions.assertEquals(new Date(1406910697000L), typeDate.getDateTimeWithZone());
 		Assertions.assertEquals(new Date(1008808797523L), typeDate.getDateTime_RFC_3339());
 		Assertions.assertEquals(new Date(784111777000L), typeDate.getDateTime_RFC_822_1123());

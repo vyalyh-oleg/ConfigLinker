@@ -144,6 +144,7 @@ test {
 
 	systemProperty 'java.util.logging.config.file', 'logging.properties'
 	systemProperty 'org.slf4j.simpleLogger.defaultLogLevel', 'TRACE'
+	systemProperty 'user.timezone', 'UTC'
 	//systemProperty 'java.util.logging.manager', 'org.apache.logging.log4j.jul.LogManager'
 
 	workingDir "./test_workdir"
