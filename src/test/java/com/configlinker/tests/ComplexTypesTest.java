@@ -163,8 +163,6 @@ class ComplexTypesTest extends AbstractBaseTest
 	}
 	
 	
-	// TODO: collection of complex types
-	
 	@Test
 	void test_getWithStringMixedWaysForArray()
 	{
@@ -259,10 +257,6 @@ class ComplexTypesTest extends AbstractBaseTest
 		mapCompaniesFromDeserializer
 		  .forEach((name, company) -> Assertions.assertEquals(BoundProperty.DeserializationMethod.DESERIALIZER_STRING, company.deserializationMethod));
 	}
-	
-	// autorecognize generics
-	// default values ? (like a fallback config)
-	// variables in configs
 }
 
 
@@ -423,8 +417,8 @@ class Company implements IDeserializer<Company>
 	{
 		String[] parts = rawStringData.split("//");
 		company.name = parts[0].trim();
-		company.emails = Arrays.stream(parts[1].split(",")).map(String::trim).toArray(String[]::new);
-		company.phoneNumbers = Arrays.stream(parts[2].split(",")).map(String::trim).toArray(String[]::new);
+		company.emails = Arrays.stream(parts[1].split(";")).map(String::trim).toArray(String[]::new);
+		company.phoneNumbers = Arrays.stream(parts[2].split(";")).map(String::trim).toArray(String[]::new);
 		company.ceo = parts[3].trim();
 		company.dateFoundation = Short.parseShort(parts[4].trim());
 		company.authorizedCapital = Double.parseDouble(parts[5].trim());
