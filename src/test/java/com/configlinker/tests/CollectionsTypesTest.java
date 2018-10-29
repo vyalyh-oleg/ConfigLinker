@@ -4,12 +4,11 @@ package com.configlinker.tests;
 import com.configlinker.annotations.BoundObject;
 import com.configlinker.annotations.BoundProperty;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -237,7 +236,7 @@ class CollectionsTypesTest extends AbstractBaseTest
 	void test_setOfBooleans()
 	{
 		BooleanSet booleanSet = getSingleConfigInstance(BooleanSet.class);
-		HashSet<Boolean> booleansExpected = new LinkedHashSet<>();
+		LinkedHashSet<Boolean> booleansExpected = new LinkedHashSet<>();
 		booleansExpected.add(false);
 		booleansExpected.add(true);
 		booleansExpected.add(false);
@@ -248,7 +247,7 @@ class CollectionsTypesTest extends AbstractBaseTest
 	void test_setOfBytes()
 	{
 		ByteSet byteSet = getSingleConfigInstance(ByteSet.class);
-		HashSet<Byte> bytesExpected = new LinkedHashSet<>();
+		LinkedHashSet<Byte> bytesExpected = new LinkedHashSet<>();
 		bytesExpected.add((byte) 100);
 		bytesExpected.add((byte) 23);
 		bytesExpected.add((byte) -122);
@@ -261,7 +260,7 @@ class CollectionsTypesTest extends AbstractBaseTest
 	void test_setOfChars()
 	{
 		CharSet charSet = getSingleConfigInstance(CharSet.class);
-		HashSet<Character> charsExpected = new LinkedHashSet<>();
+		LinkedHashSet<Character> charsExpected = new LinkedHashSet<>();
 		charsExpected.add('w');
 		charsExpected.add('8');
 		charsExpected.add('h');
@@ -278,7 +277,7 @@ class CollectionsTypesTest extends AbstractBaseTest
 	void test_setOfShorts()
 	{
 		ShortSet shortSet = getSingleConfigInstance(ShortSet.class);
-		HashSet<Short> shortsExpected = new LinkedHashSet<>();
+		LinkedHashSet<Short> shortsExpected = new LinkedHashSet<>();
 		shortsExpected.add((short) 22000);
 		shortsExpected.add((short) 3456);
 		shortsExpected.add((short) -18000);
@@ -292,7 +291,7 @@ class CollectionsTypesTest extends AbstractBaseTest
 	void test_setOfInts()
 	{
 		IntSet intSet = getSingleConfigInstance(IntSet.class);
-		HashSet<Integer> intsExpected = new LinkedHashSet<>();
+		LinkedHashSet<Integer> intsExpected = new LinkedHashSet<>();
 		intsExpected.add(123456098);
 		intsExpected.add(8479893);
 		intsExpected.add(981753);
@@ -306,7 +305,7 @@ class CollectionsTypesTest extends AbstractBaseTest
 	void test_setOfLongs()
 	{
 		LongSet longSet = getSingleConfigInstance(LongSet.class);
-		HashSet<Long> longsExpeted = new LinkedHashSet<>();
+		LinkedHashSet<Long> longsExpeted = new LinkedHashSet<>();
 		longsExpeted.add(22345778909876L);
 		longsExpeted.add(1542375271000L);
 		longsExpeted.add(1407110697000L);
@@ -319,7 +318,7 @@ class CollectionsTypesTest extends AbstractBaseTest
 	void test_setOfFloats()
 	{
 		FloatSet floatSet = getSingleConfigInstance(FloatSet.class);
-		HashSet<Float> floatsExpected = new LinkedHashSet<>();
+		LinkedHashSet<Float> floatsExpected = new LinkedHashSet<>();
 		floatsExpected.add(3.1415926545f);
 		floatsExpected.add(2.0333f);
 		floatsExpected.add(0.123456789f);
@@ -333,7 +332,7 @@ class CollectionsTypesTest extends AbstractBaseTest
 	void test_setOfDoubles()
 	{
 		DoubleSet doubleSet = getSingleConfigInstance(DoubleSet.class);
-		HashSet<Double> doublesExpected = new LinkedHashSet<>();
+		LinkedHashSet<Double> doublesExpected = new LinkedHashSet<>();
 		doublesExpected.add(2.040336982365);
 		doublesExpected.add(2.040336982365);
 		doublesExpected.add(2.140382e-101);
@@ -346,7 +345,7 @@ class CollectionsTypesTest extends AbstractBaseTest
 	void test_setOfStrings()
 	{
 		StringSet stringSet = getSingleConfigInstance(StringSet.class);
-		HashSet<String> stringsExpected = new LinkedHashSet<>();
+		LinkedHashSet<String> stringsExpected = new LinkedHashSet<>();
 		stringsExpected.add("horns.hooves@great.org");
 		stringsExpected.add("director@great.org");
 		stringsExpected.add("horns.hooves@great.org");
@@ -357,7 +356,7 @@ class CollectionsTypesTest extends AbstractBaseTest
 	void test_setOfEnums()
 	{
 		NumberNameEnumSet enumsSet = getSingleConfigInstance(NumberNameEnumSet.class);
-		HashSet<NumberName> enumsExpected = new LinkedHashSet<>();
+		LinkedHashSet<NumberName> enumsExpected = new LinkedHashSet<>();
 		enumsExpected.add(NumberName.three);
 		enumsExpected.add(NumberName.two);
 		enumsExpected.add(NumberName.one);
@@ -371,7 +370,7 @@ class CollectionsTypesTest extends AbstractBaseTest
 	{
 		IntSet intSet = getSingleConfigInstance(IntSet.class);
 		
-		HashSet<Integer> intsExpected = new LinkedHashSet<>();
+		LinkedHashSet<Integer> intsExpected = new LinkedHashSet<>();
 		intsExpected.add(123456098);
 		intsExpected.add(8479893);
 		intsExpected.add(981753);
@@ -392,7 +391,7 @@ class CollectionsTypesTest extends AbstractBaseTest
 	void test_mapOfBooleans()
 	{
 		BooleanMap booleanMap = getSingleConfigInstance(BooleanMap.class);
-		HashMap<String, Boolean> booleansExpected = new LinkedHashMap<>();
+		LinkedHashMap<String, Boolean> booleansExpected = new LinkedHashMap<>();
 		booleansExpected.put("boolean-1", false);
 		booleansExpected.put("boolean-2", true);
 		booleansExpected.put("boolean-3", false);
@@ -403,7 +402,7 @@ class CollectionsTypesTest extends AbstractBaseTest
 	void test_mapOfBytes()
 	{
 		ByteMap byteMap = getSingleConfigInstance(ByteMap.class);
-		HashMap<String, Byte> bytesExpected = new LinkedHashMap<>();
+		LinkedHashMap<String, Byte> bytesExpected = new LinkedHashMap<>();
 		bytesExpected.put("byte-1", (byte) 100);
 		bytesExpected.put("byte-2", (byte) 23);
 		bytesExpected.put("byte-3", (byte) -122);
@@ -416,7 +415,7 @@ class CollectionsTypesTest extends AbstractBaseTest
 	void test_mapOfChars()
 	{
 		CharMap charMap = getSingleConfigInstance(CharMap.class);
-		HashMap<String, Character> charsExpected = new LinkedHashMap<>();
+		LinkedHashMap<String, Character> charsExpected = new LinkedHashMap<>();
 		charsExpected.put("char-1", 'w');
 		charsExpected.put("char-2", '8');
 		charsExpected.put("char-3", 'h');
@@ -433,7 +432,7 @@ class CollectionsTypesTest extends AbstractBaseTest
 	void test_mapOfShorts()
 	{
 		ShortMap shortMap = getSingleConfigInstance(ShortMap.class);
-		HashMap<String, Short> shortsExpected = new LinkedHashMap<>();
+		LinkedHashMap<String, Short> shortsExpected = new LinkedHashMap<>();
 		shortsExpected.put("short-1", (short) 22000);
 		shortsExpected.put("short-2", (short) 3456);
 		shortsExpected.put("short-3", (short) -18000);
@@ -447,7 +446,7 @@ class CollectionsTypesTest extends AbstractBaseTest
 	void test_mapOfInts()
 	{
 		IntMap intMap = getSingleConfigInstance(IntMap.class);
-		HashMap<String, Integer> intsExpected = new LinkedHashMap<>();
+		LinkedHashMap<String, Integer> intsExpected = new LinkedHashMap<>();
 		intsExpected.put("int-1", 123456098);
 		intsExpected.put("int-2", 8479893);
 		intsExpected.put("int-3", 981753);
@@ -461,7 +460,7 @@ class CollectionsTypesTest extends AbstractBaseTest
 	void test_mapOfLongs()
 	{
 		LongMap longMap = getSingleConfigInstance(LongMap.class);
-		HashMap<String, Long> longsExpeted = new LinkedHashMap<>();
+		LinkedHashMap<String, Long> longsExpeted = new LinkedHashMap<>();
 		longsExpeted.put("long-1", 22345778909876L);
 		longsExpeted.put("long-2", 1542375271000L);
 		longsExpeted.put("long-3", 1407110697000L);
@@ -474,7 +473,7 @@ class CollectionsTypesTest extends AbstractBaseTest
 	void test_mapOfFloats()
 	{
 		FloatMap floatMap = getSingleConfigInstance(FloatMap.class);
-		HashMap<String, Float> floatsExpected = new LinkedHashMap<>();
+		LinkedHashMap<String, Float> floatsExpected = new LinkedHashMap<>();
 		floatsExpected.put("float-1", 3.1415926545f);
 		floatsExpected.put("float-2", 2.0333f);
 		floatsExpected.put("float-3", 0.123456789f);
@@ -488,7 +487,7 @@ class CollectionsTypesTest extends AbstractBaseTest
 	void test_mapOfDoubles()
 	{
 		DoubleMap doubleMap = getSingleConfigInstance(DoubleMap.class);
-		HashMap<String, Double> doublesExpected = new LinkedHashMap<>();
+		LinkedHashMap<String, Double> doublesExpected = new LinkedHashMap<>();
 		doublesExpected.put("double-1", 2.040336982365);
 		doublesExpected.put("double-2", 2.040336982365);
 		doublesExpected.put("double-3", 2.140382e-101);
@@ -501,7 +500,7 @@ class CollectionsTypesTest extends AbstractBaseTest
 	void test_mapOfStrings()
 	{
 		StringMap stringMap = getSingleConfigInstance(StringMap.class);
-		HashMap<String, String> stringsExpected = new LinkedHashMap<>();
+		LinkedHashMap<String, String> stringsExpected = new LinkedHashMap<>();
 		stringsExpected.put("string-1", "horns.hooves@great.org");
 		stringsExpected.put("string-2", "director@great.org");
 		stringsExpected.put("string-3", "horns.hooves@great.org");
@@ -512,7 +511,7 @@ class CollectionsTypesTest extends AbstractBaseTest
 	void test_mapOfEnums()
 	{
 		NumberNameEnumMap enumsMap = getSingleConfigInstance(NumberNameEnumMap.class);
-		HashMap<String, NumberName> enumsExpected = new LinkedHashMap<>();
+		LinkedHashMap<String, NumberName> enumsExpected = new LinkedHashMap<>();
 		enumsExpected.put("enum-1", NumberName.three);
 		enumsExpected.put("enum-2", NumberName.two);
 		enumsExpected.put("enum-3", NumberName.one);
@@ -528,7 +527,7 @@ class CollectionsTypesTest extends AbstractBaseTest
 		String[] charKeys = charMap.getValues().keySet().toArray(new String[charMap.getValues().size()]);
 		Character[] charValues = charMap.getValues().values().toArray(new Character[charMap.getValues().size()]);
 		
-		HashMap<String, Character> charsExpected = new LinkedHashMap<>();
+		LinkedHashMap<String, Character> charsExpected = new LinkedHashMap<>();
 		charsExpected.put("char-1", 'w');
 		charsExpected.put("char-2", '8');
 		charsExpected.put("char-3", 'h');
@@ -543,6 +542,31 @@ class CollectionsTypesTest extends AbstractBaseTest
 		
 		Assertions.assertArrayEquals(charKeysExpected, charKeys);
 		Assertions.assertArrayEquals(charValuesExpected, charValues);
+	}
+	
+	
+	@Test @Disabled("TODO: implement")
+	void test_returnCopyOfArray()
+	{
+	
+	}
+	
+	@Test @Disabled("TODO: implement")
+	void test_returnUnmodifiableList()
+	{
+	
+	}
+	
+	@Test @Disabled("TODO: implement")
+	void test_returnUnmodifiableSet()
+	{
+	
+	}
+	
+	@Test @Disabled("TODO: implement")
+	void test_returnUnmodifiableMap()
+	{
+	
 	}
 }
 
