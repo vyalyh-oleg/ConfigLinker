@@ -1,6 +1,7 @@
 package com.configlinker;
 
 import com.configlinker.annotations.BoundObject;
+import com.configlinker.annotations.BoundProperty;
 import com.configlinker.exceptions.FactoryConfigBuilderClosedException;
 
 import java.nio.charset.Charset;
@@ -16,7 +17,7 @@ import java.util.Map;
  * <li>trackPolicy = {@link BoundObject.TrackPolicy#DISABLE}</li>
  * <li>trackingInterval = 60</li>
  * <li>charset = {@link StandardCharsets#UTF_8}</li>
- * <li>ignoreWhitespaces = true</li>
+ * <li>whitespaces = true</li>
  * <li>errorBehavior = {@link ErrorBehavior#THROW_EXCEPTION}</li>
  * </ul>
  */
@@ -27,7 +28,7 @@ public final class FactoryConfigBuilder {
 	private BoundObject.TrackPolicy trackPolicy = BoundObject.TrackPolicy.DISABLE;
 	private int trackingInterval = 60;
 	private Charset charset = StandardCharsets.UTF_8;
-	private boolean ignoreWhitespaces = true;
+	private BoundProperty.Whitespaces whitespaces = BoundProperty.Whitespaces.IGNORE;
 	private ErrorBehavior errorBehavior = ErrorBehavior.THROW_EXCEPTION;
 	private boolean closed = false;
 
@@ -60,7 +61,12 @@ public final class FactoryConfigBuilder {
 	public FactoryConfigBuilder setSourceScheme(BoundObject.SourceScheme sourceScheme) throws FactoryConfigBuilderClosedException {
 		if (closed)
 			throw FactoryConfigBuilderClosedException.getInstance();
-		this.sourceScheme = sourceScheme;
+		
+		if (sourceScheme == BoundObject.SourceScheme.INHERIT)
+			this.sourceScheme = BoundObject.SourceScheme.FILE;
+		else
+			this.sourceScheme = sourceScheme;
+		
 		return this;
 	}
 
@@ -86,7 +92,12 @@ public final class FactoryConfigBuilder {
 	public FactoryConfigBuilder setTrackPolicy(BoundObject.TrackPolicy trackPolicy) throws FactoryConfigBuilderClosedException {
 		if (closed)
 			throw FactoryConfigBuilderClosedException.getInstance();
-		this.trackPolicy = trackPolicy;
+		
+		if (trackPolicy == BoundObject.TrackPolicy.INHERIT)
+			this.trackPolicy = BoundObject.TrackPolicy.DISABLE;
+		else
+			this.trackPolicy = trackPolicy;
+		
 		return this;
 	}
 
@@ -120,17 +131,25 @@ public final class FactoryConfigBuilder {
 
 	/**
 	 *
-	 * @param ignoreWhitespaces <br>Whether ignore or not leading and trailing whitespaces for configuration values.<br>
+	 * @param whitespaces <br>Whether ignore or not leading and trailing whitespaces for configuration values.<br>
 	 *                          This behaviour concerns both single parameter values and values in lists or maps.<br>
-	 *                          Default value: {@code true}
+	 *                          Default value: {@link BoundProperty.Whitespaces#IGNORE}
 	 *                          <p>Examples:
-	 *                          <pre>'color = green' -- value: "green"</pre>
-	 *                          <pre>'color = green, blue' -- values: "green" and "blue"</pre>
-	 *                          <pre>'color = one: green, two:blue , three : red ' -- values: "green", "blue", "red"</pre>
+	 *                          <pre>'color = green' --> value: "green"</pre>
+	 *                          <pre>'color = green, blue' --> values: "green" and "blue"</pre>
+	 *                    //TODO: add examples for mam keys
+	 *                          <pre>'color = one: green, two:blue , three : red ' --> values: "green", "blue", "red"</pre>
 	 * @return this
 	 */
-	public FactoryConfigBuilder setIgnoreWhitespaces(boolean ignoreWhitespaces) {
-		this.ignoreWhitespaces = ignoreWhitespaces;
+	public FactoryConfigBuilder setWhitespaces(BoundProperty.Whitespaces whitespaces) {
+		if (closed)
+			throw FactoryConfigBuilderClosedException.getInstance();
+		
+		if (whitespaces == BoundProperty.Whitespaces.INHERIT)
+			this.whitespaces = BoundProperty.Whitespaces.IGNORE;
+		else
+			this.whitespaces = whitespaces;
+		
 		return this;
 	}
 
@@ -171,8 +190,8 @@ public final class FactoryConfigBuilder {
 		return charset;
 	}
 
-	public boolean isIgnoreWhitespaces() {
-		return ignoreWhitespaces;
+	public BoundProperty.Whitespaces whitespaces() {
+		return whitespaces;
 	}
 
 	public ErrorBehavior getErrorBehavior() {

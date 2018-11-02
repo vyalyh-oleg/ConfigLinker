@@ -1,8 +1,8 @@
 package com.configlinker.annotations;
 
-import com.configlinker.IConfigChangeListener;
 import com.configlinker.ErrorBehavior;
 import com.configlinker.FactoryConfigBuilder;
+import com.configlinker.IConfigChangeListener;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -101,10 +101,10 @@ public @interface BoundObject {
 	/**
 	 * <p>
 	 * What to do if the property value does not exist in underlying persistent store.
-	 * Default value is {@link ErrorBehavior#INHERITED} and specified in {@link FactoryConfigBuilder#setErrorBehavior(ErrorBehavior)}
+	 * Default value is {@link ErrorBehavior#INHERIT} and specified in {@link FactoryConfigBuilder#setErrorBehavior(ErrorBehavior)}
 	 * @return -
 	 */
-	ErrorBehavior errorBehavior() default ErrorBehavior.INHERITED;
+	ErrorBehavior errorBehavior() default ErrorBehavior.INHERIT;
 
 	/**
 	 * Scheme describe how to access the data source.

@@ -196,7 +196,7 @@ class BasicTypesTest extends AbstractBaseTest
 	void test_typeString()
 	{
 		TypeString typeString = getSingleConfigInstance(TypeString.class);
-		// Take into account that default value for FactoryConfigBuilder.isIgnoreWhitespaces() == true
+		// Take into account that default value for FactoryConfigBuilder.whitespaces() == true
 		Assertions.assertEquals("Just a simple multiline text", typeString.getValue1());
 		Assertions.assertEquals("Just a simple multiline text", typeString.getValue2());
 		Assertions.assertEquals("Just a simplemultiline text", typeString.getValue3());
@@ -209,7 +209,7 @@ class BasicTypesTest extends AbstractBaseTest
 	@Test
 	void test_typeString_withWhiteSpaces()
 	{
-		TypeString typeString = getSingleConfigInstance(FactoryConfigBuilder.create().setIgnoreWhitespaces(false), TypeString.class);
+		TypeString typeString = getSingleConfigInstance(FactoryConfigBuilder.create().setWhitespaces(BoundProperty.Whitespaces.ACCEPT), TypeString.class);
 		Assertions.assertEquals("Just a simple multiline text", typeString.getValue1());
 		Assertions.assertEquals("Just a simple multiline text", typeString.getValue2());
 		Assertions.assertEquals("Just a simplemultiline text   ", typeString.getValue3()); // 3 spaces at the end

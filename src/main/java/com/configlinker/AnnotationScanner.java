@@ -162,13 +162,19 @@ final class AnnotationScanner {
 		// get and check ConfigChangeListeners
 		Class<? extends IConfigChangeListener> changeListener_class = boundObjectAnnotation.changeListener();
 		IConfigChangeListener changeListener = null;
-		if (changeListener_class != IConfigChangeListener.class)
-			try {
+		if (changeListener_class != IConfigChangeListener.class) {
+			try
+			{
 				changeListener_class.getDeclaredConstructor().setAccessible(true);
 				changeListener = changeListener_class.newInstance();
-			} catch (InstantiationException | IllegalAccessException | NoSuchMethodException e) {
-				throw new AnnotationAnalyzeException( "Cannot create '" + IConfigChangeListener.class.getSimpleName() + "' object; config interface '" + configInterface.getName() + "'.", e).logAndReturn();
 			}
+			catch (InstantiationException | IllegalAccessException | NoSuchMethodException e)
+			{
+				throw new AnnotationAnalyzeException(
+				  "Cannot create '" + IConfigChangeListener.class.getSimpleName() + "' object; config interface '" + configInterface.getName() + "'.", e)
+				  .logAndReturn();
+			}
+		}
 		if (changeListener != null && trackPolicy == BoundObject.TrackPolicy.DISABLE) {
 			throw new AnnotationAnalyzeException("You cannot use @BoundObject.changeListener() if TrackPolicy is 'DISABLE', config interface '" + configInterface.getName() + "'.").logAndReturn();
 		}
@@ -176,10 +182,14 @@ final class AnnotationScanner {
 
 		// get ErrorBehaviour
 		ErrorBehavior errorBehavior = boundObjectAnnotation.errorBehavior();
-		if (errorBehavior == ErrorBehavior.INHERITED)
+		if (errorBehavior == ErrorBehavior.INHERIT)
 			errorBehavior = configBuilder.getErrorBehavior();
-
-
+		
+		
+		// get ignoreWhiteSpaces
+		boolean ignoreWhiteSpaces = configBuilder.whitespaces() == BoundProperty.Whitespaces.IGNORE;
+			
+			
 		// create ConfigDescription
 		ConfigDescription configDescription = new ConfigDescription(configInterface);
 		configDescription.setSourcePath(sourcePath);
@@ -187,7 +197,7 @@ final class AnnotationScanner {
 		configDescription.setSourceScheme(sourceScheme);
 		configDescription.setHttpHeaders(httpHeaders);
 		configDescription.setCharset(charset);
-		configDescription.setIgnoreWhitespaces(configBuilder.isIgnoreWhitespaces());
+		configDescription.setIgnoreWhitespaces(ignoreWhiteSpaces);
 		configDescription.setTrackPolicy(trackPolicy);
 		configDescription.setTrackingInterval(trackingInterval);
 		configDescription.setConfigChangeListener(changeListener);
@@ -284,10 +294,15 @@ final class AnnotationScanner {
 			propertyDynamicVariableNames = null;
 
 		ErrorBehavior errorBehavior = boundPropertyAnnotation.errorBehavior();
-		if (errorBehavior == ErrorBehavior.INHERITED)
+		if (errorBehavior == ErrorBehavior.INHERIT)
 			errorBehavior = configDescription.getErrorBehavior();
-
-		IPropertyMapper propertyMapper = MapperFactory.create(boundPropertyAnnotation, propertyMethod, configDescription.isIgnoreWhitespaces());
+		
+		boolean ignoreWhiteSpaces = configDescription.isIgnoreWhitespaces();
+		BoundProperty.Whitespaces whitespaces = boundPropertyAnnotation.whitespaces();
+		if (whitespaces != BoundProperty.Whitespaces.INHERIT)
+			ignoreWhiteSpaces = whitespaces == BoundProperty.Whitespaces.IGNORE;
+			
+		IPropertyMapper propertyMapper = MapperFactory.create(boundPropertyAnnotation, propertyMethod, ignoreWhiteSpaces);
 
 		ConfigDescription.PropertyDescription propertyMethodDescription = configDescription.new PropertyDescription(propertyNameTemplate, propertyDynamicVariableNames, propertyMapper, errorBehavior);
 

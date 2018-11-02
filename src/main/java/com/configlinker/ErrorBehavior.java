@@ -13,7 +13,7 @@ public enum ErrorBehavior {
 	/**
 	 * Inherits value from {@link FactoryConfigBuilder#setErrorBehavior(ErrorBehavior)}. Default value {@link #THROW_EXCEPTION}.
 	 */
-	INHERITED,
+	INHERIT,
 	/**
 	 * <p>Throw {@link com.configlinker.exceptions.PropertyNotFoundException} when the value for configuration property not found.
 	 */

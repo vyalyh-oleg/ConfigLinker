@@ -65,7 +65,10 @@ public @interface BoundProperty {
 	 * @return -
 	 */
 	String delimiterForKeyValue() default ":";
-
+	
+	
+	Whitespaces whitespaces() default Whitespaces.INHERIT;
+	
 	/**
 	 * <p>Default value is {@code Object.class}, which used for standard types (see next paragraph).</p>
 	 * <p><b>Standard supported return types</b> (you shouldn't change current parameter for them because it will be ignored):</p>
@@ -112,10 +115,10 @@ public @interface BoundProperty {
 
 	/**
 	 * What to do if the property value does not exist in underlying persistent store.
-	 * Default value is {@link ErrorBehavior#INHERITED} and specified in {@link FactoryConfigBuilder#setErrorBehavior(ErrorBehavior)}
+	 * Default value is {@link ErrorBehavior#INHERIT} and specified in {@link FactoryConfigBuilder#setErrorBehavior(ErrorBehavior)}
 	 * @return -
 	 */
-	ErrorBehavior errorBehavior() default ErrorBehavior.INHERITED;
+	ErrorBehavior errorBehavior() default ErrorBehavior.INHERIT;
 
 	/**
 	 * <p>Values:
@@ -170,5 +173,12 @@ public @interface BoundProperty {
 		 */
 		DESERIALIZER_MAP
 		;
+	}
+	
+	enum Whitespaces {
+		//TODO: documentation
+		INHERIT,
+		IGNORE,
+		ACCEPT
 	}
 }
