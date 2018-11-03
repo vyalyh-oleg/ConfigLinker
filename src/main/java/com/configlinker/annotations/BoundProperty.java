@@ -17,7 +17,7 @@ import java.util.Map;
 public @interface BoundProperty {
 	/**
 	 * <p>Should contain string representation of property name that used in configuration.</p>
-	 * <p>If you set {@code @BoundObject.propertyNamePrefix} it will be added before this value, and in that case this value should begin with a dot. If it begins from any other acceptable symbols except dot, the value considered as full name and used without {@code propertyNamePrefix}.</p>
+	 * <p>If you set {@code @BoundObject.propertyNamePrefix} it will be added before this value, and in that case this value should begin with a dot. If it begins from any other acceptable symbols except dot, the value considered as full name and be used without {@code propertyNamePrefix}.</p>
 	 * <p>
 	 * You can use variables for substituting some parts of the name.
 	 * Variables can be set in {@link FactoryConfigBuilder#addParameter(String, String)}.

@@ -24,23 +24,22 @@ import java.util.stream.Stream;
 @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
 class ComplexTypesTest extends AbstractBaseTest
 {
-	private Company companyInConfigFile;
-	
-	private List<Company> companiesInConfigFile;
+	private static Company companyInConfigFile;
+	private static List<Company> companiesInConfigFile;
 	
 	@BeforeAll
-	void initHardcodedValues()
+	static void initHardcodedValues()
 	{
-		companyInConfigFile = new Company();
-		companyInConfigFile.name = "Horns and hooves";
-		companyInConfigFile.emails = new String[]{"horns.hooves@great.org", "director@great.org"};
-		companyInConfigFile.phoneNumbers = new String[]{"456-876-876", "764-143-078"};
-		companyInConfigFile.ceo = "Peter Jackson";
-		companyInConfigFile.dateFoundation = 1993;
-		companyInConfigFile.authorizedCapital = 140500.82;
+		ComplexTypesTest.companyInConfigFile = new Company();
+		ComplexTypesTest.companyInConfigFile.name = "Horns and hooves";
+		ComplexTypesTest.companyInConfigFile.emails = new String[]{"horns.hooves@great.org", "director@great.org"};
+		ComplexTypesTest.companyInConfigFile.phoneNumbers = new String[]{"456-876-876", "764-143-078"};
+		ComplexTypesTest.companyInConfigFile.ceo = "Peter Jackson";
+		ComplexTypesTest.companyInConfigFile.dateFoundation = 1993;
+		ComplexTypesTest.companyInConfigFile.authorizedCapital = 140500.82;
 		
 		ArrayList<Company> companies = new ArrayList<>();
-		companies.add(companyInConfigFile);
+		companies.add(ComplexTypesTest.companyInConfigFile);
 		
 		Company company2 = new Company();
 		company2.name = "Moon Light";
@@ -69,7 +68,7 @@ class ComplexTypesTest extends AbstractBaseTest
 		company4.authorizedCapital = 1000.00;
 		companies.add(company4);
 		
-		companiesInConfigFile = Collections.unmodifiableList(companies);
+		ComplexTypesTest.companiesInConfigFile = Collections.unmodifiableList(companies);
 	}
 	
 	@Test
@@ -77,7 +76,7 @@ class ComplexTypesTest extends AbstractBaseTest
 	{
 		TypeCompany_fromConstructorString typeCompany_fromConstructorString = getSingleConfigInstance(TypeCompany_fromConstructorString.class);
 		Company company = typeCompany_fromConstructorString.getCompany();
-		Assertions.assertEquals(companyInConfigFile, company);
+		Assertions.assertEquals(ComplexTypesTest.companyInConfigFile, company);
 		Assertions.assertEquals(BoundProperty.DeserializationMethod.CONSTRUCTOR_STRING, company.deserializationMethod);
 	}
 	
@@ -86,7 +85,7 @@ class ComplexTypesTest extends AbstractBaseTest
 	{
 		TypeCompany_fromValueOfString typeCompany_fromValueOfString = getSingleConfigInstance(TypeCompany_fromValueOfString.class);
 		Company company = typeCompany_fromValueOfString.getCompany();
-		Assertions.assertEquals(companyInConfigFile, company);
+		Assertions.assertEquals(ComplexTypesTest.companyInConfigFile, company);
 		Assertions.assertEquals(BoundProperty.DeserializationMethod.VALUEOF_STRING, company.deserializationMethod);
 	}
 	
@@ -95,7 +94,7 @@ class ComplexTypesTest extends AbstractBaseTest
 	{
 		TypeCompany_fromDeserializerString typeCompany_fromDeserializerString = getSingleConfigInstance(TypeCompany_fromDeserializerString.class);
 		Company company = typeCompany_fromDeserializerString.getCompany();
-		Assertions.assertEquals(companyInConfigFile, company);
+		Assertions.assertEquals(ComplexTypesTest.companyInConfigFile, company);
 		Assertions.assertEquals(BoundProperty.DeserializationMethod.DESERIALIZER_STRING, company.deserializationMethod);
 	}
 	
@@ -105,15 +104,15 @@ class ComplexTypesTest extends AbstractBaseTest
 		TypeCompany_MixedString typeCompany_mixedString = getSingleConfigInstance(TypeCompany_MixedString.class);
 		
 		Company companyFromConstructor = typeCompany_mixedString.getCompany_fromConstructorString();
-		Assertions.assertEquals(companyInConfigFile, companyFromConstructor);
+		Assertions.assertEquals(ComplexTypesTest.companyInConfigFile, companyFromConstructor);
 		Assertions.assertEquals(BoundProperty.DeserializationMethod.CONSTRUCTOR_STRING, companyFromConstructor.deserializationMethod);
 		
 		Company companyFromValueOf = typeCompany_mixedString.getCompany_fromValueOfString();
-		Assertions.assertEquals(companyInConfigFile, companyFromValueOf);
+		Assertions.assertEquals(ComplexTypesTest.companyInConfigFile, companyFromValueOf);
 		Assertions.assertEquals(BoundProperty.DeserializationMethod.VALUEOF_STRING, companyFromValueOf.deserializationMethod);
 		
 		Company companyFromDeserializer = typeCompany_mixedString.getCompany_fromDeserializerString();
-		Assertions.assertEquals(companyInConfigFile, companyFromDeserializer);
+		Assertions.assertEquals(ComplexTypesTest.companyInConfigFile, companyFromDeserializer);
 		Assertions.assertEquals(BoundProperty.DeserializationMethod.DESERIALIZER_STRING, companyFromDeserializer.deserializationMethod);
 	}
 	
@@ -122,7 +121,7 @@ class ComplexTypesTest extends AbstractBaseTest
 	{
 		TypeCompany_fromConstructorMap typeCompany_fromConstructorMap = getSingleConfigInstance(TypeCompany_fromConstructorMap.class);
 		Company company = typeCompany_fromConstructorMap.getCompany();
-		Assertions.assertEquals(companyInConfigFile, company);
+		Assertions.assertEquals(ComplexTypesTest.companyInConfigFile, company);
 		Assertions.assertEquals(BoundProperty.DeserializationMethod.CONSTRUCTOR_MAP, company.deserializationMethod);
 	}
 	
@@ -131,7 +130,7 @@ class ComplexTypesTest extends AbstractBaseTest
 	{
 		TypeCompany_fromValueOfMap typeCompany_fromValueOfMap = getSingleConfigInstance(TypeCompany_fromValueOfMap.class);
 		Company company = typeCompany_fromValueOfMap.getCompany();
-		Assertions.assertEquals(companyInConfigFile, company);
+		Assertions.assertEquals(ComplexTypesTest.companyInConfigFile, company);
 		Assertions.assertEquals(BoundProperty.DeserializationMethod.VALUEOF_MAP, company.deserializationMethod);
 	}
 	
@@ -140,7 +139,7 @@ class ComplexTypesTest extends AbstractBaseTest
 	{
 		TypeCompany_fromDeserializerMap typeCompany_fromDeserializerMap = getSingleConfigInstance(TypeCompany_fromDeserializerMap.class);
 		Company company = typeCompany_fromDeserializerMap.getCompany();
-		Assertions.assertEquals(companyInConfigFile, company);
+		Assertions.assertEquals(ComplexTypesTest.companyInConfigFile, company);
 		Assertions.assertEquals(BoundProperty.DeserializationMethod.DESERIALIZER_MAP, company.deserializationMethod);
 	}
 	
@@ -150,15 +149,15 @@ class ComplexTypesTest extends AbstractBaseTest
 		TypeCompany_MixedMap typeCompany_mixedMap = getSingleConfigInstance(TypeCompany_MixedMap.class);
 		
 		Company companyFromConstructor = typeCompany_mixedMap.getCompany_fromConstructorMap();
-		Assertions.assertEquals(companyInConfigFile, companyFromConstructor);
+		Assertions.assertEquals(ComplexTypesTest.companyInConfigFile, companyFromConstructor);
 		Assertions.assertEquals(BoundProperty.DeserializationMethod.CONSTRUCTOR_MAP, companyFromConstructor.deserializationMethod);
 		
 		Company companyFromValueOf = typeCompany_mixedMap.getCompany_fromValueOfMap();
-		Assertions.assertEquals(companyInConfigFile, companyFromValueOf);
+		Assertions.assertEquals(ComplexTypesTest.companyInConfigFile, companyFromValueOf);
 		Assertions.assertEquals(BoundProperty.DeserializationMethod.VALUEOF_MAP, companyFromValueOf.deserializationMethod);
 		
 		Company companyFromDeserializer = typeCompany_mixedMap.getCompany_fromDeserializerMap();
-		Assertions.assertEquals(companyInConfigFile, companyFromDeserializer);
+		Assertions.assertEquals(ComplexTypesTest.companyInConfigFile, companyFromDeserializer);
 		Assertions.assertEquals(BoundProperty.DeserializationMethod.DESERIALIZER_MAP, companyFromDeserializer.deserializationMethod);
 	}
 	
@@ -168,7 +167,7 @@ class ComplexTypesTest extends AbstractBaseTest
 	{
 		TypeCompany_array typeCompany_array = getSingleConfigInstance(TypeCompany_array.class);
 		
-		Company[] arrayCompaniesFromConfig = companiesInConfigFile.toArray(new Company[companiesInConfigFile.size()]);
+		Company[] arrayCompaniesFromConfig = ComplexTypesTest.companiesInConfigFile.toArray(new Company[ComplexTypesTest.companiesInConfigFile.size()]);
 		
 		Company[] arrayCompaniesFromConstructor = typeCompany_array.getArrayCompanies_fromConstructorString();
 		Assertions.assertArrayEquals(arrayCompaniesFromConfig, arrayCompaniesFromConstructor);
@@ -191,7 +190,7 @@ class ComplexTypesTest extends AbstractBaseTest
 	{
 		TypeCompany_list typeCompany_list = getSingleConfigInstance(TypeCompany_list.class);
 		
-		ArrayList<Company> listCompaniesFromConfig = new ArrayList<>(companiesInConfigFile);
+		ArrayList<Company> listCompaniesFromConfig = new ArrayList<>(ComplexTypesTest.companiesInConfigFile);
 		
 		List<Company> listCompaniesFromConstructor = typeCompany_list.getListCompanies_fromConstructorString();
 		Assertions.assertEquals(listCompaniesFromConfig, listCompaniesFromConstructor);
@@ -214,7 +213,7 @@ class ComplexTypesTest extends AbstractBaseTest
 	{
 		TypeCompany_set typeCompany_set = getSingleConfigInstance(TypeCompany_set.class);
 		
-		HashSet<Company> setCompaniesFromConfig = new HashSet<>(companiesInConfigFile);
+		HashSet<Company> setCompaniesFromConfig = new HashSet<>(ComplexTypesTest.companiesInConfigFile);
 		
 		Set<Company> setCompaniesFromConstructor = typeCompany_set.getSetCompanies_fromConstructorString();
 		Assertions.assertEquals(setCompaniesFromConfig, setCompaniesFromConstructor);
@@ -238,7 +237,7 @@ class ComplexTypesTest extends AbstractBaseTest
 		TypeCompany_map typeCompany_map = getSingleConfigInstance(TypeCompany_map.class);
 		
 		LinkedHashMap<String, Company> mapCompaniesFromConfig = new LinkedHashMap<>();
-		companiesInConfigFile.forEach(company ->
+		ComplexTypesTest.companiesInConfigFile.forEach(company ->
 		  mapCompaniesFromConfig.put(company.name, company)
 		);
 		

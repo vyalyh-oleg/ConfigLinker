@@ -42,10 +42,10 @@ class LoadersTest extends AbstractBaseTest
 		}
 	}
 	
-	@Disabled
-	@Test
+	@Test @Disabled("TODO: implement")
 	void test_ConfigLinkerLoader()
 	{
+		// TODO: implement
 		Assertions.fail("Not implemented.");
 	}
 }

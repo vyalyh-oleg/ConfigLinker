@@ -19,13 +19,13 @@ import java.util.Map;
 @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
 class BoundPropertyTest extends AbstractBaseTest
 {
-	private List<String> languagesInConfigFile;
-	private List<String> languagesInConfigFile_withSpaces;
-	private Map<String, Double> languageScoresInConfigFile;
-	private Map<String, Double> languageScoresInConfigFile_withSpaces;
+	static List<String> languagesInConfigFile;
+	static List<String> languagesInConfigFile_withSpaces;
+	static Map<String, Double> languageScoresInConfigFile;
+	static Map<String, Double> languageScoresInConfigFile_withSpaces;
 	
 	@BeforeAll
-	void initHardcodedValues()
+	static void initHardcodedValues()
 	{
 		ArrayList<String> langs = new ArrayList<>();
 		langs.add("Java");
@@ -35,7 +35,7 @@ class BoundPropertyTest extends AbstractBaseTest
 		langs.add("C++");
 		langs.add("C#");
 		langs.add("PHP");
-		languagesInConfigFile = Collections.unmodifiableList(langs);
+		BoundPropertyTest.languagesInConfigFile = Collections.unmodifiableList(langs);
 		
 		ArrayList<String> langsWithSpaces = new ArrayList<>();
 		langsWithSpaces.add("Java");
@@ -45,7 +45,7 @@ class BoundPropertyTest extends AbstractBaseTest
 		langsWithSpaces.add(" C++");
 		langsWithSpaces.add(" C# ");
 		langsWithSpaces.add(" PHP ");
-		languagesInConfigFile_withSpaces = Collections.unmodifiableList(langsWithSpaces);
+		BoundPropertyTest.languagesInConfigFile_withSpaces = Collections.unmodifiableList(langsWithSpaces);
 		
 		LinkedHashMap<String, Double> langScores = new LinkedHashMap<>();
 		langScores.put("Java", 14.941);
@@ -55,47 +55,77 @@ class BoundPropertyTest extends AbstractBaseTest
 		langScores.put("C#", 5.067);
 		langScores.put("PHP", 4.010);
 		langScores.put("JavaScript", 3.916);
-		languageScoresInConfigFile = Collections.unmodifiableMap(langScores);
+		BoundPropertyTest.languageScoresInConfigFile = Collections.unmodifiableMap(langScores);
+		
+		LinkedHashMap<String, Double> langScoresWithWhitespaces = new LinkedHashMap<>();
+		langScoresWithWhitespaces.put(" Java ", 14.941);
+		langScoresWithWhitespaces.put("C", 12.760);
+		langScoresWithWhitespaces.put(" C++  ", 6.452);
+		langScoresWithWhitespaces.put(" Python", 5.869);
+		langScoresWithWhitespaces.put(" C#", 5.067);
+		langScoresWithWhitespaces.put(" PHP ", 4.010);
+		langScoresWithWhitespaces.put("JavaScript", 3.916);
+		BoundPropertyTest.languageScoresInConfigFile_withSpaces = Collections.unmodifiableMap(langScoresWithWhitespaces);
 	}
+	
 	
 	@Test
 	void test_customDelimiterForList()
 	{
 		BoundPropFunc_customListDelimiter langList = this.getSingleConfigInstance(BoundPropFunc_customListDelimiter.class);
-		Assertions.assertEquals(languagesInConfigFile, langList.programmingLanguages());
+		Assertions.assertEquals(BoundPropertyTest.languagesInConfigFile, langList.programmingLanguages());
+	}
+	
+	@Test
+	void test_customDelimiterForListAndAcceptWhitespaces()
+	{
+		BoundPropFunc_customListDelimiter_acceptWhitespaces langList = this.getSingleConfigInstance(BoundPropFunc_customListDelimiter_acceptWhitespaces.class);
+		Assertions.assertEquals(BoundPropertyTest.languagesInConfigFile_withSpaces, langList.programmingLanguages());
 	}
 	
 	@Test
 	void test_customDelimiterForMap()
 	{
 		BoundPropFunc_customKVDelimiter langMap = this.getSingleConfigInstance(BoundPropFunc_customKVDelimiter.class);
-		Assertions.assertEquals(languageScoresInConfigFile, langMap.programmingLanguageScores());
+		Assertions.assertEquals(BoundPropertyTest.languageScoresInConfigFile, langMap.programmingLanguageScores());
+	}
+	
+	@Test
+	void test_customDelimiterForMapAndAcceptWhitespaces()
+	{
+		BoundPropFunc_customKVDelimiter_acceptWhitespaces langMap = this.getSingleConfigInstance(BoundPropFunc_customKVDelimiter_acceptWhitespaces.class);
+		Assertions.assertEquals(BoundPropertyTest.languageScoresInConfigFile_withSpaces, langMap.programmingLanguageScores());
+	}
+	
+	@Test
+	void test_whitespaceInheritance()
+	{
+		BoundPropFunc_customKVDelimiter_whitespaceInheritance langMap = this
+		  .getSingleConfigInstance(BoundPropFunc_customKVDelimiter_whitespaceInheritance.class);
+		
+		Assertions.assertEquals(BoundPropertyTest.languageScoresInConfigFile, langMap.programmingLanguageScores());
+		Assertions.assertEquals(BoundPropertyTest.languageScoresInConfigFile_withSpaces, langMap.programmingLanguageScores_acceptWhitespaces());
 	}
 	
 	@Test @Disabled("TODO: implement")
 	void test_regexValidation()
 	{
-	
+		//TODO: implement
 	}
 	
 	@Test @Disabled("TODO: implement")
 	void test_customValidator()
 	{
-	
+		//TODO: implement
 	}
 	
 	@Test @Disabled("TODO: implement")
 	void test_errorBehaviour()
 	{
-	
+		//TODO: implement
 	}
-}
-
-@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
-interface BoundPropFunc_dontIgnoreWhitespaces
-{
-	@BoundProperty(name = "programming.languages", delimiterForList = ",,", whitespaces = BoundProperty.Whitespaces.ACCEPT)
-	List<String> programmingLanguages();
+	
+	// TODO: inheritance
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
@@ -106,8 +136,32 @@ interface BoundPropFunc_customListDelimiter
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface BoundPropFunc_customListDelimiter_acceptWhitespaces
+{
+	@BoundProperty(name = "programming.languages", customTypeOrDeserializer = String.class, delimiterForList = ",,", whitespaces = BoundProperty.Whitespaces.ACCEPT)
+	List<String> programmingLanguages();
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
 interface BoundPropFunc_customKVDelimiter
 {
 	@BoundProperty(name = "programming.languages.popularity.2017", customTypeOrDeserializer = Double.class, delimiterForList = ";", delimiterForKeyValue = "@")
 	Map<String, Double> programmingLanguageScores();
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface BoundPropFunc_customKVDelimiter_acceptWhitespaces
+{
+	@BoundProperty(name = "programming.languages.popularity.2017", customTypeOrDeserializer = Double.class, delimiterForList = ";", delimiterForKeyValue = "@", whitespaces = BoundProperty.Whitespaces.ACCEPT)
+	Map<String, Double> programmingLanguageScores();
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface BoundPropFunc_customKVDelimiter_whitespaceInheritance
+{
+	@BoundProperty(name = "programming.languages.popularity.2017", customTypeOrDeserializer = Double.class, delimiterForList = ";", delimiterForKeyValue = "@")
+	Map<String, Double> programmingLanguageScores();
+	
+	@BoundProperty(name = "programming.languages.popularity.2017", customTypeOrDeserializer = Double.class, delimiterForList = ";", delimiterForKeyValue = "@", whitespaces = BoundProperty.Whitespaces.ACCEPT)
+	Map<String, Double> programmingLanguageScores_acceptWhitespaces();
 }

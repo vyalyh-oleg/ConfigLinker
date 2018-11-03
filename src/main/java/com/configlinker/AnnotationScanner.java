@@ -107,8 +107,7 @@ final class AnnotationScanner {
 		String[] customHttpHeaders = boundObjectAnnotation.httpHeaders();
 		if (!(customHttpHeaders.length == 1 && customHttpHeaders[0].isEmpty()))
 			if (sourceScheme == BoundObject.SourceScheme.HTTP) {
-				httpHeaders = new HashMap<>();
-				httpHeaders.putAll(this.configBuilder.getHttpHeaders());
+				httpHeaders = new HashMap<>(this.configBuilder.getHttpHeaders());
 				String header;
 				int colonIndex;
 				for (String httpHeader : customHttpHeaders)

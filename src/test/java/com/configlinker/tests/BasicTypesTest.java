@@ -193,30 +193,30 @@ class BasicTypesTest extends AbstractBaseTest
 	}
 	
 	@Test
-	void test_typeString()
+	void test_typeMultilineString()
 	{
-		TypeString typeString = getSingleConfigInstance(TypeString.class);
+		TypeMultilineString typeMultilineString = getSingleConfigInstance(TypeMultilineString.class);
 		// Take into account that default value for FactoryConfigBuilder.whitespaces() == true
-		Assertions.assertEquals("Just a simple multiline text", typeString.getValue1());
-		Assertions.assertEquals("Just a simple multiline text", typeString.getValue2());
-		Assertions.assertEquals("Just a simplemultiline text", typeString.getValue3());
-		Assertions.assertEquals("Just a simple \n multiline text", typeString.getValue4());
-		Assertions.assertEquals("Just a simple \r multiline text", typeString.getValue5());
-		Assertions.assertEquals("Just a simple b multiline text", typeString.getValue6());
-		Assertions.assertEquals("Just a simple \f multiline text", typeString.getValue7());
+		Assertions.assertEquals("Just a simple multiline text", typeMultilineString.getValue1());
+		Assertions.assertEquals("Just a simple multiline text", typeMultilineString.getValue2());
+		Assertions.assertEquals("Just a simplemultiline text", typeMultilineString.getValue3());
+		Assertions.assertEquals("Just a simple \n multiline text", typeMultilineString.getValue4());
+		Assertions.assertEquals("Just a simple \r multiline text", typeMultilineString.getValue5());
+		Assertions.assertEquals("Just a simple b multiline text", typeMultilineString.getValue6());
+		Assertions.assertEquals("Just a simple \f multiline text", typeMultilineString.getValue7());
 	}
 	
 	@Test
-	void test_typeString_withWhiteSpaces()
+	void test_typeMultilineString_withWhitespaces()
 	{
-		TypeString typeString = getSingleConfigInstance(FactoryConfigBuilder.create().setWhitespaces(BoundProperty.Whitespaces.ACCEPT), TypeString.class);
-		Assertions.assertEquals("Just a simple multiline text", typeString.getValue1());
-		Assertions.assertEquals("Just a simple multiline text", typeString.getValue2());
-		Assertions.assertEquals("Just a simplemultiline text   ", typeString.getValue3()); // 3 spaces at the end
-		Assertions.assertEquals("Just a simple \n multiline text", typeString.getValue4());
-		Assertions.assertEquals("Just a simple \r multiline text  ", typeString.getValue5()); // 2 spaces at the end
-		Assertions.assertEquals(" Just a simple b multiline text   ", typeString.getValue6()); // 1 leading space and 3 spaces at the end
-		Assertions.assertEquals("Just a simple \f multiline text", typeString.getValue7());
+		TypeMultilineString typeMultilineString = getSingleConfigInstance(FactoryConfigBuilder.create().setWhitespaces(BoundProperty.Whitespaces.ACCEPT), TypeMultilineString.class);
+		Assertions.assertEquals("Just a simple multiline text", typeMultilineString.getValue1());
+		Assertions.assertEquals("Just a simple multiline text", typeMultilineString.getValue2());
+		Assertions.assertEquals("Just a simplemultiline text   ", typeMultilineString.getValue3()); // 3 trailing spaces
+		Assertions.assertEquals("Just a simple \n multiline text", typeMultilineString.getValue4());
+		Assertions.assertEquals("Just a simple \r multiline text  ", typeMultilineString.getValue5()); // 2 trailing spaces
+		Assertions.assertEquals(" Just a simple b multiline text   ", typeMultilineString.getValue6()); // 1 leading space and 3 trailing spaces
+		Assertions.assertEquals("Just a simple \f multiline text", typeMultilineString.getValue7());
 	}
 }
 
@@ -409,7 +409,7 @@ interface TypeDoubleError
 }
 
 @BoundObject(sourcePath = "./configs/base_types.properties")
-interface TypeString
+interface TypeMultilineString
 {
 	@BoundProperty(name = "type.String.1")
 	String getValue1();
