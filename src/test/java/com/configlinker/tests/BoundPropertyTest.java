@@ -14,15 +14,16 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 
 @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
 class BoundPropertyTest extends AbstractBaseTest
 {
-	static List<String> languagesInConfigFile;
-	static List<String> languagesInConfigFile_withSpaces;
-	static Map<String, Double> languageScoresInConfigFile;
-	static Map<String, Double> languageScoresInConfigFile_withSpaces;
+	private static List<String> languagesInConfigFile;
+	private static List<String> languagesInConfigFile_withSpaces;
+	private static Map<String, Double> languageScoresInConfigFile;
+	private static Map<String, Double> languageScoresInConfigFile_withSpaces;
 	
 	@BeforeAll
 	static void initHardcodedValues()
@@ -107,10 +108,13 @@ class BoundPropertyTest extends AbstractBaseTest
 		Assertions.assertEquals(BoundPropertyTest.languageScoresInConfigFile_withSpaces, langMap.programmingLanguageScores_acceptWhitespaces());
 	}
 	
-	@Test @Disabled("TODO: implement")
+	@Test
 	void test_regexValidation()
 	{
-		//TODO: implement
+		String regex2= "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?";
+		BoundPropFunc_regexValidator regexValidatorProperty = this.getSingleConfigInstance(BoundPropFunc_regexValidator.class);
+		BoundPropFunc_regexValidator_withError regexValidatorProperty_withError = this.getSingleConfigInstance(BoundPropFunc_regexValidator_withError.class);
+		
 	}
 	
 	@Test @Disabled("TODO: implement")
@@ -164,4 +168,30 @@ interface BoundPropFunc_customKVDelimiter_whitespaceInheritance
 	
 	@BoundProperty(name = "programming.languages.popularity.2017", customTypeOrDeserializer = Double.class, delimiterForList = ";", delimiterForKeyValue = "@", whitespaces = BoundProperty.Whitespaces.ACCEPT)
 	Map<String, Double> programmingLanguageScores_acceptWhitespaces();
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface BoundPropFunc_regexValidator
+{
+	@BoundProperty(name = "workgroup.name", regexPattern = "[\\w\\d \"'().]{3,150}")
+	String workgroupName();
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface BoundPropFunc_regexValidator_withError
+{
+	@BoundProperty(name = "workgroup.name.error", regexPattern = "[\\w\\d \"'().]{3,150}")
+	String workgroupName();
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface BoundPropFunc_customValidator
+{
+
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface BoundPropFunc_errorBehavior
+{
+
 }

@@ -5,9 +5,11 @@ import com.configlinker.annotations.BoundProperty;
 import com.configlinker.exceptions.PropertyMapException;
 import com.configlinker.parsers.ParserFactory;
 import com.configlinker.parsers.PropertyParser;
+import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.URL;
@@ -29,9 +31,6 @@ public final class MapperFactory
 	@SuppressWarnings("unchecked")
 	public static IPropertyMapper create(BoundProperty boundPropertyAnnotation, Method propertyMethod, boolean ignoreWhitespaces) throws PropertyMapException
 	{
-		
-		Class<?> returnType = propertyMethod.getReturnType();
-		
 		String strRegexpPattern = boundPropertyAnnotation.regexPattern();
 		Pattern regexpPattern = null;
 		if (strRegexpPattern.length() > 0)
@@ -66,6 +65,8 @@ public final class MapperFactory
 		
 		// --------------------------------------------------------------------------------
 		
+		Class<?> returnType = propertyMethod.getReturnType();
+		
 		if (returnType.isPrimitive())
 		{
 			customTypeOrDeserializer = ParserFactory.getWrapperForPrimitive(returnType);
@@ -95,6 +96,15 @@ public final class MapperFactory
 			
 			if (customTypeOrDeserializer == Object.class)
 				customTypeOrDeserializer = arrayType;
+		}
+		
+		// TODO: for generics
+		if ((List.class.isAssignableFrom(returnType) || Set.class.isAssignableFrom(returnType) || Map.class
+		  .isAssignableFrom(returnType)))
+		{
+			Type genericType = propertyMethod.getGenericReturnType();
+			Type[] types = ((ParameterizedTypeImpl) genericType).getActualTypeArguments();
+			((ParameterizedTypeImpl) genericType).getRawType();
 		}
 		
 		if (customTypeOrDeserializer.isPrimitive())
