@@ -4,5 +4,5 @@ import com.configlinker.exceptions.PropertyValidateException;
 
 
 public interface IPropertyValidator<T> {
-	boolean validate(T value) throws PropertyValidateException;
+	void validate(T value) throws PropertyValidateException;
 }

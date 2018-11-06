@@ -7,6 +7,8 @@ import com.configlinker.exceptions.PropertyMapException;
 import com.configlinker.mappers.IPropertyMapper;
 import com.configlinker.mappers.MapperFactory;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
@@ -164,10 +166,11 @@ final class AnnotationScanner {
 		if (changeListener_class != IConfigChangeListener.class) {
 			try
 			{
-				changeListener_class.getDeclaredConstructor().setAccessible(true);
-				changeListener = changeListener_class.newInstance();
+				Constructor<? extends IConfigChangeListener> constructor = changeListener_class.getDeclaredConstructor();
+				constructor.setAccessible(true);
+				changeListener = constructor.newInstance();
 			}
-			catch (InstantiationException | IllegalAccessException | NoSuchMethodException e)
+			catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e)
 			{
 				throw new AnnotationAnalyzeException(
 				  "Cannot create '" + IConfigChangeListener.class.getSimpleName() + "' object; config interface '" + configInterface.getName() + "'.", e)

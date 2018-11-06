@@ -1,8 +1,11 @@
 package com.configlinker.tests;
 
 
+import com.configlinker.IPropertyValidator;
 import com.configlinker.annotations.BoundObject;
 import com.configlinker.annotations.BoundProperty;
+import com.configlinker.exceptions.PropertyMatchException;
+import com.configlinker.exceptions.PropertyValidateException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -14,7 +17,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 
 @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
@@ -73,95 +75,152 @@ class BoundPropertyTest extends AbstractBaseTest
 	@Test
 	void test_customDelimiterForList()
 	{
-		BoundPropFunc_customListDelimiter langList = this.getSingleConfigInstance(BoundPropFunc_customListDelimiter.class);
+		CustomListDelimiter langList = this.getSingleConfigInstance(CustomListDelimiter.class);
 		Assertions.assertEquals(BoundPropertyTest.languagesInConfigFile, langList.programmingLanguages());
 	}
 	
 	@Test
 	void test_customDelimiterForListAndAcceptWhitespaces()
 	{
-		BoundPropFunc_customListDelimiter_acceptWhitespaces langList = this.getSingleConfigInstance(BoundPropFunc_customListDelimiter_acceptWhitespaces.class);
+		CustomListDelimiter_acceptWhitespaces langList = this.getSingleConfigInstance(CustomListDelimiter_acceptWhitespaces.class);
 		Assertions.assertEquals(BoundPropertyTest.languagesInConfigFile_withSpaces, langList.programmingLanguages());
 	}
 	
 	@Test
 	void test_customDelimiterForMap()
 	{
-		BoundPropFunc_customKVDelimiter langMap = this.getSingleConfigInstance(BoundPropFunc_customKVDelimiter.class);
+		CustomKeyValueDelimiter langMap = this.getSingleConfigInstance(CustomKeyValueDelimiter.class);
 		Assertions.assertEquals(BoundPropertyTest.languageScoresInConfigFile, langMap.programmingLanguageScores());
 	}
 	
 	@Test
 	void test_customDelimiterForMapAndAcceptWhitespaces()
 	{
-		BoundPropFunc_customKVDelimiter_acceptWhitespaces langMap = this.getSingleConfigInstance(BoundPropFunc_customKVDelimiter_acceptWhitespaces.class);
+		CustomKeyValueDelimiter_acceptWhitespaces langMap = this.getSingleConfigInstance(CustomKeyValueDelimiter_acceptWhitespaces.class);
 		Assertions.assertEquals(BoundPropertyTest.languageScoresInConfigFile_withSpaces, langMap.programmingLanguageScores());
 	}
 	
 	@Test
-	void test_whitespaceInheritance()
+	void test_whitespaceOverride()
 	{
-		BoundPropFunc_customKVDelimiter_whitespaceInheritance langMap = this
-		  .getSingleConfigInstance(BoundPropFunc_customKVDelimiter_whitespaceInheritance.class);
+		CustomKeyValueDelimiter_whitespaceOverride langMap = this
+		  .getSingleConfigInstance(CustomKeyValueDelimiter_whitespaceOverride.class);
 		
 		Assertions.assertEquals(BoundPropertyTest.languageScoresInConfigFile, langMap.programmingLanguageScores());
 		Assertions.assertEquals(BoundPropertyTest.languageScoresInConfigFile_withSpaces, langMap.programmingLanguageScores_acceptWhitespaces());
 	}
 	
+	// --------------------------------------------------------------------------------
+	
 	@Test
 	void test_regexValidation()
 	{
-		String regex2= "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?";
-		BoundPropFunc_regexValidator regexValidatorProperty = this.getSingleConfigInstance(BoundPropFunc_regexValidator.class);
-		BoundPropFunc_regexValidator_withError regexValidatorProperty_withError = this.getSingleConfigInstance(BoundPropFunc_regexValidator_withError.class);
-		
+		RegexValidator workgroup = this.getSingleConfigInstance(RegexValidator.class);
+		Assertions.assertEquals("Association of Physicists of Ukraine", workgroup.workgroupName());
 	}
 	
-	@Test @Disabled("TODO: implement")
-	void test_customValidator()
+	@Test
+	void test_regexValidation_error()
 	{
-		//TODO: implement
+		PropertyMatchException exception = Assertions.assertThrows(PropertyMatchException.class, () -> {
+			RegexValidator_withError workgroup = this.getSingleConfigInstance(RegexValidator_withError.class);
+		});
+		
+		Assertions.assertEquals("Property 'Association of Physicists of %Ukraine%' doesn't match pattern '[\\w\\d \"'().]{3,150}'.", exception.getMessage());
+		Assertions.assertNull(exception.getCause());
 	}
+	
+	@Test
+	void test_regexValidationList()
+	{
+		ArrayList<String> emailsFromConfig = new ArrayList<>();
+		emailsFromConfig.add("vitaliy.mayko@physics.ua");
+		emailsFromConfig.add("zinovij.nazarchuk@physics.ua");
+		emailsFromConfig.add("mark.gabovich@physics.ua");
+		
+		BoundPropFunc_regexValidatorList emails = this.getSingleConfigInstance(BoundPropFunc_regexValidatorList.class);
+		Assertions.assertEquals(emailsFromConfig, emails.emailList());
+	}
+	
+	@Test
+	void test_regexValidationList_error()
+	{
+		PropertyMatchException exception = Assertions.assertThrows(PropertyMatchException.class, () -> {
+			RegexValidatorList_withError emails = this.getSingleConfigInstance(RegexValidatorList_withError.class);
+		});
+		
+		Assertions.assertEquals("Property 'vitaliy..mayko@physics.ua' doesn't match pattern '[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?'.", exception.getMessage());
+		Assertions.assertNull(exception.getCause());
+	}
+	
+	// --------------------------------------------------------------------------------
+	
+	@Test
+	void test_customValidatorList()
+	{
+		ArrayList<String> emailsFromConfig = new ArrayList<>();
+		emailsFromConfig.add("vitaliy.mayko@physics.ua");
+		emailsFromConfig.add("zinovij.nazarchuk@physics.ua");
+		emailsFromConfig.add("mark.gabovich@physics.ua");
+		
+		CustomValidatorList emails = this.getSingleConfigInstance(CustomValidatorList.class);
+		Assertions.assertEquals(emailsFromConfig, emails.emailList());
+	}
+	
+	@Test
+	void test_customValidatorList_error()
+	{
+		PropertyValidateException exception = Assertions.assertThrows(PropertyValidateException.class, () -> {
+			CustomValidatorList_withError emails = this.getSingleConfigInstance(CustomValidatorList_withError.class);
+		});
+		
+		Assertions.assertEquals("'zinovij#nazarchuk@physic.ua' not in 'physics.ua' domain.", exception.getMessage());
+		Assertions.assertNull(exception.getCause());
+	}
+	
+	// --------------------------------------------------------------------------------
+	
+	// TODO: tests fro regex and validte for array, list, set, map (for strings and any other type)
 	
 	@Test @Disabled("TODO: implement")
 	void test_errorBehaviour()
 	{
 		//TODO: implement
 	}
-	
-	// TODO: inheritance
+
 }
 
+
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
-interface BoundPropFunc_customListDelimiter
+interface CustomListDelimiter
 {
 	@BoundProperty(name = "programming.languages", customTypeOrDeserializer = String.class, delimiterForList = ",,")
 	List<String> programmingLanguages();
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
-interface BoundPropFunc_customListDelimiter_acceptWhitespaces
+interface CustomListDelimiter_acceptWhitespaces
 {
 	@BoundProperty(name = "programming.languages", customTypeOrDeserializer = String.class, delimiterForList = ",,", whitespaces = BoundProperty.Whitespaces.ACCEPT)
 	List<String> programmingLanguages();
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
-interface BoundPropFunc_customKVDelimiter
+interface CustomKeyValueDelimiter
 {
 	@BoundProperty(name = "programming.languages.popularity.2017", customTypeOrDeserializer = Double.class, delimiterForList = ";", delimiterForKeyValue = "@")
 	Map<String, Double> programmingLanguageScores();
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
-interface BoundPropFunc_customKVDelimiter_acceptWhitespaces
+interface CustomKeyValueDelimiter_acceptWhitespaces
 {
 	@BoundProperty(name = "programming.languages.popularity.2017", customTypeOrDeserializer = Double.class, delimiterForList = ";", delimiterForKeyValue = "@", whitespaces = BoundProperty.Whitespaces.ACCEPT)
 	Map<String, Double> programmingLanguageScores();
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
-interface BoundPropFunc_customKVDelimiter_whitespaceInheritance
+interface CustomKeyValueDelimiter_whitespaceOverride
 {
 	@BoundProperty(name = "programming.languages.popularity.2017", customTypeOrDeserializer = Double.class, delimiterForList = ";", delimiterForKeyValue = "@")
 	Map<String, Double> programmingLanguageScores();
@@ -170,28 +229,66 @@ interface BoundPropFunc_customKVDelimiter_whitespaceInheritance
 	Map<String, Double> programmingLanguageScores_acceptWhitespaces();
 }
 
+
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
-interface BoundPropFunc_regexValidator
+interface RegexValidator
 {
 	@BoundProperty(name = "workgroup.name", regexPattern = "[\\w\\d \"'().]{3,150}")
 	String workgroupName();
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
-interface BoundPropFunc_regexValidator_withError
+interface RegexValidator_withError
 {
 	@BoundProperty(name = "workgroup.name.error", regexPattern = "[\\w\\d \"'().]{3,150}")
 	String workgroupName();
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
-interface BoundPropFunc_customValidator
+interface BoundPropFunc_regexValidatorList
 {
-
+	String emailPattern = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?";
+	
+	@BoundProperty(name = "workgroup.emails", customTypeOrDeserializer = String.class, regexPattern = emailPattern)
+	List<String> emailList();
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
-interface BoundPropFunc_errorBehavior
+interface RegexValidatorList_withError
+{
+	@BoundProperty(name = "workgroup.emails.error", customTypeOrDeserializer = String.class, regexPattern = BoundPropFunc_regexValidatorList.emailPattern)
+	List<String> emailList();
+}
+
+
+class EmailDomainValidator implements IPropertyValidator<String>
+{
+	@Override
+	public void validate(String value) throws PropertyValidateException
+	{
+		if (!value.endsWith("@physics.ua"))
+			throw new PropertyValidateException("'" + value + "' not in 'physics.ua' domain.");
+	}
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface CustomValidatorList
+{
+	@BoundProperty(name = "workgroup.emails", customTypeOrDeserializer = String.class, validator = EmailDomainValidator.class)
+	List<String> emailList();
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface CustomValidatorList_withError
+{
+	@BoundProperty(name = "workgroup.emails.error", customTypeOrDeserializer = String.class, validator = EmailDomainValidator.class)
+	List<String> emailList();
+}
+
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface ErrorBehavior
 {
 
 }
+

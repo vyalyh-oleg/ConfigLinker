@@ -18,7 +18,7 @@ final class ListPropertyParser implements PropertyParser<List<String>> {
 				values[i] = values[i].trim();
 
 			if (regexpPattern != null && !regexpPattern.matcher(values[i]).matches())
-				throw new PropertyMatchException("Property '" + values[i] + "' don't match pattern '" + regexpPattern.toString() + "'.").logAndReturn();
+				throw new PropertyMatchException("Property '" + values[i] + "' doesn't match pattern '" + regexpPattern.toString() + "'.").logAndReturn();
 		}
 
 		return Arrays.stream(values).collect(Collectors.toList());

@@ -7,7 +7,9 @@ import com.configlinker.parsers.ParserFactory;
 import com.configlinker.parsers.PropertyParser;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.net.InetAddress;
@@ -49,9 +51,11 @@ public final class MapperFactory
 		if (validator_class != IPropertyValidator.class)
 			try
 			{
-				validator = validator_class.newInstance();
+				Constructor<? extends IPropertyValidator> constructor = validator_class.getDeclaredConstructor();
+				constructor.setAccessible(true);
+				validator = constructor.newInstance();
 			}
-			catch (InstantiationException | IllegalAccessException e)
+			catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e)
 			{
 				throw new PropertyMapException(
 				  "Cannot create validator for '" + propertyMethod.getDeclaringClass().getName() + "::" + propertyMethod.getName() + "'.", e).logAndReturn();
@@ -142,9 +146,9 @@ public final class MapperFactory
 		// --------------------------------------------------------------------------------
 		
 		PropertyParser propertyParser = ParserFactory.create(returnType, deserializationMethod);
-
+		
 		if (returnType == String.class)
-			return new StringStubPropertyMapper(propertyParser, ignoreWhitespaces, executable, regexpPattern);
+			return new StringStubPropertyMapper(propertyParser, ignoreWhitespaces, executable, regexpPattern, validator);
 		
 		if (returnType.isArray())
 		{
@@ -156,19 +160,19 @@ public final class MapperFactory
 		
 		if (List.class.isAssignableFrom(returnType))
 			if (customTypeOrDeserializer == String.class)
-				return new ListStringMapper(returnType, propertyParser, ignoreWhitespaces, executable, regexpPattern, delimiterForList);
+				return new ListStringMapper(returnType, propertyParser, ignoreWhitespaces, executable, regexpPattern, validator, delimiterForList);
 			else
 				return new ListObjectMapper(returnType, propertyParser, ignoreWhitespaces, executable, regexpPattern, validator, delimiterForList);
 		
 		if (Set.class.isAssignableFrom(returnType))
 			if (customTypeOrDeserializer == String.class)
-				return new SetStringMapper(returnType, propertyParser, ignoreWhitespaces, executable, regexpPattern, delimiterForList);
+				return new SetStringMapper(returnType, propertyParser, ignoreWhitespaces, executable, regexpPattern, validator, delimiterForList);
 			else
 				return new SetObjectMapper(returnType, propertyParser, ignoreWhitespaces, executable, regexpPattern, validator, delimiterForList);
 		
 		if (Map.class.isAssignableFrom(returnType))
 			if (customTypeOrDeserializer == String.class)
-				return new MapStringStringMapper(returnType, propertyParser, ignoreWhitespaces, executable, regexpPattern, delimiterForList,
+				return new MapStringStringMapper(returnType, propertyParser, ignoreWhitespaces, executable, regexpPattern, validator, delimiterForList,
 				  delimiterForKeyValue);
 			else
 				return new MapStringObjectMapper(returnType, propertyParser, ignoreWhitespaces, executable, regexpPattern, validator, delimiterForList,
