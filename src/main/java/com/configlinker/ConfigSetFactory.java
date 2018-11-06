@@ -1,12 +1,12 @@
 package com.configlinker;
 
 import com.configlinker.exceptions.AnnotationAnalyzeException;
+import com.configlinker.exceptions.ConfigSetException;
 import com.configlinker.exceptions.PropertyMapException;
 import com.configlinker.loaders.LoaderService;
 import com.configlinker.proxy.ConfigProxyFactory;
 
 import java.lang.reflect.Proxy;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,8 +25,12 @@ public final class ConfigSetFactory {
 	
 	public static ConfigSet create(FactoryConfigBuilder builder, Class<?>... configInterfaces) throws AnnotationAnalyzeException, PropertyMapException
 	{
-		HashSet<Class<?>> setConfigInterfaces = new HashSet<>(Arrays.asList(configInterfaces));
-		// TODO: check on duplicate interfaces and throw an error if any found
+		HashSet<Class<?>> setConfigInterfaces = new HashSet<>();
+		for (Class<?> clazz : configInterfaces)
+		{
+			if (!setConfigInterfaces.add(clazz))
+				throw new ConfigSetException("Duplicate interface found: '" + clazz.getName() + "'.");
+		}
 		return create(builder, setConfigInterfaces);
 	}
 	
