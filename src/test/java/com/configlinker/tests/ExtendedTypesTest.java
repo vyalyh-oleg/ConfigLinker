@@ -42,7 +42,7 @@ class ExtendedTypesTest extends AbstractBaseTest
 			TypeEnumError typeEnumError = getSingleConfigInstance(TypeEnumError.class);
 		});
 		
-		Assertions.assertEquals("Cannot interpret return type for method 'com.configlinker.tests.NumberName::valueOf'.", exception.getMessage());
+		Assertions.assertEquals("Cannot create object for return type in method 'com.configlinker.tests.NumberName::valueOf'.", exception.getMessage());
 		Throwable baseCause = exception.getCause().getCause();
 		Assertions.assertEquals(IllegalArgumentException.class, baseCause.getClass());
 		Assertions.assertEquals("No enum constant com.configlinker.tests.NumberName.eleven", baseCause.getMessage());
@@ -65,7 +65,7 @@ class ExtendedTypesTest extends AbstractBaseTest
 			TypeURLError typeURL = getSingleConfigInstance(TypeURLError.class);
 		});
 		
-		Assertions.assertEquals("Cannot interpret return type for method 'java.net.URL::java.net.URL'.", exception.getMessage());
+		Assertions.assertEquals("Cannot create object for return type in method 'java.net.URL::java.net.URL'.", exception.getMessage());
 		Throwable baseCause = exception.getCause().getCause();
 		Assertions.assertEquals(MalformedURLException.class, baseCause.getClass());
 		Assertions.assertEquals("unknown protocol: http-", baseCause.getMessage());
@@ -98,7 +98,7 @@ class ExtendedTypesTest extends AbstractBaseTest
 			TypeURIError typeURIError = getSingleConfigInstance(TypeURIError.class);
 		});
 		
-		Assertions.assertEquals("Cannot interpret return type for method 'java.net.URI::java.net.URI'.", exception.getMessage());
+		Assertions.assertEquals("Cannot create object for return type in method 'java.net.URI::java.net.URI'.", exception.getMessage());
 		Throwable baseCause = exception.getCause().getCause();
 		Assertions.assertEquals(URISyntaxException.class, baseCause.getClass());
 		Assertions.assertEquals("Expected scheme name at index 0: :mailto:John.Doe@example.com", baseCause.getMessage());
@@ -120,7 +120,7 @@ class ExtendedTypesTest extends AbstractBaseTest
 			TypeUUIDError1 typeURIError = getSingleConfigInstance(TypeUUIDError1.class);
 		});
 		
-		Assertions.assertEquals("Cannot interpret return type for method 'java.util.UUID::fromString'.", exception.getMessage());
+		Assertions.assertEquals("Cannot create object for return type in method 'java.util.UUID::fromString'.", exception.getMessage());
 		Throwable baseCause = exception.getCause().getCause();
 		Assertions.assertEquals(NumberFormatException.class, baseCause.getClass());
 		Assertions.assertEquals("For input string: \"4du5\"", baseCause.getMessage());
@@ -164,7 +164,7 @@ class ExtendedTypesTest extends AbstractBaseTest
 			TypeInetAddressIPv4Error typeInetAddressIPv4Error = getSingleConfigInstance(TypeInetAddressIPv4Error.class);
 		});
 		
-		Assertions.assertEquals("Cannot interpret return type for method 'java.net.InetAddress::getByName'.", exception.getMessage());
+		Assertions.assertEquals("Cannot create object for return type in method 'java.net.InetAddress::getByName'.", exception.getMessage());
 		Throwable baseCause = exception.getCause().getCause();
 		Assertions.assertEquals(UnknownHostException.class, baseCause.getClass());
 		Assertions.assertEquals("192.256.12.10: Name or service not known", baseCause.getMessage());
@@ -177,7 +177,7 @@ class ExtendedTypesTest extends AbstractBaseTest
 			TypeInetAddressIPv6Error typeInetAddressIPv6Error = getSingleConfigInstance(TypeInetAddressIPv6Error.class);
 		});
 		
-		Assertions.assertEquals("Cannot interpret return type for method 'java.net.InetAddress::getByName'.", exception.getMessage());
+		Assertions.assertEquals("Cannot create object for return type in method 'java.net.InetAddress::getByName'.", exception.getMessage());
 		Throwable baseCause = exception.getCause().getCause();
 		Assertions.assertEquals(UnknownHostException.class, baseCause.getClass());
 		Assertions.assertEquals(":::123: invalid IPv6 address", baseCause.getMessage());
@@ -207,7 +207,7 @@ class ExtendedTypesTest extends AbstractBaseTest
 			TypeDateErrorMilliseconds typeInetAddressIPv6Error = getSingleConfigInstance(TypeDateErrorMilliseconds.class);
 		});
 		
-		Assertions.assertEquals("Cannot interpret return type for method 'com.configlinker.deserializers.DateType$Milliseconds::deserialize'.", exception.getMessage());
+		Assertions.assertEquals("Cannot create object for return type in method 'com.configlinker.deserializers.DateType$Milliseconds::deserialize'.", exception.getMessage());
 		Throwable baseCause = exception.getCause().getCause();
 		Assertions.assertEquals(NumberFormatException.class, baseCause.getClass());
 		Assertions.assertEquals("For input string: \"123456O78909876\"", baseCause.getMessage());
@@ -221,7 +221,7 @@ class ExtendedTypesTest extends AbstractBaseTest
 			TypeDateErrorSeconds typeInetAddressIPv6Error = getSingleConfigInstance(TypeDateErrorSeconds.class);
 		});
 		
-		Assertions.assertEquals("Cannot interpret return type for method 'com.configlinker.deserializers.DateType$Seconds::deserialize'.", exception.getMessage());
+		Assertions.assertEquals("Cannot create object for return type in method 'com.configlinker.deserializers.DateType$Seconds::deserialize'.", exception.getMessage());
 		Throwable baseCause = exception.getCause().getCause();
 		Assertions.assertEquals(NumberFormatException.class, baseCause.getClass());
 		Assertions.assertEquals("For input string: \"15303752711234567890\"", baseCause.getMessage());
@@ -234,7 +234,7 @@ class ExtendedTypesTest extends AbstractBaseTest
 			TypeDateError typeInetAddressIPv6Error = getSingleConfigInstance(TypeDateError.class);
 		});
 		
-		Assertions.assertEquals("Cannot interpret return type for method 'com.configlinker.deserializers.DateType$DateTime::deserialize'.", exception.getMessage());
+		Assertions.assertEquals("Cannot create object for return type in method 'com.configlinker.deserializers.DateType$DateTime::deserialize'.", exception.getMessage());
 		Throwable baseCause = exception.getCause().getCause().getCause();
 		Assertions.assertEquals(ParseException.class, baseCause.getClass());
 		Assertions.assertEquals("Unparseable date: \"2014-08-01 19:01:37\"", baseCause.getMessage());

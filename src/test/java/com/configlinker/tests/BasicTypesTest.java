@@ -49,7 +49,7 @@ class BasicTypesTest extends AbstractBaseTest
 			TypeByteError typeByteError = getSingleConfigInstance(TypeByteError.class);
 		});
 		
-		Assertions.assertEquals("Cannot interpret return type for method 'java.lang.Byte::valueOf'.", exception.getMessage());
+		Assertions.assertEquals("Cannot create object for return type in method 'java.lang.Byte::valueOf'.", exception.getMessage());
 		Throwable baseCause = exception.getCause().getCause();
 		Assertions.assertEquals(NumberFormatException.class, baseCause.getClass());
 		Assertions.assertEquals("Value out of range. Value:\"128\" Radix:10", baseCause.getMessage());
@@ -71,7 +71,7 @@ class BasicTypesTest extends AbstractBaseTest
 			TypeCharError typeCharError = getSingleConfigInstance(TypeCharError.class);
 		});
 		
-		Assertions.assertEquals("Cannot interpret return type for method 'com.configlinker.mappers.CharacterMapper::valueOf'.", exception.getMessage());
+		Assertions.assertEquals("Cannot create object for return type in method 'com.configlinker.mappers.CharacterMapper::valueOf'.", exception.getMessage());
 		Throwable baseCause = exception.getCause().getCause();
 		Assertions.assertEquals(IllegalArgumentException.class, baseCause.getClass());
 		Assertions.assertEquals("Given string 'rb' instead of a single char.", baseCause.getMessage());
@@ -93,7 +93,7 @@ class BasicTypesTest extends AbstractBaseTest
 			TypeShortError typeShortError = getSingleConfigInstance(TypeShortError.class);
 		});
 		
-		Assertions.assertEquals("Cannot interpret return type for method 'java.lang.Short::valueOf'.", exception.getMessage());
+		Assertions.assertEquals("Cannot create object for return type in method 'java.lang.Short::valueOf'.", exception.getMessage());
 		Throwable baseCause = exception.getCause().getCause();
 		Assertions.assertEquals(NumberFormatException.class, baseCause.getClass());
 		Assertions.assertEquals("Value out of range. Value:\"-33000\" Radix:10", baseCause.getMessage());
@@ -115,7 +115,7 @@ class BasicTypesTest extends AbstractBaseTest
 			TypeIntError typeIntError = getSingleConfigInstance(TypeIntError.class);
 		});
 		
-		Assertions.assertEquals("Cannot interpret return type for method 'java.lang.Integer::valueOf'.", exception.getMessage());
+		Assertions.assertEquals("Cannot create object for return type in method 'java.lang.Integer::valueOf'.", exception.getMessage());
 		Throwable baseCause = exception.getCause().getCause();
 		Assertions.assertEquals(NumberFormatException.class, baseCause.getClass());
 		Assertions.assertEquals("For input string: \"2245968711\"", baseCause.getMessage());
@@ -137,7 +137,7 @@ class BasicTypesTest extends AbstractBaseTest
 			TypeLongError typeLongError = getSingleConfigInstance(TypeLongError.class);
 		});
 		
-		Assertions.assertEquals("Cannot interpret return type for method 'java.lang.Long::valueOf'.", exception.getMessage());
+		Assertions.assertEquals("Cannot create object for return type in method 'java.lang.Long::valueOf'.", exception.getMessage());
 		Throwable baseCause = exception.getCause().getCause();
 		Assertions.assertEquals(NumberFormatException.class, baseCause.getClass());
 		Assertions.assertEquals("For input string: \"19234567890987654321\"", baseCause.getMessage());
@@ -162,7 +162,7 @@ class BasicTypesTest extends AbstractBaseTest
 			TypeFloatError typeFloatError = getSingleConfigInstance(TypeFloatError.class);
 		});
 		
-		Assertions.assertEquals("Cannot interpret return type for method 'java.lang.Float::valueOf'.", exception.getMessage());
+		Assertions.assertEquals("Cannot create object for return type in method 'java.lang.Float::valueOf'.", exception.getMessage());
 		Throwable baseCause = exception.getCause().getCause();
 		Assertions.assertEquals(NumberFormatException.class, baseCause.getClass());
 		Assertions.assertEquals("For input string: \"2.04e+!13\"", baseCause.getMessage());
@@ -186,7 +186,7 @@ class BasicTypesTest extends AbstractBaseTest
 			TypeDoubleError typeDoubleError = getSingleConfigInstance(TypeDoubleError.class);
 		});
 		
-		Assertions.assertEquals("Cannot interpret return type for method 'java.lang.Double::valueOf'.", exception.getMessage());
+		Assertions.assertEquals("Cannot create object for return type in method 'java.lang.Double::valueOf'.", exception.getMessage());
 		Throwable baseCause = exception.getCause().getCause();
 		Assertions.assertEquals(NumberFormatException.class, baseCause.getClass());
 		Assertions.assertEquals("For input string: \"2.040332-101\"", baseCause.getMessage());
