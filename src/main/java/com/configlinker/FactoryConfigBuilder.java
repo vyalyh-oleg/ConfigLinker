@@ -3,6 +3,7 @@ package com.configlinker;
 import com.configlinker.annotations.BoundObject;
 import com.configlinker.annotations.BoundProperty;
 import com.configlinker.exceptions.FactoryConfigBuilderClosedException;
+import com.configlinker.exceptions.FactoryConfigBuilderException;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -21,7 +22,8 @@ import java.util.Map;
  * <li>errorBehavior = {@link ErrorBehavior#THROW_EXCEPTION}</li>
  * </ul>
  */
-public final class FactoryConfigBuilder {
+public final class FactoryConfigBuilder
+{
 	private Map<String, String> parameters = new HashMap<>();
 	private Map<String, String> httpHeaders = new HashMap<>();
 	private BoundObject.SourceScheme sourceScheme = BoundObject.SourceScheme.FILE;
@@ -49,12 +51,16 @@ public final class FactoryConfigBuilder {
 	public FactoryConfigBuilder addParameter(String key, String value) throws FactoryConfigBuilderClosedException {
 		if (closed)
 			throw FactoryConfigBuilderClosedException.getInstance();
+		
+		if (key == null || key.isEmpty() || value == null || value.isEmpty())
+			throw new FactoryConfigBuilderException("'key' or 'value' null or empty.");
+		
 		parameters.put(key, value);
 		return this;
 	}
 
 	/**
-	 * @param sourceScheme See {@link BoundObject.SourceScheme} and {@link BoundObject#sourceScheme()}
+	 * @param sourceScheme See {@link BoundObject.SourceScheme} and {@link BoundObject#sourceScheme()}. Default value: {@link BoundObject.SourceScheme#FILE}
 	 * @return this
 	 * @throws FactoryConfigBuilderClosedException -
 	 */
@@ -80,12 +86,15 @@ public final class FactoryConfigBuilder {
 	public FactoryConfigBuilder setHttpHeader(String name, String value){
 		if (closed)
 			throw FactoryConfigBuilderClosedException.getInstance();
-		this.httpHeaders.put(name, value);
+		
+		if (name != null && !name.isEmpty() && value != null)
+			this.httpHeaders.put(name, value);
+		
 		return this;
 	}
 
 	/**
-	 * @param trackPolicy See {@link BoundObject.TrackPolicy} and {@link BoundObject#trackPolicy()}
+	 * @param trackPolicy See {@link BoundObject.TrackPolicy} and {@link BoundObject#trackPolicy()}. Default value: {@link BoundObject.TrackPolicy#DISABLE}
 	 * @return this
 	 * @throws FactoryConfigBuilderClosedException -
 	 */
@@ -102,10 +111,11 @@ public final class FactoryConfigBuilder {
 	}
 
 	/**
-	 * <p>This property has sense only if you use {@link BoundObject.SourceScheme#HTTP} here (in builder) or in {@link BoundObject#sourceScheme()} on one of configuration interfaces.
+	 * <p>This property has sense only if you use {@link BoundObject.SourceScheme#HTTP} here (in builder) or in {@link BoundObject#sourceScheme()} on one of the configuration interfaces.
+	 * <p>Default: {@code 60} seconds
 	 *
-	 * @param trackingInterval Parameter reread interval in seconds. MIN value = 15 seconds, MAX value = 24 hours (24*3600 seconds).
-	 * @return -
+	 * @param trackingInterval reread interval in seconds. MIN value = 15 seconds, MAX value = 24 hours (24*3600 seconds).
+	 * @return this
 	 */
 	public FactoryConfigBuilder setTrackingInterval(int trackingInterval) throws FactoryConfigBuilderClosedException, IllegalArgumentException {
 		if (closed)
@@ -118,7 +128,7 @@ public final class FactoryConfigBuilder {
 
 	/**
 	 * <p>See {@link BoundObject#charsetName()}
-	 * @param charset The charset of the loaded property file.
+	 * @param charset The charset of the loaded property file. Default value {@link StandardCharsets#UTF_8}
 	 * @return this
 	 * @throws FactoryConfigBuilderClosedException -
 	 */
@@ -128,17 +138,9 @@ public final class FactoryConfigBuilder {
 		this.charset = charset;
 		return this;
 	}
-
+	
 	/**
-	 *
-	 * @param whitespaces <br>Whether ignore or not leading and trailing whitespaces for configuration values.<br>
-	 *                          This behaviour concerns both single parameter values and values in lists or maps.<br>
-	 *                          Default value: {@link BoundProperty.Whitespaces#IGNORE}
-	 *                          <p>Examples:
-	 *                          <pre>'color = green' --> value: "green"</pre>
-	 *                          <pre>'color = green, blue' --> values: "green" and "blue"</pre>
-	 *                    //TODO: add examples for mam keys
-	 *                          <pre>'color = one: green, two:blue , three : red ' --> values: "green", "blue", "red"</pre>
+	 * @param whitespaces See {@link BoundProperty.Whitespaces}. Default value {@link BoundProperty.Whitespaces#IGNORE}
 	 * @return this
 	 */
 	public FactoryConfigBuilder setWhitespaces(BoundProperty.Whitespaces whitespaces) {

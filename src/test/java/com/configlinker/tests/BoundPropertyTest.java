@@ -15,8 +15,10 @@ import org.junit.jupiter.api.TestInstance;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
@@ -26,6 +28,7 @@ class BoundPropertyTest extends AbstractBaseTest
 	private static List<String> languagesInConfigFile_withSpaces;
 	private static Map<String, Double> languageScoresInConfigFile;
 	private static Map<String, Double> languageScoresInConfigFile_withSpaces;
+	private static List<String> emailsInConfig;
 	
 	@BeforeAll
 	static void initHardcodedValues()
@@ -69,8 +72,15 @@ class BoundPropertyTest extends AbstractBaseTest
 		langScoresWithWhitespaces.put(" PHP ", 4.010);
 		langScoresWithWhitespaces.put("JavaScript", 3.916);
 		BoundPropertyTest.languageScoresInConfigFile_withSpaces = Collections.unmodifiableMap(langScoresWithWhitespaces);
+		
+		ArrayList<String> emails = new ArrayList<>();
+		emails.add("vitaliy.mayko@physics.ua");
+		emails.add("zinovij.nazarchuk@physics.ua");
+		emails.add("mark.gabovich@physics.ua");
+		emailsInConfig = Collections.unmodifiableList(emails);
 	}
 	
+	// --------------------------------------------------------------------------------
 	
 	@Test
 	void test_customDelimiterForList()
@@ -126,7 +136,7 @@ class BoundPropertyTest extends AbstractBaseTest
 			RegexValidator_withError workgroup = this.getSingleConfigInstance(RegexValidator_withError.class);
 		});
 		
-		Assertions.assertEquals("Property 'Association of Physicists of %Ukraine%' doesn't match pattern '[\\w\\d \"'().]{3,150}'.", exception.getMessage());
+		Assertions.assertEquals("Property value 'Association of Physicists of %Ukraine%' doesn't match pattern '[\\w\\d \"'().]{3,150}'.", exception.getMessage());
 		Assertions.assertNull(exception.getCause());
 	}
 	
@@ -138,8 +148,8 @@ class BoundPropertyTest extends AbstractBaseTest
 		emailsFromConfig.add("zinovij.nazarchuk@physics.ua");
 		emailsFromConfig.add("mark.gabovich@physics.ua");
 		
-		BoundPropFunc_regexValidatorList emails = this.getSingleConfigInstance(BoundPropFunc_regexValidatorList.class);
-		Assertions.assertEquals(emailsFromConfig, emails.emailList());
+		RegexValidatorList emails = this.getSingleConfigInstance(RegexValidatorList.class);
+		Assertions.assertEquals(emailsFromConfig, emails.emailsList());
 	}
 	
 	@Test
@@ -149,22 +159,60 @@ class BoundPropertyTest extends AbstractBaseTest
 			RegexValidatorList_withError emails = this.getSingleConfigInstance(RegexValidatorList_withError.class);
 		});
 		
-		Assertions.assertEquals("Property 'vitaliy..mayko@physics.ua' doesn't match pattern '[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?'.", exception.getMessage());
+		Assertions.assertEquals("Property value 'vitaliy..mayko@physics.ua' doesn't match pattern '[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?'.", exception.getMessage());
+		Assertions.assertNull(exception.getCause());
+	}
+	
+	@Test
+	void test_regexValidationMap()
+	{
+		// workgroup.statusMap = a:active, s:suspended, c:closed, d:destroyed
+		LinkedHashMap<String, String> statusesFromConfig = new LinkedHashMap<>();
+		statusesFromConfig.put("a", "active");
+		statusesFromConfig.put("s", "suspended");
+		statusesFromConfig.put("c", "closed");
+		statusesFromConfig.put("d", "destroyed");
+		
+		RegexValidatorMap statuses = this.getSingleConfigInstance(RegexValidatorMap.class);
+		Assertions.assertEquals(statusesFromConfig, statuses.statusMap());
+	}
+	
+	@Test
+	void test_regexValidationMap_error()
+	{
+		PropertyMatchException exception = Assertions.assertThrows(PropertyMatchException.class, () -> {
+			RegexValidatorMap_withError statuses = this.getSingleConfigInstance(RegexValidatorMap_withError.class);
+		});
+		
+		Assertions.assertEquals("Property value 'suspend' for key 's' doesn't match pattern '^(active|suspended|closed|destroyed)$'.", exception.getMessage());
 		Assertions.assertNull(exception.getCause());
 	}
 	
 	// --------------------------------------------------------------------------------
 	
 	@Test
+	void test_customValidator()
+	{
+		CustomValidator email = this.getSingleConfigInstance(CustomValidator.class);
+		Assertions.assertEquals("mark.gabovich@physics.ua", email.email());
+	}
+	
+	@Test
+	void test_customValidator_error()
+	{
+		PropertyValidateException exception = Assertions.assertThrows(PropertyValidateException.class, () -> {
+			CustomValidator_withError email = this.getSingleConfigInstance(CustomValidator_withError.class);
+		});
+		
+		Assertions.assertEquals("'zinovij#nazarchuk@physic.ua' not in 'physics.ua' domain.", exception.getMessage());
+		Assertions.assertNull(exception.getCause());
+	}
+	
+	@Test
 	void test_customValidatorList()
 	{
-		ArrayList<String> emailsFromConfig = new ArrayList<>();
-		emailsFromConfig.add("vitaliy.mayko@physics.ua");
-		emailsFromConfig.add("zinovij.nazarchuk@physics.ua");
-		emailsFromConfig.add("mark.gabovich@physics.ua");
-		
 		CustomValidatorList emails = this.getSingleConfigInstance(CustomValidatorList.class);
-		Assertions.assertEquals(emailsFromConfig, emails.emailList());
+		Assertions.assertEquals(emailsInConfig, emails.emailsList());
 	}
 	
 	@Test
@@ -178,14 +226,58 @@ class BoundPropertyTest extends AbstractBaseTest
 		Assertions.assertNull(exception.getCause());
 	}
 	
-	// --------------------------------------------------------------------------------
+	@Test
+	void test_customValidatorSet()
+	{
+		LinkedHashSet<String> emailsSetInConfig = new LinkedHashSet<>(emailsInConfig);
+		
+		CustomValidatorSet emails = this.getSingleConfigInstance(CustomValidatorSet.class);
+		Assertions.assertEquals(emailsSetInConfig, emails.emailsSet());
+	}
 	
-	// TODO: tests fro regex and validte for array, list, set, map (for strings and any other type)
+	@Test
+	void test_customValidatorSet_error()
+	{
+		PropertyValidateException exception = Assertions.assertThrows(PropertyValidateException.class, () -> {
+			CustomValidatorSet_withError emails = this.getSingleConfigInstance(CustomValidatorSet_withError.class);
+		});
+		
+		Assertions.assertEquals("'zinovij#nazarchuk@physic.ua' not in 'physics.ua' domain.", exception.getMessage());
+		Assertions.assertNull(exception.getCause());
+	}
+	
+	@Test
+	void test_customValidatorMap()
+	{
+		LinkedHashMap<String,String> emailsInFromConfig = new LinkedHashMap<>();
+		emailsInFromConfig.put("vitaliy", "vitaliy.mayko@physics.ua");
+		emailsInFromConfig.put("zinovij", "zinovij.nazarchuk@physics.ua");
+		emailsInFromConfig.put("mark", "mark.gabovich@physics.ua");
+		
+		CustomValidatorMap emails = this.getSingleConfigInstance(CustomValidatorMap.class);
+		Assertions.assertEquals(emailsInFromConfig, emails.emailsMap());
+	}
+	
+	@Test
+	void test_customValidatorMap_error()
+	{
+		PropertyValidateException exception = Assertions.assertThrows(PropertyValidateException.class, () -> {
+			CustomValidatorSet_withError emails = this.getSingleConfigInstance(CustomValidatorSet_withError.class);
+		});
+		
+		Assertions.assertEquals("'zinovij#nazarchuk@physic.ua' not in 'physics.ua' domain.", exception.getMessage());
+		Assertions.assertNull(exception.getCause());
+	}
+	
+	// TODO: tests for values: object, listOfObjects, setOfObjects, mapOfObjects
+	
+	// --------------------------------------------------------------------------------
 	
 	@Test @Disabled("TODO: implement")
 	void test_errorBehaviour()
 	{
 		//TODO: implement
+		Assertions.fail("Not implemented.");
 	}
 
 }
@@ -229,6 +321,7 @@ interface CustomKeyValueDelimiter_whitespaceOverride
 	Map<String, Double> programmingLanguageScores_acceptWhitespaces();
 }
 
+// --------------------------------------------------------------------------------
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
 interface RegexValidator
@@ -245,21 +338,38 @@ interface RegexValidator_withError
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
-interface BoundPropFunc_regexValidatorList
+interface RegexValidatorList
 {
 	String emailPattern = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?";
 	
 	@BoundProperty(name = "workgroup.emails", customTypeOrDeserializer = String.class, regexPattern = emailPattern)
-	List<String> emailList();
+	List<String> emailsList();
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
 interface RegexValidatorList_withError
 {
-	@BoundProperty(name = "workgroup.emails.error", customTypeOrDeserializer = String.class, regexPattern = BoundPropFunc_regexValidatorList.emailPattern)
-	List<String> emailList();
+	@BoundProperty(name = "workgroup.emails.error", customTypeOrDeserializer = String.class, regexPattern = RegexValidatorList.emailPattern)
+	List<String> emailsList();
 }
 
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface RegexValidatorMap
+{
+	String statusPattern = "^(active|suspended|closed|destroyed)$";
+	
+	@BoundProperty(name = "workgroup.statuses", customTypeOrDeserializer = String.class, regexPattern = statusPattern)
+	Map<String, String> statusMap();
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface RegexValidatorMap_withError
+{
+	@BoundProperty(name = "workgroup.statuses.error", customTypeOrDeserializer = String.class, regexPattern = RegexValidatorMap.statusPattern)
+	Map<String, String> statusMap();
+}
+
+// --------------------------------------------------------------------------------
 
 class EmailDomainValidator implements IPropertyValidator<String>
 {
@@ -271,20 +381,90 @@ class EmailDomainValidator implements IPropertyValidator<String>
 	}
 }
 
+class EmailDomainMapValidator implements IPropertyValidator<Object[]>
+{
+	@Override
+	public void validate(Object[] value) throws PropertyValidateException
+	{
+		// value[0] -- key, and is always String
+		// value[1] -- value, could be any object depending from return type in interface method
+		
+		if (!((String) value[1]).endsWith("@physics.ua"))
+			throw new PropertyValidateException("'" + value[1] + "' for key " + value[0] + " not in 'physics.ua' domain.");
+	}
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface CustomValidator
+{
+	@BoundProperty(name = "workgroup.email", validator = EmailDomainValidator.class)
+	String email();
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface CustomValidator_withError
+{
+	@BoundProperty(name = "workgroup.email.error", validator = EmailDomainValidator.class)
+	String email();
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface CustomValidatorArray
+{
+	@BoundProperty(name = "workgroup.emails", validator = EmailDomainValidator.class)
+	String[] emailsArray();
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface CustomValidatorArray_withError
+{
+	@BoundProperty(name = "workgroup.emails.error", validator = EmailDomainValidator.class)
+	String[] emailsArray();
+}
+
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
 interface CustomValidatorList
 {
 	@BoundProperty(name = "workgroup.emails", customTypeOrDeserializer = String.class, validator = EmailDomainValidator.class)
-	List<String> emailList();
+	List<String> emailsList();
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
 interface CustomValidatorList_withError
 {
 	@BoundProperty(name = "workgroup.emails.error", customTypeOrDeserializer = String.class, validator = EmailDomainValidator.class)
-	List<String> emailList();
+	List<String> emailsList();
 }
 
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface CustomValidatorSet
+{
+	@BoundProperty(name = "workgroup.emails", customTypeOrDeserializer = String.class, validator = EmailDomainValidator.class)
+	Set<String> emailsSet();
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface CustomValidatorSet_withError
+{
+	@BoundProperty(name = "workgroup.emails.error", customTypeOrDeserializer = String.class, validator = EmailDomainValidator.class)
+	Set<String> emailsSet();
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface CustomValidatorMap
+{
+	@BoundProperty(name = "workgroup.emails.map", customTypeOrDeserializer = String.class, validator = EmailDomainMapValidator.class)
+	Map<String, String> emailsMap();
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface CustomValidatorMap_withError
+{
+	@BoundProperty(name = "workgroup.emails.map.error", customTypeOrDeserializer = String.class, validator = EmailDomainMapValidator.class)
+	Map<String, String> emailsMap();
+}
+
+// --------------------------------------------------------------------------------
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
 interface ErrorBehavior

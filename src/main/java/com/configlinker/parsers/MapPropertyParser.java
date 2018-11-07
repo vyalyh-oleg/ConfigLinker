@@ -30,9 +30,9 @@ final class MapPropertyParser implements PropertyParser<Map<String, String>> {
 			}
 
 			values.put(key, value);
-
+			
 			if (regexpPattern != null && !regexpPattern.matcher(value).matches())
-				throw new PropertyMatchException("Property '\'" + key + "\':\'" + value + "\'' doesn't match pattern '" + regexpPattern.toString() + "'.").logAndReturn();
+				throw new PropertyMatchException("Property value '" + value + "' for key '" + key + "' doesn't match pattern '" + regexpPattern.toString() + "'.").logAndReturn();
 		}
 
 		return values;

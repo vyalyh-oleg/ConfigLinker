@@ -131,7 +131,7 @@ class ExtendedTypesTest extends AbstractBaseTest
 	{
 		TypeUUIDError2 typeURIError = getSingleConfigInstance(TypeUUIDError2.class);
 		
-		Assertions.assertEquals("1711e708-a4864dc5-8dbe-f275b601-064f", typeURIError.getUUIDAsString());
+		Assertions.assertEquals("1711e78e-a4864dc5-8dbe-f275b601-064f", typeURIError.getUUIDAsString());
 		Assertions.assertEquals("1711e78e-4dc5-8dbe-b601-00000000064f", typeURIError.getUUID().toString());
 	}
 	

@@ -61,14 +61,16 @@ abstract class AbstractPropertyMapper<RAW_TYPE, MAPPED_TYPE> implements IPropert
 			if (mappedValue.getClass().isArray())
 				Arrays.stream((Object[]) mappedValue).forEach(this.validator::validate);
 			
-			if (List.class.isAssignableFrom(this.returnType))
+			else if (List.class.isAssignableFrom(this.returnType))
 				((List<?>) mappedValue).stream().forEach(this.validator::validate);
 			
-			if (Set.class.isAssignableFrom(this.returnType))
+			else if (Set.class.isAssignableFrom(this.returnType))
 				((Set<?>) mappedValue).stream().forEach(this.validator::validate);
 			
-			if (Map.class.isAssignableFrom(this.returnType))
+			else if (Map.class.isAssignableFrom(this.returnType))
 				((Map<?, ?>) mappedValue).entrySet().stream().map(entry -> new Object[]{entry.getKey(), entry.getValue()}).forEach(this.validator::validate);
+			else
+				this.validator.validate(mappedValue);
 		}
 		
 		return mappedValue;
