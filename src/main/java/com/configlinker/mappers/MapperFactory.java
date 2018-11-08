@@ -5,12 +5,12 @@ import com.configlinker.annotations.BoundProperty;
 import com.configlinker.exceptions.PropertyMapException;
 import com.configlinker.parsers.ParserFactory;
 import com.configlinker.parsers.PropertyParser;
-import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.InetAddress;
 import java.net.URI;
@@ -102,25 +102,26 @@ public final class MapperFactory
 				customTypeOrDeserializer = arrayType;
 		}
 		
-		// TODO: for generics
-		if ((List.class.isAssignableFrom(returnType) || Set.class.isAssignableFrom(returnType) || Map.class
-		  .isAssignableFrom(returnType)))
-		{
-			Type genericType = propertyMethod.getGenericReturnType();
-			Type[] types = ((ParameterizedTypeImpl) genericType).getActualTypeArguments();
-			((ParameterizedTypeImpl) genericType).getRawType();
-		}
-		
 		if (customTypeOrDeserializer.isPrimitive())
 			throw new PropertyMapException(
 			  "Value of '@BoundProperty.customTypeOrDeserializer' can not be a primitive type class, but current value is '" + customTypeOrDeserializer
 				.getName() + "' and current return type is '" + returnType.getName() + "'.").logAndReturn();
 		
-		if (customTypeOrDeserializer == Object.class && (List.class.isAssignableFrom(returnType) || Set.class.isAssignableFrom(returnType) || Map.class
-		  .isAssignableFrom(returnType)))
-			throw new PropertyMapException("For type '" + returnType
-			  .getName() + "' you must specify its generic type in '@BoundProperty.customTypeOrDeserializer' and choose (for non predefined types) '@BoundProperty.deserializationMethod'; method leading to error: '" + propertyMethod
-			  .getDeclaringClass().getName() + "." + propertyMethod.getName() + "()'.").logAndReturn();
+		if (customTypeOrDeserializer == Object.class && (List.class.isAssignableFrom(returnType) || Set.class.isAssignableFrom(returnType) || Map.class.isAssignableFrom(returnType)))
+		{
+			Type genericType = propertyMethod.getGenericReturnType();
+			if (genericType instanceof ParameterizedType)
+			{
+				ParameterizedType parameterizedType = ((ParameterizedType) genericType);
+				if (List.class.isAssignableFrom(returnType) || Set.class.isAssignableFrom(returnType))
+					customTypeOrDeserializer = (Class<?>) parameterizedType.getActualTypeArguments()[0];
+				else
+					customTypeOrDeserializer = (Class<?>) parameterizedType.getActualTypeArguments()[1];
+			}
+			
+			if (customTypeOrDeserializer == Object.class)
+				throw new PropertyMapException("For type '" + returnType.getName() + "' you must specify its generic type in '@BoundProperty.customTypeOrDeserializer' and choose (for non predefined types) '@BoundProperty.deserializationMethod'; method leading to error: '" + propertyMethod.getDeclaringClass().getName() + "." + propertyMethod.getName() + "()'.").logAndReturn();
+		}
 		
 		if (customTypeOrDeserializer == Object.class)
 			customTypeOrDeserializer = returnType;
@@ -131,8 +132,8 @@ public final class MapperFactory
 		
 		executable = getMethodForPredefinedType(customTypeOrDeserializer);
 		if (executable != null)
-			// because all predefined types are constructed from strings (this behaviour could be changed with time)
-			// TODO: should be added properly 'deserializationMethod' determination
+			// because currentlyall predefined types are constructed from strings (this behaviour could be changed with time)
+			// TODO: should be added properly logic for 'deserializationMethod' determination
 			deserializationMethod = BoundProperty.DeserializationMethod.CONSTRUCTOR_STRING;
 		else
 		{

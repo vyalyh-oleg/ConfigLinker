@@ -426,7 +426,7 @@ class Company implements IDeserializer<Company>
 	private static void parseFromMap(Company company, Map<String, String> rawKeyValues)
 	{
 		company.name = rawKeyValues.get("name");
-		company.emails = Arrays.stream(rawKeyValues.get("emailsList").split(";")).map(String::trim).toArray(String[]::new);
+		company.emails = Arrays.stream(rawKeyValues.get("emails").split(";")).map(String::trim).toArray(String[]::new);
 		company.phoneNumbers = Arrays.stream(rawKeyValues.get("phoneNumbers").split(";")).map(String::trim).toArray(String[]::new);
 		company.ceo = rawKeyValues.get("ceo");
 		company.dateFoundation = Short.parseShort(rawKeyValues.get("dateFoundation"));
