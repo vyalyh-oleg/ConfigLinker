@@ -2,6 +2,7 @@ package com.configlinker.mappers;
 
 import com.configlinker.IPropertyValidator;
 import com.configlinker.annotations.BoundProperty;
+import com.configlinker.enums.DeserializationMethod;
 import com.configlinker.exceptions.PropertyMapException;
 import com.configlinker.parsers.ParserFactory;
 import com.configlinker.parsers.PropertyParser;
@@ -33,7 +34,7 @@ public final class MapperFactory
 	@SuppressWarnings("unchecked")
 	public static IPropertyMapper create(BoundProperty boundPropertyAnnotation, Method propertyMethod, boolean ignoreWhitespaces) throws PropertyMapException
 	{
-		String strRegexpPattern = boundPropertyAnnotation.regexPattern();
+		String strRegexpPattern = boundPropertyAnnotation.regex();
 		Pattern regexpPattern = null;
 		if (strRegexpPattern.length() > 0)
 			try
@@ -61,11 +62,11 @@ public final class MapperFactory
 				  "Cannot create validator for '" + propertyMethod.getDeclaringClass().getName() + "::" + propertyMethod.getName() + "'.", e).logAndReturn();
 			}
 		
-		Class<?> customTypeOrDeserializer = boundPropertyAnnotation.customTypeOrDeserializer();
-		BoundProperty.DeserializationMethod deserializationMethod = boundPropertyAnnotation.deserializationMethod();
+		Class<?> customTypeOrDeserializer = boundPropertyAnnotation.customType();
+		DeserializationMethod deserializationMethod = boundPropertyAnnotation.deserializationMethod();
 		
-		String delimiterForList = boundPropertyAnnotation.delimiterForList();
-		String delimiterForKeyValue = boundPropertyAnnotation.delimiterForKeyValue();
+		String delimiterForList = boundPropertyAnnotation.delimList();
+		String delimiterForKeyValue = boundPropertyAnnotation.delimKeyValue();
 		
 		// --------------------------------------------------------------------------------
 		
@@ -74,13 +75,13 @@ public final class MapperFactory
 		if (returnType.isPrimitive())
 		{
 			customTypeOrDeserializer = ParserFactory.getWrapperForPrimitive(returnType);
-			deserializationMethod = BoundProperty.DeserializationMethod.VALUEOF_STRING;
+			deserializationMethod = DeserializationMethod.VALUEOF_STRING;
 		}
 		
 		if (ParserFactory.isPrimitiveWrapper(returnType) || returnType == String.class || returnType.isEnum())
 		{
 			customTypeOrDeserializer = returnType;
-			deserializationMethod = BoundProperty.DeserializationMethod.VALUEOF_STRING;
+			deserializationMethod = DeserializationMethod.VALUEOF_STRING;
 		}
 		
 		if (returnType.isArray())
@@ -92,7 +93,7 @@ public final class MapperFactory
 			if (ParserFactory.isPrimitiveWrapper(arrayType) || arrayType == String.class || arrayType.isEnum())
 			{
 				customTypeOrDeserializer = arrayType;
-				deserializationMethod = BoundProperty.DeserializationMethod.VALUEOF_STRING;
+				deserializationMethod = DeserializationMethod.VALUEOF_STRING;
 				
 				if (customTypeOrDeserializer == Character.class)
 					regexpPattern = Pattern.compile(".");
@@ -104,7 +105,7 @@ public final class MapperFactory
 		
 		if (customTypeOrDeserializer.isPrimitive())
 			throw new PropertyMapException(
-			  "Value of '@BoundProperty.customTypeOrDeserializer' can not be a primitive type class, but current value is '" + customTypeOrDeserializer
+			  "Value of '@BoundProperty.customType' can not be a primitive type class, but current value is '" + customTypeOrDeserializer
 				.getName() + "' and current return type is '" + returnType.getName() + "'.").logAndReturn();
 		
 		if (customTypeOrDeserializer == Object.class && (List.class.isAssignableFrom(returnType) || Set.class.isAssignableFrom(returnType) || Map.class.isAssignableFrom(returnType)))
@@ -120,7 +121,7 @@ public final class MapperFactory
 			}
 			
 			if (customTypeOrDeserializer == Object.class)
-				throw new PropertyMapException("For type '" + returnType.getName() + "' you must specify it's generic type in the angle brackets or in '@BoundProperty.customTypeOrDeserializer'; method leading to error: '" + propertyMethod.getDeclaringClass().getName() + "." + propertyMethod.getName() + "()'.").logAndReturn();
+				throw new PropertyMapException("For type '" + returnType.getName() + "' you must specify it's generic type in the angle brackets or in '@BoundProperty.customType'; method leading to error: '" + propertyMethod.getDeclaringClass().getName() + "." + propertyMethod.getName() + "()'.").logAndReturn();
 		}
 		
 		if (customTypeOrDeserializer == Object.class)
@@ -134,15 +135,13 @@ public final class MapperFactory
 		if (executable != null)
 			// because currentlyall predefined types are constructed from strings (this behaviour could be changed with time)
 			// TODO: should be added properly logic for 'deserializationMethod' determination
-			deserializationMethod = BoundProperty.DeserializationMethod.CONSTRUCTOR_STRING;
+			deserializationMethod = DeserializationMethod.CONSTRUCTOR_STRING;
 		else
 		{
-			if (deserializationMethod == BoundProperty.DeserializationMethod.AUTO)
+			if (deserializationMethod == DeserializationMethod.AUTO)
 				deserializationMethod = determineDeserializationMethod(customTypeOrDeserializer);
 			executable = getMethodForType(customTypeOrDeserializer, deserializationMethod);
 		}
-		
-		// TODO: Additional check for 'customTypeOrDeserializer', if return type is List, Set or Map and the Generic type is one of the List, Set or Map too.
 		
 		// --------------------------------------------------------------------------------
 		
@@ -183,50 +182,50 @@ public final class MapperFactory
 		  delimiterForKeyValue);
 	}
 	
-	private static BoundProperty.DeserializationMethod determineDeserializationMethod(Class<?> customTypeOrDeserializer) throws PropertyMapException
+	private static DeserializationMethod determineDeserializationMethod(Class<?> customTypeOrDeserializer) throws PropertyMapException
 	{
-		BoundProperty.DeserializationMethod result = null;
+		DeserializationMethod result = null;
 		HashSet<Executable> methods = new HashSet<>();
 		
 		try
 		{
 			methods.add(customTypeOrDeserializer.getDeclaredConstructor(String.class));
-			result = BoundProperty.DeserializationMethod.CONSTRUCTOR_STRING;
+			result = DeserializationMethod.CONSTRUCTOR_STRING;
 		}
 		catch (NoSuchMethodException ignore) { }
 		
 		try
 		{
 			methods.add(customTypeOrDeserializer.getDeclaredConstructor(Map.class));
-			result = BoundProperty.DeserializationMethod.CONSTRUCTOR_MAP;
+			result = DeserializationMethod.CONSTRUCTOR_MAP;
 		}
 		catch (NoSuchMethodException ignore) { }
 		
 		try
 		{
 			methods.add(customTypeOrDeserializer.getDeclaredMethod("valueOf", String.class));
-			result = BoundProperty.DeserializationMethod.VALUEOF_STRING;
+			result = DeserializationMethod.VALUEOF_STRING;
 		}
 		catch (NoSuchMethodException ignore) { }
 		
 		try
 		{
 			methods.add(customTypeOrDeserializer.getDeclaredMethod("valueOf", Map.class));
-			result = BoundProperty.DeserializationMethod.VALUEOF_MAP;
+			result = DeserializationMethod.VALUEOF_MAP;
 		}
 		catch (NoSuchMethodException ignore) { }
 		
 		try
 		{
 			methods.add(customTypeOrDeserializer.getDeclaredMethod("deserialize", String.class));
-			result = BoundProperty.DeserializationMethod.DESERIALIZER_STRING;
+			result = DeserializationMethod.DESERIALIZER_STRING;
 		}
 		catch (NoSuchMethodException ignore) { }
 		
 		try
 		{
 			methods.add(customTypeOrDeserializer.getDeclaredMethod("deserialize", Map.class));
-			result = BoundProperty.DeserializationMethod.DESERIALIZER_MAP;
+			result = DeserializationMethod.DESERIALIZER_MAP;
 		}
 		catch (NoSuchMethodException ignore) { }
 		
@@ -239,7 +238,7 @@ public final class MapperFactory
 		return result;
 	}
 	
-	private static Executable getMethodForType(Class<?> customTypeOrDeserializer, BoundProperty.DeserializationMethod deserializationMethod) throws
+	private static Executable getMethodForType(Class<?> customTypeOrDeserializer, DeserializationMethod deserializationMethod) throws
 	  PropertyMapException
 	{
 		try
@@ -307,7 +306,7 @@ public final class MapperFactory
 			if (executable == null && customTypeOrDeserializer == UUID.class)
 				executable = UUID.class.getMethod("fromString", String.class);
 			
-			//if (customTypeOrDeserializer == YourType.class)
+			//if (customType == YourType.class)
 			// implement for other types
 		}
 		catch (NoSuchMethodException e)

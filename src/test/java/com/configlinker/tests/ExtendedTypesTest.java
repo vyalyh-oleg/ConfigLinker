@@ -409,54 +409,54 @@ interface TypeInetAddressIPv6Error
 @BoundObject(sourcePath = "configs/extended_types.properties")
 interface TypeDate
 {
-	@BoundProperty(name = "type.Date.milliseconds", customTypeOrDeserializer = DateType.Milliseconds.class)
+	@BoundProperty(name = "type.Date.milliseconds", customType = DateType.Milliseconds.class)
 	Date getDateTimeFromMilliseconds();
 	
-	@BoundProperty(name = "type.Date.seconds", customTypeOrDeserializer = DateType.Seconds.class)
+	@BoundProperty(name = "type.Date.seconds", customType = DateType.Seconds.class)
 	Date getDateTimeFromSeconds();
 	
-	@BoundProperty(name = "type.Date.year", customTypeOrDeserializer = DateType.Year.class)
+	@BoundProperty(name = "type.Date.year", customType = DateType.Year.class)
 	Date getYearOnly();
 	
-	@BoundProperty(name = "type.Date.date", customTypeOrDeserializer = DateType.DateOnly.class)
+	@BoundProperty(name = "type.Date.date", customType = DateType.DateOnly.class)
 	Date getDateOnly();
 	
-	@BoundProperty(name = "type.Date.time", customTypeOrDeserializer = DateType.TimeOnly.class)
+	@BoundProperty(name = "type.Date.time", customType = DateType.TimeOnly.class)
 	Date getTimeOnly();
 	
-	@BoundProperty(name = "type.Date.date-time", customTypeOrDeserializer = DateType.DateTime.class)
+	@BoundProperty(name = "type.Date.date-time", customType = DateType.DateTime.class)
 	Date getDateTime();
 	
-	@BoundProperty(name = "type.Date.date-time-zone", customTypeOrDeserializer = DateType.DateTimeZone.class)
+	@BoundProperty(name = "type.Date.date-time-zone", customType = DateType.DateTimeZone.class)
 	Date getDateTimeWithZone();
 	
-	@BoundProperty(name = "type.Date.RFC_3339", customTypeOrDeserializer = DateType.TimestampRFC_3339.class)
+	@BoundProperty(name = "type.Date.RFC_3339", customType = DateType.TimestampRFC_3339.class)
 	Date getDateTime_RFC_3339();
 	
-	@BoundProperty(name = "type.Date.RFC_822_1123", customTypeOrDeserializer = DateType.TimestampRFC_822_1123.class)
+	@BoundProperty(name = "type.Date.RFC_822_1123", customType = DateType.TimestampRFC_822_1123.class)
 	Date getDateTime_RFC_822_1123();
 	
-	@BoundProperty(name = "type.Date.RFC_850_1036", customTypeOrDeserializer = DateType.TimestampRFC_850_1036.class)
+	@BoundProperty(name = "type.Date.RFC_850_1036", customType = DateType.TimestampRFC_850_1036.class)
 	Date getDateTime_RFC_850_1036();
 }
 
 @BoundObject(sourcePath = "configs/extended_types.properties")
 interface TypeDateErrorMilliseconds
 {
-	@BoundProperty(name = "type.Date.milliseconds.wrong", customTypeOrDeserializer = DateType.Milliseconds.class)
+	@BoundProperty(name = "type.Date.milliseconds.wrong", customType = DateType.Milliseconds.class)
 	Date getDateTimeFromMilliseconds();
 }
 
 @BoundObject(sourcePath = "configs/extended_types.properties")
 interface TypeDateErrorSeconds
 {
-	@BoundProperty(name = "type.Date.seconds.wrong", customTypeOrDeserializer = DateType.Seconds.class)
+	@BoundProperty(name = "type.Date.seconds.wrong", customType = DateType.Seconds.class)
 	Date getDateTimeFromSeconds();
 }
 
 @BoundObject(sourcePath = "configs/extended_types.properties")
 interface TypeDateError
 {
-	@BoundProperty(name = "type.Date.date-time.wrong", customTypeOrDeserializer = DateType.DateTime.class)
+	@BoundProperty(name = "type.Date.date-time.wrong", customType = DateType.DateTime.class)
 	Date getDateTime();
 }

@@ -2,6 +2,7 @@ package com.configlinker.tests;
 
 import com.configlinker.annotations.BoundObject;
 import com.configlinker.annotations.BoundProperty;
+import com.configlinker.enums.SourceScheme;
 import com.configlinker.tests.httpserver.DownloadFileHandler;
 import com.configlinker.tests.httpserver.SimpleHttpServer;
 import org.junit.jupiter.api.Assertions;
@@ -59,21 +60,21 @@ interface LoadFromFile
 	String getConfigName();
 }
 
-@BoundObject(sourcePath = "classpath_config.properties", sourceScheme = BoundObject.SourceScheme.CLASSPATH)
+@BoundObject(sourcePath = "classpath_config.properties", sourceScheme = SourceScheme.CLASSPATH)
 interface LoadFromClasspath
 {
 	@BoundProperty(name = "config.name")
 	String getConfigName();
 }
 
-@BoundObject(sourcePath = "http://" + SimpleHttpServer.hostName + ":" + SimpleHttpServer.port + DownloadFileHandler.PATH + "http_config.properties", sourceScheme = BoundObject.SourceScheme.HTTP)
+@BoundObject(sourcePath = "http://" + SimpleHttpServer.hostName + ":" + SimpleHttpServer.port + DownloadFileHandler.PATH + "http_config.properties", sourceScheme = SourceScheme.HTTP)
 interface LoadFromHttp
 {
 	@BoundProperty(name = "config.name")
 	String getConfigName();
 }
 
-@BoundObject(sourcePath = "<ConfigLinker.server>", sourceScheme = BoundObject.SourceScheme.CONFIG_LINKER_SERVER)
+@BoundObject(sourcePath = "<ConfigLinker.server>", sourceScheme = SourceScheme.CONFIG_LINKER_SERVER)
 interface LoadFromConfigLinkerServer
 {
 	@BoundProperty(name = "config.name")

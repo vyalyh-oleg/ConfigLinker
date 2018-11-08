@@ -2,6 +2,10 @@ package com.configlinker;
 
 import com.configlinker.annotations.BoundObject;
 import com.configlinker.annotations.BoundProperty;
+import com.configlinker.enums.SourceScheme;
+import com.configlinker.enums.TrackPolicy;
+import com.configlinker.enums.Whitespaces;
+import com.configlinker.enums.ErrorBehavior;
 import com.configlinker.exceptions.AnnotationAnalyzeException;
 import com.configlinker.exceptions.PropertyMapException;
 import com.configlinker.mappers.IPropertyMapper;
@@ -33,10 +37,10 @@ final class AnnotationScanner {
 	 */
 	private static final Pattern dynamicVariablePattern = Pattern.compile("@\\{\\w+\\}");
 
-	private final FactoryConfigBuilder configBuilder;
+	private final FactorySettingsBuilder configBuilder;
 	private final HashMap<Class<?>, ConfigDescription> configDescriptions;
 
-	AnnotationScanner(FactoryConfigBuilder configBuilder) {
+	AnnotationScanner(FactorySettingsBuilder configBuilder) {
 		this.configBuilder = configBuilder;
 		this.configDescriptions = new HashMap<>();
 	}
@@ -99,8 +103,8 @@ final class AnnotationScanner {
 
 
 		// get SourceScheme
-		BoundObject.SourceScheme sourceScheme = boundObjectAnnotation.sourceScheme();
-		if (sourceScheme == BoundObject.SourceScheme.INHERIT)
+		SourceScheme sourceScheme = boundObjectAnnotation.sourceScheme();
+		if (sourceScheme == SourceScheme.INHERIT)
 			sourceScheme = configBuilder.getSourceScheme();
 
 
@@ -108,7 +112,7 @@ final class AnnotationScanner {
 		Map<String, String> httpHeaders = null;
 		String[] customHttpHeaders = boundObjectAnnotation.httpHeaders();
 		if (!(customHttpHeaders.length == 1 && customHttpHeaders[0].isEmpty()))
-			if (sourceScheme == BoundObject.SourceScheme.HTTP) {
+			if (sourceScheme == SourceScheme.HTTP) {
 				httpHeaders = new HashMap<>(this.configBuilder.getHttpHeaders());
 				String header;
 				int colonIndex;
@@ -142,19 +146,19 @@ final class AnnotationScanner {
 
 
 		// get TrackPolicy
-		BoundObject.TrackPolicy trackPolicy = boundObjectAnnotation.trackPolicy();
-		if (trackPolicy == BoundObject.TrackPolicy.INHERIT)
+		TrackPolicy trackPolicy = boundObjectAnnotation.trackingPolicy();
+		if (trackPolicy == TrackPolicy.INHERIT)
 			trackPolicy = configBuilder.getTrackPolicy();
 
-		if (trackPolicy == BoundObject.TrackPolicy.ENABLE && sourceScheme == BoundObject.SourceScheme.CLASSPATH) {
-			String msg = "You can not track changes for " + BoundObject.SourceScheme.class.getSimpleName() + "=='" + BoundObject.SourceScheme.CLASSPATH.name() + "', config interface '" + configInterface.getName() + "'; please, use for such purposes '" + BoundObject.SourceScheme.FILE.name() + "'.";
+		if (trackPolicy == TrackPolicy.ENABLE && sourceScheme == SourceScheme.CLASSPATH) {
+			String msg = "You can not track changes for " + SourceScheme.class.getSimpleName() + "=='" + SourceScheme.CLASSPATH.name() + "', config interface '" + configInterface.getName() + "'; please, use for such purposes '" + SourceScheme.FILE.name() + "'.";
 			throw new AnnotationAnalyzeException(msg).logAndReturn();
 		}
 
 
 		// get tracking interval
 		int trackingInterval = boundObjectAnnotation.trackingInterval();
-		if (sourceScheme != BoundObject.SourceScheme.HTTP || trackPolicy == BoundObject.TrackPolicy.DISABLE)
+		if (sourceScheme != SourceScheme.HTTP || trackPolicy == TrackPolicy.DISABLE)
 			trackingInterval = -1;
 		else if (trackingInterval == 0)
 			trackingInterval = configBuilder.getTrackingInterval();
@@ -177,7 +181,7 @@ final class AnnotationScanner {
 				  .logAndReturn();
 			}
 		}
-		if (changeListener != null && trackPolicy == BoundObject.TrackPolicy.DISABLE) {
+		if (changeListener != null && trackPolicy == TrackPolicy.DISABLE) {
 			throw new AnnotationAnalyzeException("You cannot use @BoundObject.changeListener() if TrackPolicy is 'DISABLE', config interface '" + configInterface.getName() + "'.").logAndReturn();
 		}
 
@@ -189,7 +193,7 @@ final class AnnotationScanner {
 		
 		
 		// get ignoreWhiteSpaces
-		boolean ignoreWhiteSpaces = configBuilder.whitespaces() == BoundProperty.Whitespaces.IGNORE;
+		boolean ignoreWhiteSpaces = configBuilder.whitespaces() == Whitespaces.IGNORE;
 			
 			
 		// create ConfigDescription
@@ -300,9 +304,9 @@ final class AnnotationScanner {
 			errorBehavior = configDescription.getErrorBehavior();
 		
 		boolean ignoreWhiteSpaces = configDescription.isIgnoreWhitespaces();
-		BoundProperty.Whitespaces whitespaces = boundPropertyAnnotation.whitespaces();
-		if (whitespaces != BoundProperty.Whitespaces.INHERIT)
-			ignoreWhiteSpaces = whitespaces == BoundProperty.Whitespaces.IGNORE;
+		Whitespaces whitespaces = boundPropertyAnnotation.whitespaces();
+		if (whitespaces != Whitespaces.INHERIT)
+			ignoreWhiteSpaces = whitespaces == Whitespaces.IGNORE;
 			
 		IPropertyMapper propertyMapper = MapperFactory.create(boundPropertyAnnotation, propertyMethod, ignoreWhiteSpaces);
 

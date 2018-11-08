@@ -1,6 +1,6 @@
 package com.configlinker.parsers;
 
-import com.configlinker.annotations.BoundProperty;
+import com.configlinker.enums.DeserializationMethod;
 import com.configlinker.exceptions.PropertyParseException;
 
 import java.util.List;
@@ -16,7 +16,7 @@ public final class ParserFactory {
 	private ParserFactory() {
 	}
 
-	public static PropertyParser create(Class<?> returnType, BoundProperty.DeserializationMethod deserializationMethod) throws PropertyParseException {
+	public static PropertyParser create(Class<?> returnType, DeserializationMethod deserializationMethod) throws PropertyParseException {
 		if (returnType.isEnum() || returnType == String.class ||
 				returnType.isPrimitive() || ParserFactory.isPrimitiveWrapper(returnType))
 			return STRING_STUB_PROPERTY_PARSER;
@@ -34,14 +34,14 @@ public final class ParserFactory {
 			return MAP_PROPERTY_PARSER;
 
 		// when the user used custom deserializer
-		if (deserializationMethod == BoundProperty.DeserializationMethod.CONSTRUCTOR_STRING ||
-				deserializationMethod == BoundProperty.DeserializationMethod.VALUEOF_STRING ||
-				deserializationMethod == BoundProperty.DeserializationMethod.DESERIALIZER_STRING)
+		if (deserializationMethod == DeserializationMethod.CONSTRUCTOR_STRING ||
+				deserializationMethod == DeserializationMethod.VALUEOF_STRING ||
+				deserializationMethod == DeserializationMethod.DESERIALIZER_STRING)
 			return STRING_STUB_PROPERTY_PARSER;
 
-		if (deserializationMethod == BoundProperty.DeserializationMethod.CONSTRUCTOR_MAP ||
-				deserializationMethod == BoundProperty.DeserializationMethod.VALUEOF_MAP ||
-				deserializationMethod == BoundProperty.DeserializationMethod.DESERIALIZER_MAP)
+		if (deserializationMethod == DeserializationMethod.CONSTRUCTOR_MAP ||
+				deserializationMethod == DeserializationMethod.VALUEOF_MAP ||
+				deserializationMethod == DeserializationMethod.DESERIALIZER_MAP)
 			return MAP_PROPERTY_PARSER;
 
 		throw new PropertyParseException("Cannot find appropriate parser for '" + returnType.getName() + "'.").logAndReturn();

@@ -1,5 +1,7 @@
-package com.configlinker;
+package com.configlinker.enums;
 
+
+import com.configlinker.FactorySettingsBuilder;
 
 /**
  * <p>What to do if the property value does not exist in underlying persistent store or cannot be converted to object representation for any reasons.
@@ -11,7 +13,7 @@ package com.configlinker;
  */
 public enum ErrorBehavior {
 	/**
-	 * Inherits value from {@link FactoryConfigBuilder#setErrorBehavior(ErrorBehavior)}. Default value {@link #THROW_EXCEPTION}.
+	 * Inherits value from {@link FactorySettingsBuilder#setErrorBehavior(ErrorBehavior)}. Default value {@link #THROW_EXCEPTION}.
 	 */
 	INHERIT,
 	/**

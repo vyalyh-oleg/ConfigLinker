@@ -2,7 +2,7 @@ package com.configlinker.loaders;
 
 import com.configlinker.ConfigDescription;
 import com.configlinker.Loggers;
-import com.configlinker.annotations.BoundObject;
+import com.configlinker.enums.TrackPolicy;
 import com.configlinker.exceptions.PropertyLoadException;
 
 import java.io.BufferedReader;
@@ -44,7 +44,7 @@ final class HttpLoader extends AbstractLoader {
 			} catch (MalformedURLException e) {
 				throw new PropertyLoadException("Wrong HTTP/S URL '" + description.getSourcePath() + "' in annotation parameter @BoundObject.sourcePath() on interface '" + description.getConfInterface().getName() + "'.").logAndReturn();
 			}
-			if (description.getTrackPolicy() == BoundObject.TrackPolicy.ENABLE)
+			if (description.getTrackPolicy() == TrackPolicy.ENABLE)
 				watchedFiles.computeIfAbsent(url, url1 -> new HashSet<>()).add(description);
 		}
 	}

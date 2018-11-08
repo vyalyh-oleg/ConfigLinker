@@ -3,7 +3,7 @@ package com.configlinker.tests;
 
 import com.configlinker.ConfigSet;
 import com.configlinker.ConfigSetFactory;
-import com.configlinker.FactoryConfigBuilder;
+import com.configlinker.FactorySettingsBuilder;
 import org.junit.jupiter.api.BeforeAll;
 
 import java.util.Set;
@@ -30,7 +30,7 @@ public abstract class AbstractBaseTest
 		return ConfigSetFactory.create(configInterfaces);
 	}
 	
-	protected ConfigSet getConfigSet(FactoryConfigBuilder configBuilder, Set<Class<?>> configInterfaces)
+	protected ConfigSet getConfigSet(FactorySettingsBuilder configBuilder, Set<Class<?>> configInterfaces)
 	{
 		return ConfigSetFactory.create(configBuilder, configInterfaces);
 	}
@@ -40,7 +40,7 @@ public abstract class AbstractBaseTest
 		return ConfigSetFactory.create(interfaceType).getConfigObject(interfaceType);
 	}
 	
-	protected <T> T getSingleConfigInstance(FactoryConfigBuilder configBuilder, Class<T> interfaceType)
+	protected <T> T getSingleConfigInstance(FactorySettingsBuilder configBuilder, Class<T> interfaceType)
 	{
 		return ConfigSetFactory.create(configBuilder, interfaceType).getConfigObject(interfaceType);
 	}

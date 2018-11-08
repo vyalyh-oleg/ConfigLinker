@@ -1,6 +1,8 @@
 package com.configlinker;
 
-import com.configlinker.annotations.BoundObject;
+import com.configlinker.enums.SourceScheme;
+import com.configlinker.enums.TrackPolicy;
+import com.configlinker.enums.ErrorBehavior;
 import com.configlinker.mappers.IPropertyMapper;
 
 import java.lang.reflect.Method;
@@ -11,13 +13,13 @@ import java.util.Map;
 public final class ConfigDescription
 {
 	private final Class<?> confInterface;
-	private BoundObject.SourceScheme sourceScheme;
+	private SourceScheme sourceScheme;
 	private Map<String, String> httpHeaders;
 	private String sourcePath;
 	private Charset charset;
 	private boolean ignoreWhitespaces;
 	private String propertyNamePrefix;
-	private BoundObject.TrackPolicy trackPolicy;
+	private TrackPolicy trackPolicy;
 	private int trackingInterval;
 	private IConfigChangeListener configChangeListener;
 	private ErrorBehavior errorBehavior;
@@ -34,7 +36,7 @@ public final class ConfigDescription
 		return confInterface;
 	}
 	
-	public BoundObject.SourceScheme getSourceScheme()
+	public SourceScheme getSourceScheme()
 	{
 		return sourceScheme;
 	}
@@ -64,7 +66,7 @@ public final class ConfigDescription
 		return propertyNamePrefix;
 	}
 	
-	public BoundObject.TrackPolicy getTrackPolicy()
+	public TrackPolicy getTrackPolicy()
 	{
 		return trackPolicy;
 	}
@@ -96,7 +98,7 @@ public final class ConfigDescription
 	}
 	
 	
-	void setSourceScheme(BoundObject.SourceScheme sourceScheme)
+	void setSourceScheme(SourceScheme sourceScheme)
 	{
 		this.sourceScheme = sourceScheme;
 	}
@@ -126,7 +128,7 @@ public final class ConfigDescription
 		this.propertyNamePrefix = propertyNamePrefix;
 	}
 	
-	void setTrackPolicy(BoundObject.TrackPolicy trackPolicy)
+	void setTrackPolicy(TrackPolicy trackPolicy)
 	{
 		this.trackPolicy = trackPolicy;
 	}

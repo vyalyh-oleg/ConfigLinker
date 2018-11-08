@@ -1,7 +1,10 @@
 package com.configlinker;
 
 import com.configlinker.annotations.BoundObject;
-import com.configlinker.annotations.BoundProperty;
+import com.configlinker.enums.SourceScheme;
+import com.configlinker.enums.TrackPolicy;
+import com.configlinker.enums.Whitespaces;
+import com.configlinker.enums.ErrorBehavior;
 import com.configlinker.exceptions.FactoryConfigBuilderClosedException;
 import com.configlinker.exceptions.FactoryConfigBuilderException;
 
@@ -14,31 +17,31 @@ import java.util.Map;
 /**
  * <p>Default configuration factory values:
  * <ul>
- * <li>sourceScheme = {@link BoundObject.SourceScheme#FILE}</li>
- * <li>trackPolicy = {@link BoundObject.TrackPolicy#DISABLE}</li>
+ * <li>sourceScheme = {@link SourceScheme#FILE}</li>
+ * <li>trackingPolicy = {@link TrackPolicy#DISABLE}</li>
  * <li>trackingInterval = 60</li>
  * <li>charset = {@link StandardCharsets#UTF_8}</li>
  * <li>whitespaces = true</li>
  * <li>errorBehavior = {@link ErrorBehavior#THROW_EXCEPTION}</li>
  * </ul>
  */
-public final class FactoryConfigBuilder
+public final class FactorySettingsBuilder
 {
 	private Map<String, String> parameters = new HashMap<>();
 	private Map<String, String> httpHeaders = new HashMap<>();
-	private BoundObject.SourceScheme sourceScheme = BoundObject.SourceScheme.FILE;
-	private BoundObject.TrackPolicy trackPolicy = BoundObject.TrackPolicy.DISABLE;
+	private SourceScheme sourceScheme = SourceScheme.FILE;
+	private TrackPolicy trackPolicy = TrackPolicy.DISABLE;
 	private int trackingInterval = 60;
 	private Charset charset = StandardCharsets.UTF_8;
-	private BoundProperty.Whitespaces whitespaces = BoundProperty.Whitespaces.IGNORE;
+	private Whitespaces whitespaces = Whitespaces.IGNORE;
 	private ErrorBehavior errorBehavior = ErrorBehavior.THROW_EXCEPTION;
 	private boolean closed = false;
 
-	public static FactoryConfigBuilder create() {
-		return new FactoryConfigBuilder();
+	public static FactorySettingsBuilder create() {
+		return new FactorySettingsBuilder();
 	}
 
-	private FactoryConfigBuilder() {
+	private FactorySettingsBuilder() {
 	}
 
 	/**
@@ -48,7 +51,7 @@ public final class FactoryConfigBuilder
 	 * @return this
 	 * @throws FactoryConfigBuilderClosedException -
 	 */
-	public FactoryConfigBuilder addParameter(String key, String value) throws FactoryConfigBuilderClosedException {
+	public FactorySettingsBuilder addParameter(String key, String value) throws FactoryConfigBuilderClosedException {
 		if (closed)
 			throw FactoryConfigBuilderClosedException.getInstance();
 		
@@ -60,16 +63,16 @@ public final class FactoryConfigBuilder
 	}
 
 	/**
-	 * @param sourceScheme See {@link BoundObject.SourceScheme} and {@link BoundObject#sourceScheme()}. Default value: {@link BoundObject.SourceScheme#FILE}
+	 * @param sourceScheme See {@link SourceScheme} and {@link BoundObject#sourceScheme()}. Default value: {@link SourceScheme#FILE}
 	 * @return this
 	 * @throws FactoryConfigBuilderClosedException -
 	 */
-	public FactoryConfigBuilder setSourceScheme(BoundObject.SourceScheme sourceScheme) throws FactoryConfigBuilderClosedException {
+	public FactorySettingsBuilder setSourceScheme(SourceScheme sourceScheme) throws FactoryConfigBuilderClosedException {
 		if (closed)
 			throw FactoryConfigBuilderClosedException.getInstance();
 		
-		if (sourceScheme == BoundObject.SourceScheme.INHERIT)
-			this.sourceScheme = BoundObject.SourceScheme.FILE;
+		if (sourceScheme == SourceScheme.INHERIT)
+			this.sourceScheme = SourceScheme.FILE;
 		else
 			this.sourceScheme = sourceScheme;
 		
@@ -77,13 +80,13 @@ public final class FactoryConfigBuilder
 	}
 
 	/**
-	 * <p>Use this method to add necessary headers to every request that will be made to receive configuration. This headers are used only if the {@link BoundObject#sourceScheme} is {@link BoundObject.SourceScheme#HTTP}.
+	 * <p>Use this method to add necessary headers to every request that will be made to receive configuration. This headers are used only if the {@link BoundObject#sourceScheme} is {@link SourceScheme#HTTP}.
 	 * This method do not merge values for the same header names. In duplicate case header will be simply replaced.
 	 * @param name Header name
 	 * @param value Header value
 	 * @return this
 	 */
-	public FactoryConfigBuilder setHttpHeader(String name, String value){
+	public FactorySettingsBuilder setHttpHeader(String name, String value){
 		if (closed)
 			throw FactoryConfigBuilderClosedException.getInstance();
 		
@@ -94,16 +97,16 @@ public final class FactoryConfigBuilder
 	}
 
 	/**
-	 * @param trackPolicy See {@link BoundObject.TrackPolicy} and {@link BoundObject#trackPolicy()}. Default value: {@link BoundObject.TrackPolicy#DISABLE}
+	 * @param trackPolicy See {@link TrackPolicy} and {@link BoundObject#trackingPolicy()}. Default value: {@link TrackPolicy#DISABLE}
 	 * @return this
 	 * @throws FactoryConfigBuilderClosedException -
 	 */
-	public FactoryConfigBuilder setTrackPolicy(BoundObject.TrackPolicy trackPolicy) throws FactoryConfigBuilderClosedException {
+	public FactorySettingsBuilder setTrackPolicy(TrackPolicy trackPolicy) throws FactoryConfigBuilderClosedException {
 		if (closed)
 			throw FactoryConfigBuilderClosedException.getInstance();
 		
-		if (trackPolicy == BoundObject.TrackPolicy.INHERIT)
-			this.trackPolicy = BoundObject.TrackPolicy.DISABLE;
+		if (trackPolicy == TrackPolicy.INHERIT)
+			this.trackPolicy = TrackPolicy.DISABLE;
 		else
 			this.trackPolicy = trackPolicy;
 		
@@ -111,13 +114,13 @@ public final class FactoryConfigBuilder
 	}
 
 	/**
-	 * <p>This property has sense only if you use {@link BoundObject.SourceScheme#HTTP} here (in builder) or in {@link BoundObject#sourceScheme()} on one of the configuration interfaces.
+	 * <p>This property has sense only if you use {@link SourceScheme#HTTP} here (in builder) or in {@link BoundObject#sourceScheme()} on one of the configuration interfaces.
 	 * <p>Default: {@code 60} seconds
 	 *
 	 * @param trackingInterval reread interval in seconds. MIN value = 15 seconds, MAX value = 24 hours (24*3600 seconds).
 	 * @return this
 	 */
-	public FactoryConfigBuilder setTrackingInterval(int trackingInterval) throws FactoryConfigBuilderClosedException, IllegalArgumentException {
+	public FactorySettingsBuilder setTrackingInterval(int trackingInterval) throws FactoryConfigBuilderClosedException, IllegalArgumentException {
 		if (closed)
 			throw FactoryConfigBuilderClosedException.getInstance();
 		if (trackingInterval < 15 || trackingInterval > 24 * 3600)
@@ -132,7 +135,7 @@ public final class FactoryConfigBuilder
 	 * @return this
 	 * @throws FactoryConfigBuilderClosedException -
 	 */
-	public FactoryConfigBuilder setCharset(Charset charset) throws FactoryConfigBuilderClosedException {
+	public FactorySettingsBuilder setCharset(Charset charset) throws FactoryConfigBuilderClosedException {
 		if (closed)
 			throw FactoryConfigBuilderClosedException.getInstance();
 		this.charset = charset;
@@ -140,15 +143,15 @@ public final class FactoryConfigBuilder
 	}
 	
 	/**
-	 * @param whitespaces See {@link BoundProperty.Whitespaces}. Default value {@link BoundProperty.Whitespaces#IGNORE}
+	 * @param whitespaces See {@link Whitespaces}. Default value {@link Whitespaces#IGNORE}
 	 * @return this
 	 */
-	public FactoryConfigBuilder setWhitespaces(BoundProperty.Whitespaces whitespaces) {
+	public FactorySettingsBuilder setWhitespaces(Whitespaces whitespaces) {
 		if (closed)
 			throw FactoryConfigBuilderClosedException.getInstance();
 		
-		if (whitespaces == BoundProperty.Whitespaces.INHERIT)
-			this.whitespaces = BoundProperty.Whitespaces.IGNORE;
+		if (whitespaces == Whitespaces.INHERIT)
+			this.whitespaces = Whitespaces.IGNORE;
 		else
 			this.whitespaces = whitespaces;
 		
@@ -160,7 +163,7 @@ public final class FactoryConfigBuilder
 	 * @return this
 	 * @throws FactoryConfigBuilderClosedException -
 	 */
-	public FactoryConfigBuilder setErrorBehavior(ErrorBehavior errorBehavior) throws FactoryConfigBuilderClosedException {
+	public FactorySettingsBuilder setErrorBehavior(ErrorBehavior errorBehavior) throws FactoryConfigBuilderClosedException {
 		if (closed)
 			throw FactoryConfigBuilderClosedException.getInstance();
 		this.errorBehavior = errorBehavior;
@@ -172,7 +175,7 @@ public final class FactoryConfigBuilder
 		return Collections.unmodifiableMap(parameters);
 	}
 
-	public BoundObject.SourceScheme getSourceScheme() {
+	public SourceScheme getSourceScheme() {
 		return sourceScheme;
 	}
 
@@ -180,7 +183,7 @@ public final class FactoryConfigBuilder
 		return Collections.unmodifiableMap(httpHeaders);
 	}
 
-	public BoundObject.TrackPolicy getTrackPolicy() {
+	public TrackPolicy getTrackPolicy() {
 		return trackPolicy;
 	}
 
@@ -192,7 +195,7 @@ public final class FactoryConfigBuilder
 		return charset;
 	}
 
-	public BoundProperty.Whitespaces whitespaces() {
+	public Whitespaces whitespaces() {
 		return whitespaces;
 	}
 

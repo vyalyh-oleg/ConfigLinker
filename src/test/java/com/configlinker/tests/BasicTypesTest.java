@@ -1,8 +1,9 @@
 package com.configlinker.tests;
 
-import com.configlinker.FactoryConfigBuilder;
+import com.configlinker.FactorySettingsBuilder;
 import com.configlinker.annotations.BoundObject;
 import com.configlinker.annotations.BoundProperty;
+import com.configlinker.enums.Whitespaces;
 import com.configlinker.exceptions.PropertyMapException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -196,7 +197,7 @@ class BasicTypesTest extends AbstractBaseTest
 	void test_typeMultilineString()
 	{
 		TypeMultilineString typeMultilineString = getSingleConfigInstance(TypeMultilineString.class);
-		// Take into account that default value for FactoryConfigBuilder.whitespaces() == true
+		// Take into account that default value for FactorySettingsBuilder.whitespaces() == Whitespaces.IGNORE
 		Assertions.assertEquals("Just a simple multiline text", typeMultilineString.getValue1());
 		Assertions.assertEquals("Just a simple multiline text", typeMultilineString.getValue2());
 		Assertions.assertEquals("Just a simplemultiline text", typeMultilineString.getValue3());
@@ -209,7 +210,7 @@ class BasicTypesTest extends AbstractBaseTest
 	@Test
 	void test_typeMultilineString_withWhitespaces()
 	{
-		TypeMultilineString typeMultilineString = getSingleConfigInstance(FactoryConfigBuilder.create().setWhitespaces(BoundProperty.Whitespaces.ACCEPT), TypeMultilineString.class);
+		TypeMultilineString typeMultilineString = getSingleConfigInstance(FactorySettingsBuilder.create().setWhitespaces(Whitespaces.ACCEPT), TypeMultilineString.class);
 		Assertions.assertEquals("Just a simple multiline text", typeMultilineString.getValue1());
 		Assertions.assertEquals("Just a simple multiline text", typeMultilineString.getValue2());
 		Assertions.assertEquals("Just a simplemultiline text   ", typeMultilineString.getValue3()); // 3 trailing spaces

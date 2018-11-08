@@ -4,6 +4,7 @@ package com.configlinker.tests;
 import com.configlinker.IDeserializer;
 import com.configlinker.annotations.BoundObject;
 import com.configlinker.annotations.BoundProperty;
+import com.configlinker.enums.DeserializationMethod;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -77,7 +78,7 @@ class ComplexTypesTest extends AbstractBaseTest
 		TypeCompany_fromConstructorString typeCompany_fromConstructorString = getSingleConfigInstance(TypeCompany_fromConstructorString.class);
 		Company company = typeCompany_fromConstructorString.getCompany();
 		Assertions.assertEquals(ComplexTypesTest.companyInConfigFile, company);
-		Assertions.assertEquals(BoundProperty.DeserializationMethod.CONSTRUCTOR_STRING, company.deserializationMethod);
+		Assertions.assertEquals(DeserializationMethod.CONSTRUCTOR_STRING, company.deserializationMethod);
 	}
 	
 	@Test
@@ -86,7 +87,7 @@ class ComplexTypesTest extends AbstractBaseTest
 		TypeCompany_fromValueOfString typeCompany_fromValueOfString = getSingleConfigInstance(TypeCompany_fromValueOfString.class);
 		Company company = typeCompany_fromValueOfString.getCompany();
 		Assertions.assertEquals(ComplexTypesTest.companyInConfigFile, company);
-		Assertions.assertEquals(BoundProperty.DeserializationMethod.VALUEOF_STRING, company.deserializationMethod);
+		Assertions.assertEquals(DeserializationMethod.VALUEOF_STRING, company.deserializationMethod);
 	}
 	
 	@Test
@@ -95,7 +96,7 @@ class ComplexTypesTest extends AbstractBaseTest
 		TypeCompany_fromDeserializerString typeCompany_fromDeserializerString = getSingleConfigInstance(TypeCompany_fromDeserializerString.class);
 		Company company = typeCompany_fromDeserializerString.getCompany();
 		Assertions.assertEquals(ComplexTypesTest.companyInConfigFile, company);
-		Assertions.assertEquals(BoundProperty.DeserializationMethod.DESERIALIZER_STRING, company.deserializationMethod);
+		Assertions.assertEquals(DeserializationMethod.DESERIALIZER_STRING, company.deserializationMethod);
 	}
 	
 	@Test
@@ -105,15 +106,15 @@ class ComplexTypesTest extends AbstractBaseTest
 		
 		Company companyFromConstructor = typeCompany_mixedString.getCompany_fromConstructorString();
 		Assertions.assertEquals(ComplexTypesTest.companyInConfigFile, companyFromConstructor);
-		Assertions.assertEquals(BoundProperty.DeserializationMethod.CONSTRUCTOR_STRING, companyFromConstructor.deserializationMethod);
+		Assertions.assertEquals(DeserializationMethod.CONSTRUCTOR_STRING, companyFromConstructor.deserializationMethod);
 		
 		Company companyFromValueOf = typeCompany_mixedString.getCompany_fromValueOfString();
 		Assertions.assertEquals(ComplexTypesTest.companyInConfigFile, companyFromValueOf);
-		Assertions.assertEquals(BoundProperty.DeserializationMethod.VALUEOF_STRING, companyFromValueOf.deserializationMethod);
+		Assertions.assertEquals(DeserializationMethod.VALUEOF_STRING, companyFromValueOf.deserializationMethod);
 		
 		Company companyFromDeserializer = typeCompany_mixedString.getCompany_fromDeserializerString();
 		Assertions.assertEquals(ComplexTypesTest.companyInConfigFile, companyFromDeserializer);
-		Assertions.assertEquals(BoundProperty.DeserializationMethod.DESERIALIZER_STRING, companyFromDeserializer.deserializationMethod);
+		Assertions.assertEquals(DeserializationMethod.DESERIALIZER_STRING, companyFromDeserializer.deserializationMethod);
 	}
 	
 	@Test
@@ -122,7 +123,7 @@ class ComplexTypesTest extends AbstractBaseTest
 		TypeCompany_fromConstructorMap typeCompany_fromConstructorMap = getSingleConfigInstance(TypeCompany_fromConstructorMap.class);
 		Company company = typeCompany_fromConstructorMap.getCompany();
 		Assertions.assertEquals(ComplexTypesTest.companyInConfigFile, company);
-		Assertions.assertEquals(BoundProperty.DeserializationMethod.CONSTRUCTOR_MAP, company.deserializationMethod);
+		Assertions.assertEquals(DeserializationMethod.CONSTRUCTOR_MAP, company.deserializationMethod);
 	}
 	
 	@Test
@@ -131,7 +132,7 @@ class ComplexTypesTest extends AbstractBaseTest
 		TypeCompany_fromValueOfMap typeCompany_fromValueOfMap = getSingleConfigInstance(TypeCompany_fromValueOfMap.class);
 		Company company = typeCompany_fromValueOfMap.getCompany();
 		Assertions.assertEquals(ComplexTypesTest.companyInConfigFile, company);
-		Assertions.assertEquals(BoundProperty.DeserializationMethod.VALUEOF_MAP, company.deserializationMethod);
+		Assertions.assertEquals(DeserializationMethod.VALUEOF_MAP, company.deserializationMethod);
 	}
 	
 	@Test
@@ -140,7 +141,7 @@ class ComplexTypesTest extends AbstractBaseTest
 		TypeCompany_fromDeserializerMap typeCompany_fromDeserializerMap = getSingleConfigInstance(TypeCompany_fromDeserializerMap.class);
 		Company company = typeCompany_fromDeserializerMap.getCompany();
 		Assertions.assertEquals(ComplexTypesTest.companyInConfigFile, company);
-		Assertions.assertEquals(BoundProperty.DeserializationMethod.DESERIALIZER_MAP, company.deserializationMethod);
+		Assertions.assertEquals(DeserializationMethod.DESERIALIZER_MAP, company.deserializationMethod);
 	}
 	
 	@Test
@@ -150,15 +151,15 @@ class ComplexTypesTest extends AbstractBaseTest
 		
 		Company companyFromConstructor = typeCompany_mixedMap.getCompany_fromConstructorMap();
 		Assertions.assertEquals(ComplexTypesTest.companyInConfigFile, companyFromConstructor);
-		Assertions.assertEquals(BoundProperty.DeserializationMethod.CONSTRUCTOR_MAP, companyFromConstructor.deserializationMethod);
+		Assertions.assertEquals(DeserializationMethod.CONSTRUCTOR_MAP, companyFromConstructor.deserializationMethod);
 		
 		Company companyFromValueOf = typeCompany_mixedMap.getCompany_fromValueOfMap();
 		Assertions.assertEquals(ComplexTypesTest.companyInConfigFile, companyFromValueOf);
-		Assertions.assertEquals(BoundProperty.DeserializationMethod.VALUEOF_MAP, companyFromValueOf.deserializationMethod);
+		Assertions.assertEquals(DeserializationMethod.VALUEOF_MAP, companyFromValueOf.deserializationMethod);
 		
 		Company companyFromDeserializer = typeCompany_mixedMap.getCompany_fromDeserializerMap();
 		Assertions.assertEquals(ComplexTypesTest.companyInConfigFile, companyFromDeserializer);
-		Assertions.assertEquals(BoundProperty.DeserializationMethod.DESERIALIZER_MAP, companyFromDeserializer.deserializationMethod);
+		Assertions.assertEquals(DeserializationMethod.DESERIALIZER_MAP, companyFromDeserializer.deserializationMethod);
 	}
 	
 	
@@ -172,17 +173,17 @@ class ComplexTypesTest extends AbstractBaseTest
 		Company[] arrayCompaniesFromConstructor = typeCompany_array.getArrayCompanies_fromConstructorString();
 		Assertions.assertArrayEquals(arrayCompaniesFromConfig, arrayCompaniesFromConstructor);
 		Stream.of(arrayCompaniesFromConstructor)
-		  .forEach(company -> Assertions.assertEquals(BoundProperty.DeserializationMethod.CONSTRUCTOR_STRING, company.deserializationMethod));
+		  .forEach(company -> Assertions.assertEquals(DeserializationMethod.CONSTRUCTOR_STRING, company.deserializationMethod));
 		
 		Company[] arrayCompaniesFromValueOf = typeCompany_array.getArrayCompanies_fromValueOfString();
 		Assertions.assertArrayEquals(arrayCompaniesFromConfig, arrayCompaniesFromValueOf);
 		Stream.of(arrayCompaniesFromValueOf)
-		  .forEach(company -> Assertions.assertEquals(BoundProperty.DeserializationMethod.VALUEOF_STRING, company.deserializationMethod));
+		  .forEach(company -> Assertions.assertEquals(DeserializationMethod.VALUEOF_STRING, company.deserializationMethod));
 		
 		Company[] arrayCompaniesFromDeserializer = typeCompany_array.getArrayCompanies_fromDeserializerString();
 		Assertions.assertArrayEquals(arrayCompaniesFromConfig, arrayCompaniesFromDeserializer);
 		Stream.of(arrayCompaniesFromDeserializer)
-		  .forEach(company -> Assertions.assertEquals(BoundProperty.DeserializationMethod.DESERIALIZER_STRING, company.deserializationMethod));
+		  .forEach(company -> Assertions.assertEquals(DeserializationMethod.DESERIALIZER_STRING, company.deserializationMethod));
 	}
 	
 	@Test
@@ -195,17 +196,17 @@ class ComplexTypesTest extends AbstractBaseTest
 		List<Company> listCompaniesFromConstructor = typeCompany_list.getListCompanies_fromConstructorString();
 		Assertions.assertEquals(listCompaniesFromConfig, listCompaniesFromConstructor);
 		listCompaniesFromConstructor
-		  .forEach(company -> Assertions.assertEquals(BoundProperty.DeserializationMethod.CONSTRUCTOR_STRING, company.deserializationMethod));
+		  .forEach(company -> Assertions.assertEquals(DeserializationMethod.CONSTRUCTOR_STRING, company.deserializationMethod));
 		
 		List<Company> listCompaniesFromValueOf = typeCompany_list.getListCompanies_fromValueOfString();
 		Assertions.assertEquals(listCompaniesFromConfig, listCompaniesFromValueOf);
 		listCompaniesFromValueOf
-		  .forEach(company -> Assertions.assertEquals(BoundProperty.DeserializationMethod.VALUEOF_STRING, company.deserializationMethod));
+		  .forEach(company -> Assertions.assertEquals(DeserializationMethod.VALUEOF_STRING, company.deserializationMethod));
 		
 		List<Company> listCompaniesFromDeserializer = typeCompany_list.getListCompanies_fromDeserializerString();
 		Assertions.assertEquals(listCompaniesFromConfig, listCompaniesFromDeserializer);
 		listCompaniesFromDeserializer
-		  .forEach(company -> Assertions.assertEquals(BoundProperty.DeserializationMethod.DESERIALIZER_STRING, company.deserializationMethod));
+		  .forEach(company -> Assertions.assertEquals(DeserializationMethod.DESERIALIZER_STRING, company.deserializationMethod));
 	}
 	
 	@Test
@@ -218,17 +219,17 @@ class ComplexTypesTest extends AbstractBaseTest
 		Set<Company> setCompaniesFromConstructor = typeCompany_set.getSetCompanies_fromConstructorString();
 		Assertions.assertEquals(setCompaniesFromConfig, setCompaniesFromConstructor);
 		setCompaniesFromConstructor
-		  .forEach(company -> Assertions.assertEquals(BoundProperty.DeserializationMethod.CONSTRUCTOR_STRING, company.deserializationMethod));
+		  .forEach(company -> Assertions.assertEquals(DeserializationMethod.CONSTRUCTOR_STRING, company.deserializationMethod));
 		
 		Set<Company> setCompaniesFromValueOf = typeCompany_set.getSetCompanies_fromValueOfString();
 		Assertions.assertEquals(setCompaniesFromConfig, setCompaniesFromValueOf);
 		setCompaniesFromValueOf
-		  .forEach(company -> Assertions.assertEquals(BoundProperty.DeserializationMethod.VALUEOF_STRING, company.deserializationMethod));
+		  .forEach(company -> Assertions.assertEquals(DeserializationMethod.VALUEOF_STRING, company.deserializationMethod));
 		
 		Set<Company> setCompaniesFromDeserializer = typeCompany_set.getSetCompanies_fromDeserializerString();
 		Assertions.assertEquals(setCompaniesFromConfig, setCompaniesFromDeserializer);
 		setCompaniesFromDeserializer
-		  .forEach(company -> Assertions.assertEquals(BoundProperty.DeserializationMethod.DESERIALIZER_STRING, company.deserializationMethod));
+		  .forEach(company -> Assertions.assertEquals(DeserializationMethod.DESERIALIZER_STRING, company.deserializationMethod));
 	}
 	
 	@Test
@@ -244,17 +245,17 @@ class ComplexTypesTest extends AbstractBaseTest
 		Map<String, Company> mapCompaniesFromConstructor = typeCompany_map.getMapCompanies_fromConstructorString();
 		Assertions.assertEquals(mapCompaniesFromConfig, mapCompaniesFromConstructor);
 		mapCompaniesFromConstructor
-		  .forEach((name, company) -> Assertions.assertEquals(BoundProperty.DeserializationMethod.CONSTRUCTOR_STRING, company.deserializationMethod));
+		  .forEach((name, company) -> Assertions.assertEquals(DeserializationMethod.CONSTRUCTOR_STRING, company.deserializationMethod));
 		
 		Map<String, Company> mapCompaniesFromValueOf = typeCompany_map.getMapCompanies_fromValueOfString();
 		Assertions.assertEquals(mapCompaniesFromConfig, mapCompaniesFromValueOf);
 		mapCompaniesFromValueOf
-		  .forEach((name, company) -> Assertions.assertEquals(BoundProperty.DeserializationMethod.VALUEOF_STRING, company.deserializationMethod));
+		  .forEach((name, company) -> Assertions.assertEquals(DeserializationMethod.VALUEOF_STRING, company.deserializationMethod));
 		
 		Map<String, Company> mapCompaniesFromDeserializer = typeCompany_map.getMapCompanies_fromDeserializerString();
 		Assertions.assertEquals(mapCompaniesFromConfig, mapCompaniesFromDeserializer);
 		mapCompaniesFromDeserializer
-		  .forEach((name, company) -> Assertions.assertEquals(BoundProperty.DeserializationMethod.DESERIALIZER_STRING, company.deserializationMethod));
+		  .forEach((name, company) -> Assertions.assertEquals(DeserializationMethod.DESERIALIZER_STRING, company.deserializationMethod));
 	}
 }
 
@@ -262,34 +263,34 @@ class ComplexTypesTest extends AbstractBaseTest
 @BoundObject(sourcePath = "configs/complex_types.properties")
 interface TypeCompany_fromConstructorString
 {
-	@BoundProperty(name = "affiliate.horns-and-hooves.info.string", deserializationMethod = BoundProperty.DeserializationMethod.CONSTRUCTOR_STRING)
+	@BoundProperty(name = "affiliate.horns-and-hooves.info.string", deserializationMethod = DeserializationMethod.CONSTRUCTOR_STRING)
 	Company getCompany();
 }
 
 @BoundObject(sourcePath = "configs/complex_types.properties")
 interface TypeCompany_fromValueOfString
 {
-	@BoundProperty(name = "affiliate.horns-and-hooves.info.string", deserializationMethod = BoundProperty.DeserializationMethod.VALUEOF_STRING)
+	@BoundProperty(name = "affiliate.horns-and-hooves.info.string", deserializationMethod = DeserializationMethod.VALUEOF_STRING)
 	Company getCompany();
 }
 
 @BoundObject(sourcePath = "configs/complex_types.properties")
 interface TypeCompany_fromDeserializerString
 {
-	@BoundProperty(name = "affiliate.horns-and-hooves.info.string", deserializationMethod = BoundProperty.DeserializationMethod.DESERIALIZER_STRING)
+	@BoundProperty(name = "affiliate.horns-and-hooves.info.string", deserializationMethod = DeserializationMethod.DESERIALIZER_STRING)
 	Company getCompany();
 }
 
 @BoundObject(sourcePath = "configs/complex_types.properties")
 interface TypeCompany_MixedString
 {
-	@BoundProperty(name = "affiliate.horns-and-hooves.info.string", deserializationMethod = BoundProperty.DeserializationMethod.CONSTRUCTOR_STRING)
+	@BoundProperty(name = "affiliate.horns-and-hooves.info.string", deserializationMethod = DeserializationMethod.CONSTRUCTOR_STRING)
 	Company getCompany_fromConstructorString();
 	
-	@BoundProperty(name = "affiliate.horns-and-hooves.info.string", deserializationMethod = BoundProperty.DeserializationMethod.VALUEOF_STRING)
+	@BoundProperty(name = "affiliate.horns-and-hooves.info.string", deserializationMethod = DeserializationMethod.VALUEOF_STRING)
 	Company getCompany_fromValueOfString();
 	
-	@BoundProperty(name = "affiliate.horns-and-hooves.info.string", deserializationMethod = BoundProperty.DeserializationMethod.DESERIALIZER_STRING)
+	@BoundProperty(name = "affiliate.horns-and-hooves.info.string", deserializationMethod = DeserializationMethod.DESERIALIZER_STRING)
 	Company getCompany_fromDeserializerString();
 }
 
@@ -297,34 +298,34 @@ interface TypeCompany_MixedString
 @BoundObject(sourcePath = "configs/complex_types.properties")
 interface TypeCompany_fromConstructorMap
 {
-	@BoundProperty(name = "affiliate.horns-and-hooves.info.map", deserializationMethod = BoundProperty.DeserializationMethod.CONSTRUCTOR_MAP)
+	@BoundProperty(name = "affiliate.horns-and-hooves.info.map", deserializationMethod = DeserializationMethod.CONSTRUCTOR_MAP)
 	Company getCompany();
 }
 
 @BoundObject(sourcePath = "configs/complex_types.properties")
 interface TypeCompany_fromValueOfMap
 {
-	@BoundProperty(name = "affiliate.horns-and-hooves.info.map", deserializationMethod = BoundProperty.DeserializationMethod.VALUEOF_MAP)
+	@BoundProperty(name = "affiliate.horns-and-hooves.info.map", deserializationMethod = DeserializationMethod.VALUEOF_MAP)
 	Company getCompany();
 }
 
 @BoundObject(sourcePath = "configs/complex_types.properties")
 interface TypeCompany_fromDeserializerMap
 {
-	@BoundProperty(name = "affiliate.horns-and-hooves.info.map", deserializationMethod = BoundProperty.DeserializationMethod.DESERIALIZER_MAP)
+	@BoundProperty(name = "affiliate.horns-and-hooves.info.map", deserializationMethod = DeserializationMethod.DESERIALIZER_MAP)
 	Company getCompany();
 }
 
 @BoundObject(sourcePath = "configs/complex_types.properties")
 interface TypeCompany_MixedMap
 {
-	@BoundProperty(name = "affiliate.horns-and-hooves.info.map", deserializationMethod = BoundProperty.DeserializationMethod.CONSTRUCTOR_MAP)
+	@BoundProperty(name = "affiliate.horns-and-hooves.info.map", deserializationMethod = DeserializationMethod.CONSTRUCTOR_MAP)
 	Company getCompany_fromConstructorMap();
 	
-	@BoundProperty(name = "affiliate.horns-and-hooves.info.map", deserializationMethod = BoundProperty.DeserializationMethod.VALUEOF_MAP)
+	@BoundProperty(name = "affiliate.horns-and-hooves.info.map", deserializationMethod = DeserializationMethod.VALUEOF_MAP)
 	Company getCompany_fromValueOfMap();
 	
-	@BoundProperty(name = "affiliate.horns-and-hooves.info.map", deserializationMethod = BoundProperty.DeserializationMethod.DESERIALIZER_MAP)
+	@BoundProperty(name = "affiliate.horns-and-hooves.info.map", deserializationMethod = DeserializationMethod.DESERIALIZER_MAP)
 	Company getCompany_fromDeserializerMap();
 }
 
@@ -332,52 +333,52 @@ interface TypeCompany_MixedMap
 @BoundObject(sourcePath = "configs/complex_types.properties")
 interface TypeCompany_array
 {
-	@BoundProperty(name = "affiliates.info.list", deserializationMethod = BoundProperty.DeserializationMethod.CONSTRUCTOR_STRING)
+	@BoundProperty(name = "affiliates.info.list", deserializationMethod = DeserializationMethod.CONSTRUCTOR_STRING)
 	Company[] getArrayCompanies_fromConstructorString();
 	
-	@BoundProperty(name = "affiliates.info.list", deserializationMethod = BoundProperty.DeserializationMethod.VALUEOF_STRING)
+	@BoundProperty(name = "affiliates.info.list", deserializationMethod = DeserializationMethod.VALUEOF_STRING)
 	Company[] getArrayCompanies_fromValueOfString();
 	
-	@BoundProperty(name = "affiliates.info.list", deserializationMethod = BoundProperty.DeserializationMethod.DESERIALIZER_STRING)
+	@BoundProperty(name = "affiliates.info.list", deserializationMethod = DeserializationMethod.DESERIALIZER_STRING)
 	Company[] getArrayCompanies_fromDeserializerString();
 }
 
 @BoundObject(sourcePath = "configs/complex_types.properties")
 interface TypeCompany_list
 {
-	@BoundProperty(name = "affiliates.info.list", customTypeOrDeserializer = Company.class, deserializationMethod = BoundProperty.DeserializationMethod.CONSTRUCTOR_STRING)
+	@BoundProperty(name = "affiliates.info.list", customType = Company.class, deserializationMethod = DeserializationMethod.CONSTRUCTOR_STRING)
 	List<Company> getListCompanies_fromConstructorString();
 	
-	@BoundProperty(name = "affiliates.info.list", customTypeOrDeserializer = Company.class, deserializationMethod = BoundProperty.DeserializationMethod.VALUEOF_STRING)
+	@BoundProperty(name = "affiliates.info.list", customType = Company.class, deserializationMethod = DeserializationMethod.VALUEOF_STRING)
 	List<Company> getListCompanies_fromValueOfString();
 	
-	@BoundProperty(name = "affiliates.info.list", customTypeOrDeserializer = Company.class, deserializationMethod = BoundProperty.DeserializationMethod.DESERIALIZER_STRING)
+	@BoundProperty(name = "affiliates.info.list", customType = Company.class, deserializationMethod = DeserializationMethod.DESERIALIZER_STRING)
 	List<Company> getListCompanies_fromDeserializerString();
 }
 
 @BoundObject(sourcePath = "configs/complex_types.properties")
 interface TypeCompany_set
 {
-	@BoundProperty(name = "affiliates.info.list", customTypeOrDeserializer = Company.class, deserializationMethod = BoundProperty.DeserializationMethod.CONSTRUCTOR_STRING)
+	@BoundProperty(name = "affiliates.info.list", customType = Company.class, deserializationMethod = DeserializationMethod.CONSTRUCTOR_STRING)
 	Set<Company> getSetCompanies_fromConstructorString();
 	
-	@BoundProperty(name = "affiliates.info.list", customTypeOrDeserializer = Company.class, deserializationMethod = BoundProperty.DeserializationMethod.VALUEOF_STRING)
+	@BoundProperty(name = "affiliates.info.list", customType = Company.class, deserializationMethod = DeserializationMethod.VALUEOF_STRING)
 	Set<Company> getSetCompanies_fromValueOfString();
 	
-	@BoundProperty(name = "affiliates.info.list", customTypeOrDeserializer = Company.class, deserializationMethod = BoundProperty.DeserializationMethod.DESERIALIZER_STRING)
+	@BoundProperty(name = "affiliates.info.list", customType = Company.class, deserializationMethod = DeserializationMethod.DESERIALIZER_STRING)
 	Set<Company> getSetCompanies_fromDeserializerString();
 }
 
 @BoundObject(sourcePath = "configs/complex_types.properties")
 interface TypeCompany_map
 {
-	@BoundProperty(name = "affiliates.info.map", customTypeOrDeserializer = Company.class, deserializationMethod = BoundProperty.DeserializationMethod.CONSTRUCTOR_STRING)
+	@BoundProperty(name = "affiliates.info.map", customType = Company.class, deserializationMethod = DeserializationMethod.CONSTRUCTOR_STRING)
 	Map<String, Company> getMapCompanies_fromConstructorString();
 	
-	@BoundProperty(name = "affiliates.info.map", customTypeOrDeserializer = Company.class, deserializationMethod = BoundProperty.DeserializationMethod.VALUEOF_STRING)
+	@BoundProperty(name = "affiliates.info.map", customType = Company.class, deserializationMethod = DeserializationMethod.VALUEOF_STRING)
 	Map<String, Company> getMapCompanies_fromValueOfString();
 	
-	@BoundProperty(name = "affiliates.info.map", customTypeOrDeserializer = Company.class, deserializationMethod = BoundProperty.DeserializationMethod.DESERIALIZER_STRING)
+	@BoundProperty(name = "affiliates.info.map", customType = Company.class, deserializationMethod = DeserializationMethod.DESERIALIZER_STRING)
 	Map<String, Company> getMapCompanies_fromDeserializerString();
 }
 
@@ -390,7 +391,7 @@ class Company implements IDeserializer<Company>
 	String ceo;
 	short dateFoundation;
 	double authorizedCapital;
-	BoundProperty.DeserializationMethod deserializationMethod;
+	DeserializationMethod deserializationMethod;
 	
 	public Company()
 	{
@@ -400,7 +401,7 @@ class Company implements IDeserializer<Company>
 	{
 		Company newCompany = new Company();
 		parseFromString(newCompany, rawStringData);
-		newCompany.deserializationMethod = BoundProperty.DeserializationMethod.VALUEOF_STRING;
+		newCompany.deserializationMethod = DeserializationMethod.VALUEOF_STRING;
 		return newCompany;
 	}
 	
@@ -408,7 +409,7 @@ class Company implements IDeserializer<Company>
 	{
 		Company newCompany = new Company();
 		parseFromMap(newCompany, rawStringMap);
-		newCompany.deserializationMethod = BoundProperty.DeserializationMethod.VALUEOF_MAP;
+		newCompany.deserializationMethod = DeserializationMethod.VALUEOF_MAP;
 		return newCompany;
 	}
 	
@@ -436,13 +437,13 @@ class Company implements IDeserializer<Company>
 	public Company(String rawData)
 	{
 		parseFromString(this, rawData);
-		this.deserializationMethod = BoundProperty.DeserializationMethod.CONSTRUCTOR_STRING;
+		this.deserializationMethod = DeserializationMethod.CONSTRUCTOR_STRING;
 	}
 	
 	public Company(Map<String, String> rawStringMap)
 	{
 		parseFromMap(this, rawStringMap);
-		this.deserializationMethod = BoundProperty.DeserializationMethod.CONSTRUCTOR_MAP;
+		this.deserializationMethod = DeserializationMethod.CONSTRUCTOR_MAP;
 	}
 	
 	@Override
@@ -450,7 +451,7 @@ class Company implements IDeserializer<Company>
 	{
 		Company newCompany = new Company();
 		parseFromString(newCompany, rawValue);
-		newCompany.deserializationMethod = BoundProperty.DeserializationMethod.DESERIALIZER_STRING;
+		newCompany.deserializationMethod = DeserializationMethod.DESERIALIZER_STRING;
 		return newCompany;
 	}
 	
@@ -459,7 +460,7 @@ class Company implements IDeserializer<Company>
 	{
 		Company newCompany = new Company();
 		parseFromMap(newCompany, stringValues);
-		newCompany.deserializationMethod = BoundProperty.DeserializationMethod.DESERIALIZER_MAP;
+		newCompany.deserializationMethod = DeserializationMethod.DESERIALIZER_MAP;
 		return newCompany;
 	}
 	

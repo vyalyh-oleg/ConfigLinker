@@ -78,7 +78,7 @@ abstract class AbstractPropertyMapper<RAW_TYPE, MAPPED_TYPE> implements IPropert
 	
 	protected final <RETURN> RETURN createObjectFromString(String elementStringValue)
 	{
-		// TODO: additional check for generic type (customTypeOrDeserializer), if return type is List, Set or Map
+		// TODO: additional check for generic type (customType), if return type is List, Set or Map
 		// TODO: additional mapper for each element if it is complex type
 		//PropertyParser propertyParser = ParserFactory.create(returnType, deserializationMethod);
 		return null;

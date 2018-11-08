@@ -3,7 +3,7 @@ package com.configlinker.loaders;
 import com.configlinker.IConfigChangeListener;
 import com.configlinker.ConfigChangedEvent;
 import com.configlinker.ConfigDescription;
-import com.configlinker.ErrorBehavior;
+import com.configlinker.enums.ErrorBehavior;
 import com.configlinker.Loggers;
 import com.configlinker.exceptions.ConfigLinkerRuntimeException;
 import com.configlinker.exceptions.ConfigProxyException;
