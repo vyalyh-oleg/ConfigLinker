@@ -120,7 +120,7 @@ public final class MapperFactory
 			}
 			
 			if (customTypeOrDeserializer == Object.class)
-				throw new PropertyMapException("For type '" + returnType.getName() + "' you must specify its generic type in '@BoundProperty.customTypeOrDeserializer' and choose (for non predefined types) '@BoundProperty.deserializationMethod'; method leading to error: '" + propertyMethod.getDeclaringClass().getName() + "." + propertyMethod.getName() + "()'.").logAndReturn();
+				throw new PropertyMapException("For type '" + returnType.getName() + "' you must specify it's generic type in the angle brackets or in '@BoundProperty.customTypeOrDeserializer'; method leading to error: '" + propertyMethod.getDeclaringClass().getName() + "." + propertyMethod.getName() + "()'.").logAndReturn();
 		}
 		
 		if (customTypeOrDeserializer == Object.class)
