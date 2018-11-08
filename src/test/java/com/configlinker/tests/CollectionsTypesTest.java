@@ -545,25 +545,29 @@ class CollectionsTypesTest extends AbstractBaseTest
 	}
 	
 	
-	@Test @Disabled("TODO: implement")
+	@Test
+	@Disabled("TODO: implement")
 	void test_returnCopyOfArray()
 	{
 		// TODO: implement
 	}
 	
-	@Test @Disabled("TODO: implement")
+	@Test
+	@Disabled("TODO: implement")
 	void test_returnUnmodifiableList()
 	{
 		// TODO: implement
 	}
 	
-	@Test @Disabled("TODO: implement")
+	@Test
+	@Disabled("TODO: implement")
 	void test_returnUnmodifiableSet()
 	{
 		// TODO: implement
 	}
 	
-	@Test @Disabled("TODO: implement")
+	@Test
+	@Disabled("TODO: implement")
 	void test_returnUnmodifiableMap()
 	{
 		// TODO: implement
@@ -649,70 +653,70 @@ interface NumberNameEnumArray
 @BoundObject(sourcePath = "configs/collections.properties")
 interface BooleanList
 {
-	@BoundProperty(name = "collection.of.boolean", customType = Boolean.class)
+	@BoundProperty(name = "collection.of.boolean")
 	List<Boolean> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface ByteList
 {
-	@BoundProperty(name = "collection.of.byte", customType = Byte.class)
+	@BoundProperty(name = "collection.of.byte")
 	List<Byte> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface CharList
 {
-	@BoundProperty(name = "collection.of.char", customType = Character.class)
+	@BoundProperty(name = "collection.of.char")
 	List<Character> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface ShortList
 {
-	@BoundProperty(name = "collection.of.short", customType = Short.class)
+	@BoundProperty(name = "collection.of.short")
 	List<Short> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface IntList
 {
-	@BoundProperty(name = "collection.of.int", customType = Integer.class)
+	@BoundProperty(name = "collection.of.int")
 	List<Integer> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface LongList
 {
-	@BoundProperty(name = "collection.of.long", customType = Long.class)
+	@BoundProperty(name = "collection.of.long")
 	List<Long> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface FloatList
 {
-	@BoundProperty(name = "collection.of.float", customType = Float.class)
+	@BoundProperty(name = "collection.of.float")
 	List<Float> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface DoubleList
 {
-	@BoundProperty(name = "collection.of.double", customType = Double.class)
+	@BoundProperty(name = "collection.of.double")
 	List<Double> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface StringList
 {
-	@BoundProperty(name = "collection.of.string", customType = String.class)
+	@BoundProperty(name = "collection.of.string")
 	List<String> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface NumberNameEnumList
 {
-	@BoundProperty(name = "collection.of.enum.numberNames", customType = NumberName.class)
+	@BoundProperty(name = "collection.of.enum.numberNames")
 	List<NumberName> getValues();
 }
 
@@ -722,70 +726,70 @@ interface NumberNameEnumList
 @BoundObject(sourcePath = "configs/collections.properties")
 interface BooleanSet
 {
-	@BoundProperty(name = "collection.of.boolean", customType = Boolean.class)
+	@BoundProperty(name = "collection.of.boolean")
 	Set<Boolean> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface ByteSet
 {
-	@BoundProperty(name = "collection.of.byte", customType = Byte.class)
+	@BoundProperty(name = "collection.of.byte")
 	Set<Byte> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface CharSet
 {
-	@BoundProperty(name = "collection.of.char", customType = Character.class)
+	@BoundProperty(name = "collection.of.char")
 	Set<Character> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface ShortSet
 {
-	@BoundProperty(name = "collection.of.short", customType = Short.class)
+	@BoundProperty(name = "collection.of.short")
 	Set<Short> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface IntSet
 {
-	@BoundProperty(name = "collection.of.int", customType = Integer.class)
+	@BoundProperty(name = "collection.of.int")
 	Set<Integer> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface LongSet
 {
-	@BoundProperty(name = "collection.of.long", customType = Long.class)
+	@BoundProperty(name = "collection.of.long")
 	Set<Long> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface FloatSet
 {
-	@BoundProperty(name = "collection.of.float", customType = Float.class)
+	@BoundProperty(name = "collection.of.float")
 	Set<Float> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface DoubleSet
 {
-	@BoundProperty(name = "collection.of.double", customType = Double.class)
+	@BoundProperty(name = "collection.of.double")
 	Set<Double> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface StringSet
 {
-	@BoundProperty(name = "collection.of.string", customType = String.class)
+	@BoundProperty(name = "collection.of.string")
 	Set<String> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface NumberNameEnumSet
 {
-	@BoundProperty(name = "collection.of.enum.numberNames", customType = NumberName.class)
+	@BoundProperty(name = "collection.of.enum.numberNames")
 	Set<NumberName> getValues();
 }
 
@@ -795,69 +799,69 @@ interface NumberNameEnumSet
 @BoundObject(sourcePath = "configs/collections.properties")
 interface BooleanMap
 {
-	@BoundProperty(name = "map.of.boolean", customType = Boolean.class)
+	@BoundProperty(name = "map.of.boolean")
 	Map<String, Boolean> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface ByteMap
 {
-	@BoundProperty(name = "map.of.byte", customType = Byte.class)
+	@BoundProperty(name = "map.of.byte")
 	Map<String, Byte> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface CharMap
 {
-	@BoundProperty(name = "map.of.char", customType = Character.class)
+	@BoundProperty(name = "map.of.char")
 	Map<String, Character> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface ShortMap
 {
-	@BoundProperty(name = "map.of.short", customType = Short.class)
-	Map<String,Short> getValues();
+	@BoundProperty(name = "map.of.short")
+	Map<String, Short> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface IntMap
 {
-	@BoundProperty(name = "map.of.int", customType = Integer.class)
-	Map<String,Integer> getValues();
+	@BoundProperty(name = "map.of.int")
+	Map<String, Integer> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface LongMap
 {
-	@BoundProperty(name = "map.of.long", customType = Long.class)
-	Map<String,Long> getValues();
+	@BoundProperty(name = "map.of.long")
+	Map<String, Long> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface FloatMap
 {
-	@BoundProperty(name = "map.of.float", customType = Float.class)
-	Map<String,Float> getValues();
+	@BoundProperty(name = "map.of.float")
+	Map<String, Float> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface DoubleMap
 {
-	@BoundProperty(name = "map.of.double", customType = Double.class)
-	Map<String,Double> getValues();
+	@BoundProperty(name = "map.of.double")
+	Map<String, Double> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface StringMap
 {
-	@BoundProperty(name = "map.of.string", customType = String.class)
-	Map<String,String> getValues();
+	@BoundProperty(name = "map.of.string")
+	Map<String, String> getValues();
 }
 
 @BoundObject(sourcePath = "configs/collections.properties")
 interface NumberNameEnumMap
 {
-	@BoundProperty(name = "map.of.enum.numberNames", customType = NumberName.class)
-	Map<String,NumberName> getValues();
+	@BoundProperty(name = "map.of.enum.numberNames")
+	Map<String, NumberName> getValues();
 }

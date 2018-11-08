@@ -137,7 +137,8 @@ class BoundPropertyTest extends AbstractBaseTest
 			RegexValidator_withError workgroup = this.getSingleConfigInstance(RegexValidator_withError.class);
 		});
 		
-		Assertions.assertEquals("Property value 'Association of Physicists of %Ukraine%' doesn't match pattern '[\\w\\d \"'().]{3,150}'.", exception.getMessage());
+		Assertions
+		  .assertEquals("Property value 'Association of Physicists of %Ukraine%' doesn't match pattern '[\\w\\d \"'().]{3,150}'.", exception.getMessage());
 		Assertions.assertNull(exception.getCause());
 	}
 	
@@ -160,7 +161,9 @@ class BoundPropertyTest extends AbstractBaseTest
 			RegexValidatorList_withError emails = this.getSingleConfigInstance(RegexValidatorList_withError.class);
 		});
 		
-		Assertions.assertEquals("Property value 'vitaliy..mayko@physics.ua' doesn't match pattern '[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?'.", exception.getMessage());
+		Assertions.assertEquals(
+		  "Property value 'vitaliy..mayko@physics.ua' doesn't match pattern '[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?'.",
+		  exception.getMessage());
 		Assertions.assertNull(exception.getCause());
 	}
 	
@@ -250,7 +253,7 @@ class BoundPropertyTest extends AbstractBaseTest
 	@Test
 	void test_customValidatorMap()
 	{
-		LinkedHashMap<String,String> emailsInFromConfig = new LinkedHashMap<>();
+		LinkedHashMap<String, String> emailsInFromConfig = new LinkedHashMap<>();
 		emailsInFromConfig.put("vitaliy", "vitaliy.mayko@physics.ua");
 		emailsInFromConfig.put("zinovij", "zinovij.nazarchuk@physics.ua");
 		emailsInFromConfig.put("mark", "mark.gabovich@physics.ua");
@@ -274,51 +277,52 @@ class BoundPropertyTest extends AbstractBaseTest
 	
 	// --------------------------------------------------------------------------------
 	
-	@Test @Disabled("TODO: implement")
+	@Test
+	@Disabled("TODO: implement")
 	void test_errorBehaviour()
 	{
 		//TODO: implement
 		Assertions.fail("Not implemented.");
 	}
-
+	
 }
 
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
 interface CustomListDelimiter
 {
-	@BoundProperty(name = "programming.languages", customType = String.class, delimList = ",,")
+	@BoundProperty(name = "programming.languages", delimList = ",,")
 	List<String> programmingLanguages();
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
 interface CustomListDelimiter_acceptWhitespaces
 {
-	@BoundProperty(name = "programming.languages", customType = String.class, delimList = ",,", whitespaces = Whitespaces.ACCEPT)
+	@BoundProperty(name = "programming.languages", delimList = ",,", whitespaces = Whitespaces.ACCEPT)
 	List<String> programmingLanguages();
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
 interface CustomKeyValueDelimiter
 {
-	@BoundProperty(name = "programming.languages.popularity.2017", customType = Double.class, delimList = ";", delimKeyValue = "@")
+	@BoundProperty(name = "programming.languages.popularity.2017", delimList = ";", delimKeyValue = "@")
 	Map<String, Double> programmingLanguageScores();
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
 interface CustomKeyValueDelimiter_acceptWhitespaces
 {
-	@BoundProperty(name = "programming.languages.popularity.2017", customType = Double.class, delimList = ";", delimKeyValue = "@", whitespaces = Whitespaces.ACCEPT)
+	@BoundProperty(name = "programming.languages.popularity.2017", delimList = ";", delimKeyValue = "@", whitespaces = Whitespaces.ACCEPT)
 	Map<String, Double> programmingLanguageScores();
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
 interface CustomKeyValueDelimiter_whitespaceOverride
 {
-	@BoundProperty(name = "programming.languages.popularity.2017", customType = Double.class, delimList = ";", delimKeyValue = "@")
+	@BoundProperty(name = "programming.languages.popularity.2017", delimList = ";", delimKeyValue = "@")
 	Map<String, Double> programmingLanguageScores();
 	
-	@BoundProperty(name = "programming.languages.popularity.2017", customType = Double.class, delimList = ";", delimKeyValue = "@", whitespaces = Whitespaces.ACCEPT)
+	@BoundProperty(name = "programming.languages.popularity.2017", delimList = ";", delimKeyValue = "@", whitespaces = Whitespaces.ACCEPT)
 	Map<String, Double> programmingLanguageScores_acceptWhitespaces();
 }
 
@@ -343,14 +347,14 @@ interface RegexValidatorList
 {
 	String emailPattern = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?";
 	
-	@BoundProperty(name = "workgroup.emails", customType = String.class, regex = emailPattern)
+	@BoundProperty(name = "workgroup.emails", regex = emailPattern)
 	List<String> emailsList();
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
 interface RegexValidatorList_withError
 {
-	@BoundProperty(name = "workgroup.emails.error", customType = String.class, regex = RegexValidatorList.emailPattern)
+	@BoundProperty(name = "workgroup.emails.error", regex = RegexValidatorList.emailPattern)
 	List<String> emailsList();
 }
 
@@ -359,14 +363,14 @@ interface RegexValidatorMap
 {
 	String statusPattern = "^(active|suspended|closed|destroyed)$";
 	
-	@BoundProperty(name = "workgroup.statuses", customType = String.class, regex = statusPattern)
+	@BoundProperty(name = "workgroup.statuses", regex = statusPattern)
 	Map<String, String> statusMap();
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
 interface RegexValidatorMap_withError
 {
-	@BoundProperty(name = "workgroup.statuses.error", customType = String.class, regex = RegexValidatorMap.statusPattern)
+	@BoundProperty(name = "workgroup.statuses.error", regex = RegexValidatorMap.statusPattern)
 	Map<String, String> statusMap();
 }
 
@@ -426,42 +430,42 @@ interface CustomValidatorArray_withError
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
 interface CustomValidatorList
 {
-	@BoundProperty(name = "workgroup.emails", customType = String.class, validator = EmailDomainValidator.class)
+	@BoundProperty(name = "workgroup.emails", validator = EmailDomainValidator.class)
 	List<String> emailsList();
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
 interface CustomValidatorList_withError
 {
-	@BoundProperty(name = "workgroup.emails.error", customType = String.class, validator = EmailDomainValidator.class)
+	@BoundProperty(name = "workgroup.emails.error", validator = EmailDomainValidator.class)
 	List<String> emailsList();
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
 interface CustomValidatorSet
 {
-	@BoundProperty(name = "workgroup.emails", customType = String.class, validator = EmailDomainValidator.class)
+	@BoundProperty(name = "workgroup.emails", validator = EmailDomainValidator.class)
 	Set<String> emailsSet();
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
 interface CustomValidatorSet_withError
 {
-	@BoundProperty(name = "workgroup.emails.error", customType = String.class, validator = EmailDomainValidator.class)
+	@BoundProperty(name = "workgroup.emails.error", validator = EmailDomainValidator.class)
 	Set<String> emailsSet();
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
 interface CustomValidatorMap
 {
-	@BoundProperty(name = "workgroup.emails.map", customType = String.class, validator = EmailDomainMapValidator.class)
+	@BoundProperty(name = "workgroup.emails.map", validator = EmailDomainMapValidator.class)
 	Map<String, String> emailsMap();
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
 interface CustomValidatorMap_withError
 {
-	@BoundProperty(name = "workgroup.emails.map.error", customType = String.class, validator = EmailDomainMapValidator.class)
+	@BoundProperty(name = "workgroup.emails.map.error", validator = EmailDomainMapValidator.class)
 	Map<String, String> emailsMap();
 }
 

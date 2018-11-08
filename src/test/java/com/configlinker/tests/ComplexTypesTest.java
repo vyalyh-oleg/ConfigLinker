@@ -346,39 +346,39 @@ interface TypeCompany_array
 @BoundObject(sourcePath = "configs/complex_types.properties")
 interface TypeCompany_list
 {
-	@BoundProperty(name = "affiliates.info.list", customType = Company.class, deserializationMethod = DeserializationMethod.CONSTRUCTOR_STRING)
+	@BoundProperty(name = "affiliates.info.list", deserializationMethod = DeserializationMethod.CONSTRUCTOR_STRING)
 	List<Company> getListCompanies_fromConstructorString();
 	
-	@BoundProperty(name = "affiliates.info.list", customType = Company.class, deserializationMethod = DeserializationMethod.VALUEOF_STRING)
+	@BoundProperty(name = "affiliates.info.list", deserializationMethod = DeserializationMethod.VALUEOF_STRING)
 	List<Company> getListCompanies_fromValueOfString();
 	
-	@BoundProperty(name = "affiliates.info.list", customType = Company.class, deserializationMethod = DeserializationMethod.DESERIALIZER_STRING)
+	@BoundProperty(name = "affiliates.info.list", deserializationMethod = DeserializationMethod.DESERIALIZER_STRING)
 	List<Company> getListCompanies_fromDeserializerString();
 }
 
 @BoundObject(sourcePath = "configs/complex_types.properties")
 interface TypeCompany_set
 {
-	@BoundProperty(name = "affiliates.info.list", customType = Company.class, deserializationMethod = DeserializationMethod.CONSTRUCTOR_STRING)
+	@BoundProperty(name = "affiliates.info.list", deserializationMethod = DeserializationMethod.CONSTRUCTOR_STRING)
 	Set<Company> getSetCompanies_fromConstructorString();
 	
-	@BoundProperty(name = "affiliates.info.list", customType = Company.class, deserializationMethod = DeserializationMethod.VALUEOF_STRING)
+	@BoundProperty(name = "affiliates.info.list", deserializationMethod = DeserializationMethod.VALUEOF_STRING)
 	Set<Company> getSetCompanies_fromValueOfString();
 	
-	@BoundProperty(name = "affiliates.info.list", customType = Company.class, deserializationMethod = DeserializationMethod.DESERIALIZER_STRING)
+	@BoundProperty(name = "affiliates.info.list", deserializationMethod = DeserializationMethod.DESERIALIZER_STRING)
 	Set<Company> getSetCompanies_fromDeserializerString();
 }
 
 @BoundObject(sourcePath = "configs/complex_types.properties")
 interface TypeCompany_map
 {
-	@BoundProperty(name = "affiliates.info.map", customType = Company.class, deserializationMethod = DeserializationMethod.CONSTRUCTOR_STRING)
+	@BoundProperty(name = "affiliates.info.map", deserializationMethod = DeserializationMethod.CONSTRUCTOR_STRING)
 	Map<String, Company> getMapCompanies_fromConstructorString();
 	
-	@BoundProperty(name = "affiliates.info.map", customType = Company.class, deserializationMethod = DeserializationMethod.VALUEOF_STRING)
+	@BoundProperty(name = "affiliates.info.map", deserializationMethod = DeserializationMethod.VALUEOF_STRING)
 	Map<String, Company> getMapCompanies_fromValueOfString();
 	
-	@BoundProperty(name = "affiliates.info.map", customType = Company.class, deserializationMethod = DeserializationMethod.DESERIALIZER_STRING)
+	@BoundProperty(name = "affiliates.info.map", deserializationMethod = DeserializationMethod.DESERIALIZER_STRING)
 	Map<String, Company> getMapCompanies_fromDeserializerString();
 }
 
