@@ -24,7 +24,8 @@ import com.configlinker.FactorySettingsBuilder;
 public enum Whitespaces
 {
 	/**
-	 * The behavior depends on the superior value. @BoundProperty -> @BoundObject -> ConfigSetFactory
+	 * The behavior depends on the superior value.<br>
+	 * {@code @BoundProperty --> @BoundObject --> ConfigSetFactory}
 	 */
 	INHERIT,
 	/**
