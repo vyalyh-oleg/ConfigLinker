@@ -4,12 +4,12 @@ package com.configlinker.tests;
 import com.configlinker.IPropertyValidator;
 import com.configlinker.annotations.BoundObject;
 import com.configlinker.annotations.BoundProperty;
+import com.configlinker.enums.ErrorBehavior;
 import com.configlinker.enums.Whitespaces;
 import com.configlinker.exceptions.PropertyMatchException;
 import com.configlinker.exceptions.PropertyValidateException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
@@ -273,18 +273,46 @@ class BoundPropertyTest extends AbstractBaseTest
 		Assertions.assertNull(exception.getCause());
 	}
 	
-	// TODO: tests for values: object, listOfObjects, setOfObjects, mapOfObjects
+	// TODO: validators tests for values: object, listOfObjects, setOfObjects, mapOfObjects
+	// --------------------------------------------------------------------------------
+	
 	
 	// --------------------------------------------------------------------------------
 	
 	@Test
-	@Disabled("TODO: implement")
-	void test_errorBehaviour()
+	void test_errorBehaviourOverrideIn_BoundProperty()
 	{
-		//TODO: implement
-		Assertions.fail("Not implemented.");
+		ErrorBehaviorOverrideInProperty errorOverrideInProperty = getSingleConfigInstance(ErrorBehaviorOverrideInProperty.class);
+		
 	}
 	
+	@Test
+	void test_errorBehaviourOverrideIn_BoundObject()
+	{
+		ErrorBehaviorOverrideInObject errorOverrideInObject = getSingleConfigInstance(ErrorBehaviorOverrideInObject.class);
+		
+	}
+	
+	@Test
+	void test_errorBehaviourOverrideIn_BoundPropertyAndObject()
+	{
+		ErrorBehaviorOverrideInPropertyAndObject errorOverrideInPropertyAndObject = getSingleConfigInstance(ErrorBehaviorOverrideInPropertyAndObject.class);
+		
+	}
+	
+	@Test
+	void test_errorBehaviourOverrideIn_FactorySettings()
+	{
+		ErrorBehaviorDefault errorDefault = getSingleConfigInstance(ErrorBehaviorDefault.class);
+		
+	}
+	
+	@Test
+	void test_errorBehaviourOverrideIn_BoundProperty_BoundObject_FactorySettings()
+	{
+		ErrorBehaviorOverrideInPropertyAndObject errorOverrideInPropertyAndObject = getSingleConfigInstance(ErrorBehaviorOverrideInPropertyAndObject.class);
+		
+	}
 }
 
 
@@ -472,8 +500,33 @@ interface CustomValidatorMap_withError
 // --------------------------------------------------------------------------------
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
-interface ErrorBehavior
+interface ErrorBehaviorDefault
 {
+	@BoundProperty(name = "workgroup.empty")
+	String emptyDefaultErrorBehaviour();
+}
 
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface ErrorBehaviorOverrideInProperty
+{
+	@BoundProperty(name = "workgroup.empty", errorBehavior = ErrorBehavior.RETURN_NULL)
+	String emptyReturnNull();
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties", errorBehavior = ErrorBehavior.RETURN_NULL)
+interface ErrorBehaviorOverrideInObject
+{
+	@BoundProperty(name = "workgroup.empty")
+	String emptyReturnNull();
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties", errorBehavior = ErrorBehavior.RETURN_NULL)
+interface ErrorBehaviorOverrideInPropertyAndObject
+{
+	@BoundProperty(name = "workgroup.empty")
+	String emptyReturnNull();
+	
+	@BoundProperty(name = "workgroup.empty", errorBehavior = ErrorBehavior.THROW_EXCEPTION)
+	String emptyThrowException();
 }
 
