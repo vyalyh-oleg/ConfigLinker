@@ -213,6 +213,24 @@ class BoundPropertyTest extends AbstractBaseTest
 	}
 	
 	@Test
+	void test_customValidatorArray()
+	{
+		CustomValidatorArray emails = this.getSingleConfigInstance(CustomValidatorArray.class);
+		Assertions.assertEquals(emailsInConfig.toArray(new String[emailsInConfig.size()]), emails.emailsArray());
+	}
+	
+	@Test
+	void test_customValidatorArray_error()
+	{
+		PropertyValidateException exception = Assertions.assertThrows(PropertyValidateException.class, () -> {
+			CustomValidatorArray_withError emails = this.getSingleConfigInstance(CustomValidatorArray_withError.class);
+		});
+		
+		Assertions.assertEquals("'zinovij#nazarchuk@physic.ua' not in 'physics.ua' domain.", exception.getMessage());
+		Assertions.assertNull(exception.getCause());
+	}
+	
+	@Test
 	void test_customValidatorList()
 	{
 		CustomValidatorList emails = this.getSingleConfigInstance(CustomValidatorList.class);
@@ -273,7 +291,11 @@ class BoundPropertyTest extends AbstractBaseTest
 		Assertions.assertNull(exception.getCause());
 	}
 	
-	// TODO: tests for values: object, listOfObjects, setOfObjects, mapOfObjects
+	// TODO: tests for values: object, arrayOfObjects listOfObjects, setOfObjects, mapOfObjects
+	
+	// --------------------------------------------------------------------------------
+	
+	
 	
 	// --------------------------------------------------------------------------------
 	
