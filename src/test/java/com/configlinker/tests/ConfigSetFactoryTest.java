@@ -12,7 +12,7 @@ import java.util.Map;
 class ConfigSetFactoryTest
 {
 
-
+// the ConfigSets, produced by the factory, are the same for every call
 	
 
 }

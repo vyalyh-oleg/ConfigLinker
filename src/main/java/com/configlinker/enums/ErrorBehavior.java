@@ -17,7 +17,7 @@ public enum ErrorBehavior {
 	 */
 	INHERIT,
 	/**
-	 * <p>Throw {@link com.configlinker.exceptions.PropertyNotFoundException} when the value for configuration property not found.
+	 * <p>Throw {@link com.configlinker.exceptions.PropertyNotFoundException} when the value for configuration property not found. It is default value when {@link #INHERIT}.
 	 */
 	THROW_EXCEPTION,
 	/**

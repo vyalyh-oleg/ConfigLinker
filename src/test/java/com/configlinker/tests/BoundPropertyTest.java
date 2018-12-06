@@ -1,12 +1,14 @@
 package com.configlinker.tests;
 
 
+import com.configlinker.FactorySettingsBuilder;
 import com.configlinker.IPropertyValidator;
 import com.configlinker.annotations.BoundObject;
 import com.configlinker.annotations.BoundProperty;
 import com.configlinker.enums.ErrorBehavior;
 import com.configlinker.enums.Whitespaces;
 import com.configlinker.exceptions.PropertyMatchException;
+import com.configlinker.exceptions.PropertyNotFoundException;
 import com.configlinker.exceptions.PropertyValidateException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -29,7 +31,9 @@ class BoundPropertyTest extends AbstractBaseTest
 	private static List<String> languagesInConfigFile_withSpaces;
 	private static Map<String, Double> languageScoresInConfigFile;
 	private static Map<String, Double> languageScoresInConfigFile_withSpaces;
-	private static List<String> emailsInConfig;
+	private static List<String> emailsFromConfig;
+	private static List<Email> emailObjectsFromConfig;
+	
 	
 	@BeforeAll
 	static void initHardcodedValues()
@@ -78,7 +82,29 @@ class BoundPropertyTest extends AbstractBaseTest
 		emails.add("vitaliy.mayko@physics.ua");
 		emails.add("zinovij.nazarchuk@physics.ua");
 		emails.add("mark.gabovich@physics.ua");
-		emailsInConfig = Collections.unmodifiableList(emails);
+		emailsFromConfig = Collections.unmodifiableList(emails);
+		
+		ArrayList<Email> emailObjects = new ArrayList<>();
+		emailObjects.add(new Email("vitaliy.mayko@physics.ua"));
+		emailObjects.add(new Email("zinovij.nazarchuk@physics.ua"));
+		emailObjects.add(new Email("mark.gabovich@physics.ua"));
+		emailObjectsFromConfig = Collections.unmodifiableList(emailObjects);
+	}
+	
+	
+	private static class Email
+	{
+		private final String email;
+		
+		public Email(String email)
+		{
+			this.email = email;
+		}
+		
+		public String getEmail()
+		{
+			return email;
+		}
 	}
 	
 	// --------------------------------------------------------------------------------
@@ -145,11 +171,6 @@ class BoundPropertyTest extends AbstractBaseTest
 	@Test
 	void test_regexValidationList()
 	{
-		ArrayList<String> emailsFromConfig = new ArrayList<>();
-		emailsFromConfig.add("vitaliy.mayko@physics.ua");
-		emailsFromConfig.add("zinovij.nazarchuk@physics.ua");
-		emailsFromConfig.add("mark.gabovich@physics.ua");
-		
 		RegexValidatorList emails = this.getSingleConfigInstance(RegexValidatorList.class);
 		Assertions.assertEquals(emailsFromConfig, emails.emailsList());
 	}
@@ -171,14 +192,14 @@ class BoundPropertyTest extends AbstractBaseTest
 	void test_regexValidationMap()
 	{
 		// workgroup.statusMap = a:active, s:suspended, c:closed, d:destroyed
-		LinkedHashMap<String, String> statusesFromConfig = new LinkedHashMap<>();
-		statusesFromConfig.put("a", "active");
-		statusesFromConfig.put("s", "suspended");
-		statusesFromConfig.put("c", "closed");
-		statusesFromConfig.put("d", "destroyed");
+		LinkedHashMap<String, String> statusesMapFromConfig = new LinkedHashMap<>();
+		statusesMapFromConfig.put("a", "active");
+		statusesMapFromConfig.put("s", "suspended");
+		statusesMapFromConfig.put("c", "closed");
+		statusesMapFromConfig.put("d", "destroyed");
 		
 		RegexValidatorMap statuses = this.getSingleConfigInstance(RegexValidatorMap.class);
-		Assertions.assertEquals(statusesFromConfig, statuses.statusMap());
+		Assertions.assertEquals(statusesMapFromConfig, statuses.statusMap());
 	}
 	
 	@Test
@@ -216,7 +237,7 @@ class BoundPropertyTest extends AbstractBaseTest
 	void test_customValidatorArray()
 	{
 		CustomValidatorArray emails = this.getSingleConfigInstance(CustomValidatorArray.class);
-		Assertions.assertEquals(emailsInConfig.toArray(new String[emailsInConfig.size()]), emails.emailsArray());
+		Assertions.assertArrayEquals(emailsFromConfig.toArray(new String[emailsFromConfig.size()]), emails.emailsArray());
 	}
 	
 	@Test
@@ -234,7 +255,7 @@ class BoundPropertyTest extends AbstractBaseTest
 	void test_customValidatorList()
 	{
 		CustomValidatorList emails = this.getSingleConfigInstance(CustomValidatorList.class);
-		Assertions.assertEquals(emailsInConfig, emails.emailsList());
+		Assertions.assertEquals(emailsFromConfig, emails.emailsList());
 	}
 	
 	@Test
@@ -251,7 +272,7 @@ class BoundPropertyTest extends AbstractBaseTest
 	@Test
 	void test_customValidatorSet()
 	{
-		LinkedHashSet<String> emailsSetInConfig = new LinkedHashSet<>(emailsInConfig);
+		LinkedHashSet<String> emailsSetInConfig = new LinkedHashSet<>(emailsFromConfig);
 		
 		CustomValidatorSet emails = this.getSingleConfigInstance(CustomValidatorSet.class);
 		Assertions.assertEquals(emailsSetInConfig, emails.emailsSet());
@@ -271,70 +292,114 @@ class BoundPropertyTest extends AbstractBaseTest
 	@Test
 	void test_customValidatorMap()
 	{
-		LinkedHashMap<String, String> emailsInFromConfig = new LinkedHashMap<>();
-		emailsInFromConfig.put("vitaliy", "vitaliy.mayko@physics.ua");
-		emailsInFromConfig.put("zinovij", "zinovij.nazarchuk@physics.ua");
-		emailsInFromConfig.put("mark", "mark.gabovich@physics.ua");
+		LinkedHashMap<String, String> emailsMapFromConfig = new LinkedHashMap<>();
+		emailsMapFromConfig.put("vitaliy", "vitaliy.mayko@physics.ua");
+		emailsMapFromConfig.put("zinovij", "zinovij.nazarchuk@physics.ua");
+		emailsMapFromConfig.put("mark", "mark.gabovich@physics.ua");
 		
 		CustomValidatorMap emails = this.getSingleConfigInstance(CustomValidatorMap.class);
-		Assertions.assertEquals(emailsInFromConfig, emails.emailsMap());
+		Assertions.assertEquals(emailsMapFromConfig, emails.emailsMap());
 	}
 	
 	@Test
 	void test_customValidatorMap_error()
 	{
 		PropertyValidateException exception = Assertions.assertThrows(PropertyValidateException.class, () -> {
-			CustomValidatorSet_withError emails = this.getSingleConfigInstance(CustomValidatorSet_withError.class);
+			CustomValidatorMap_withError emails = this.getSingleConfigInstance(CustomValidatorMap_withError.class);
 		});
 		
-		Assertions.assertEquals("'zinovij#nazarchuk@physic.ua' not in 'physics.ua' domain.", exception.getMessage());
+		Assertions.assertEquals("'zinovij#nazarchuk@physic.ua' for key 'zinovij' not in 'physics.ua' domain.", exception.getMessage());
 		Assertions.assertNull(exception.getCause());
 	}
 	
-	// TODO: tests for values: object, arrayOfObjects listOfObjects, setOfObjects, mapOfObjects
+	// TODO: tests for validate values: object, arrayOfObjects listOfObjects, setOfObjects, mapOfObjects
 	
 	// --------------------------------------------------------------------------------
-	
+	// emailObjectsFromConfig
 	
 	
 	// --------------------------------------------------------------------------------
 	
 	@Test
-	void test_errorBehaviourOverrideIn_BoundProperty()
+	void test_errorBehaviorOverrideIn_BoundProperty()
 	{
 		ErrorBehaviorOverrideInProperty errorOverrideInProperty = getSingleConfigInstance(ErrorBehaviorOverrideInProperty.class);
-		
+		Assertions.assertNull(errorOverrideInProperty.nullValueReturnNull());
 	}
 	
 	@Test
-	void test_errorBehaviourOverrideIn_BoundObject()
+	void test_errorBehaviorOverrideIn_BoundObject()
 	{
 		ErrorBehaviorOverrideInObject errorOverrideInObject = getSingleConfigInstance(ErrorBehaviorOverrideInObject.class);
-		
+		Assertions.assertNull(errorOverrideInObject.nullValueReturnNull());
 	}
 	
 	@Test
-	void test_errorBehaviourOverrideIn_BoundPropertyAndObject()
+	void test_errorBehaviorOverrideIn_BoundPropertyAndObject_1()
 	{
-		ErrorBehaviorOverrideInPropertyAndObject errorOverrideInPropertyAndObject = getSingleConfigInstance(ErrorBehaviorOverrideInPropertyAndObject.class);
+		PropertyNotFoundException exception = Assertions.assertThrows(PropertyNotFoundException.class, () -> {
+			ErrorBehaviorOverrideInPropertyAndObject errorOverrideInPropertyAndObject = getSingleConfigInstance(ErrorBehaviorOverrideInPropertyAndObject.class);
+		});
 		
+		Assertions.assertEquals("Value for property 'workgroup.null' not found, config interface 'com.configlinker.tests.ErrorBehaviorOverrideInPropertyAndObject', method 'nullValueThrowException'.", exception.getMessage());
 	}
 	
 	@Test
-	void test_errorBehaviourOverrideIn_FactorySettings()
+	void test_errorBehaviorOverrideIn_BoundPropertyAndObject_2()
 	{
-		ErrorBehaviorDefault errorDefault = getSingleConfigInstance(ErrorBehaviorDefault.class);
-		
+		ErrorBehaviorOverrideInPropertyAndObject2 errorOverrideInPropertyAndObject2 = getSingleConfigInstance(ErrorBehaviorOverrideInPropertyAndObject2.class);
+		Assertions.assertNull(errorOverrideInPropertyAndObject2.nullValueReturnNull());
+		Assertions.assertEquals("", errorOverrideInPropertyAndObject2.emptyValueThrowException());
 	}
 	
 	@Test
-	void test_errorBehaviourOverrideIn_BoundProperty_BoundObject_FactorySettings()
+	void test_errorBehavior_Default()
 	{
-		ErrorBehaviorOverrideInPropertyAndObject errorOverrideInPropertyAndObject = getSingleConfigInstance(ErrorBehaviorOverrideInPropertyAndObject.class);
+		PropertyNotFoundException exception = Assertions.assertThrows(PropertyNotFoundException.class, () -> {
+			ErrorBehaviorDefault errorDefault = getSingleConfigInstance(ErrorBehaviorDefault.class);
+		});
 		
+		Assertions.assertEquals("Value for property 'workgroup.null' not found, config interface 'com.configlinker.tests.ErrorBehaviorDefault', method 'nullValueDefaultErrorBehavior'.", exception.getMessage());
+		
+		
+		PropertyNotFoundException exception2 = Assertions.assertThrows(PropertyNotFoundException.class, () -> {
+			FactorySettingsBuilder factorySettingsBuilder = FactorySettingsBuilder.create().setErrorBehavior(ErrorBehavior.THROW_EXCEPTION);
+			ErrorBehaviorDefault errorDefault2 = getSingleConfigInstance(factorySettingsBuilder, ErrorBehaviorDefault.class);
+		});
+		
+		Assertions.assertEquals("Value for property 'workgroup.null' not found, config interface 'com.configlinker.tests.ErrorBehaviorDefault', method 'nullValueDefaultErrorBehavior'.", exception2.getMessage());
+	}
+	
+	@Test
+	void test_errorBehaviorOverrideIn_FactorySettings()
+	{
+		FactorySettingsBuilder factorySettingsBuilder = FactorySettingsBuilder.create().setErrorBehavior(ErrorBehavior.RETURN_NULL);
+		ErrorBehaviorDefault errorDefault = getSingleConfigInstance(factorySettingsBuilder, ErrorBehaviorDefault.class);
+		Assertions.assertNull(errorDefault.nullValueDefaultErrorBehavior());
+	}
+	
+	@Test
+	void test_errorBehaviorOverrideIn_BoundPropertyAndObjectAndFactorySettings_1()
+	{
+		PropertyNotFoundException exception = Assertions.assertThrows(PropertyNotFoundException.class, () -> {
+			FactorySettingsBuilder factorySettingsBuilder = FactorySettingsBuilder.create().setErrorBehavior(ErrorBehavior.RETURN_NULL);
+			ErrorBehaviorOverrideInPropertyAndObject3 errorOverrideInPropertyAndObject3 = getSingleConfigInstance(ErrorBehaviorOverrideInPropertyAndObject3.class);
+		});
+		
+		Assertions.assertEquals("Value for property 'workgroup.null' not found, config interface 'com.configlinker.tests.ErrorBehaviorOverrideInPropertyAndObject3', method 'nullValueThrowException'.", exception.getMessage());
+	}
+	
+	@Test
+	void test_errorBehaviorOverrideIn_BoundPropertyAndObjectAndFactorySettings_2()
+	{
+		FactorySettingsBuilder factorySettingsBuilder = FactorySettingsBuilder.create().setErrorBehavior(ErrorBehavior.RETURN_NULL);
+		ErrorBehaviorOverrideInPropertyAndObject4 errorOverrideInPropertyAndObject4 = getSingleConfigInstance(ErrorBehaviorOverrideInPropertyAndObject4.class);
+		Assertions.assertNull(errorOverrideInPropertyAndObject4.nullValueReturnNull());
+		Assertions.assertEquals("", errorOverrideInPropertyAndObject4.emptyValueThrowException());
 	}
 }
 
+// --------------------------------------------------------------------------------
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
 interface CustomListDelimiter
@@ -443,7 +508,7 @@ class EmailDomainMapValidator implements IPropertyValidator<Object[]>
 		// value[1] -- value, could be any object depending from return type in interface method
 		
 		if (!((String) value[1]).endsWith("@physics.ua"))
-			throw new PropertyValidateException("'" + value[1] + "' for key " + value[0] + " not in 'physics.ua' domain.");
+			throw new PropertyValidateException("'" + value[1] + "' for key '" + value[0] + "' not in 'physics.ua' domain.");
 	}
 }
 
@@ -522,31 +587,60 @@ interface CustomValidatorMap_withError
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
 interface ErrorBehaviorDefault
 {
-	@BoundProperty(name = "workgroup.empty")
-	String emptyDefaultErrorBehaviour();
+	@BoundProperty(name = "workgroup.null")
+	String nullValueDefaultErrorBehavior();
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
 interface ErrorBehaviorOverrideInProperty
 {
-	@BoundProperty(name = "workgroup.empty", errorBehavior = ErrorBehavior.RETURN_NULL)
-	String emptyReturnNull();
+	@BoundProperty(name = "workgroup.null", errorBehavior = ErrorBehavior.RETURN_NULL)
+	String nullValueReturnNull();
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties", errorBehavior = ErrorBehavior.RETURN_NULL)
 interface ErrorBehaviorOverrideInObject
 {
-	@BoundProperty(name = "workgroup.empty")
-	String emptyReturnNull();
+	@BoundProperty(name = "workgroup.null")
+	String nullValueReturnNull();
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties", errorBehavior = ErrorBehavior.RETURN_NULL)
 interface ErrorBehaviorOverrideInPropertyAndObject
 {
-	@BoundProperty(name = "workgroup.empty")
-	String emptyReturnNull();
+	@BoundProperty(name = "workgroup.null")
+	String nullValueReturnNull();
 	
-	@BoundProperty(name = "workgroup.empty", errorBehavior = ErrorBehavior.THROW_EXCEPTION)
-	String emptyThrowException();
+	@BoundProperty(name = "workgroup.null", errorBehavior = ErrorBehavior.THROW_EXCEPTION)
+	String nullValueThrowException();
 }
 
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties", errorBehavior = ErrorBehavior.RETURN_NULL)
+interface ErrorBehaviorOverrideInPropertyAndObject2
+{
+	@BoundProperty(name = "workgroup.null")
+	String nullValueReturnNull();
+	
+	@BoundProperty(name = "workgroup.empty", errorBehavior = ErrorBehavior.THROW_EXCEPTION)
+	String emptyValueThrowException();
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties", errorBehavior = ErrorBehavior.THROW_EXCEPTION)
+interface ErrorBehaviorOverrideInPropertyAndObject3
+{
+	@BoundProperty(name = "workgroup.null", errorBehavior = ErrorBehavior.RETURN_NULL)
+	String nullValueReturnNull();
+	
+	@BoundProperty(name = "workgroup.null")
+	String nullValueThrowException();
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties", errorBehavior = ErrorBehavior.THROW_EXCEPTION)
+interface ErrorBehaviorOverrideInPropertyAndObject4
+{
+	@BoundProperty(name = "workgroup.null", errorBehavior = ErrorBehavior.RETURN_NULL)
+	String nullValueReturnNull();
+	
+	@BoundProperty(name = "workgroup.empty")
+	String emptyValueThrowException();
+}
