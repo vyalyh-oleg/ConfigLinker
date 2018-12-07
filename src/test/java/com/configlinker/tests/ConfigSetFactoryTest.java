@@ -1,19 +1,20 @@
 package com.configlinker.tests;
 
 
-import com.configlinker.annotations.BoundObject;
-import com.configlinker.annotations.BoundProperty;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
-import java.util.Map;
 
-
+@TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
 class ConfigSetFactoryTest
 {
+	@Test
+	void test_factoryProduceSameConfigInstances()
+	{
+		// the ConfigSets, produced by the factory, are the same for every call
+		
+	}
 
-// the ConfigSets, produced by the factory, are the same for every call
-	
 
 }
 
