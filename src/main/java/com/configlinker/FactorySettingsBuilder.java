@@ -22,7 +22,7 @@ import java.util.Map;
  * <li>trackingPolicy = {@link TrackPolicy#DISABLE}</li>
  * <li>trackingInterval = 60</li>
  * <li>charset = {@link StandardCharsets#UTF_8}</li>
- * <li>whitespaces = true</li>
+ * <li>getWhitespaces = true</li>
  * <li>errorBehavior = {@link ErrorBehavior#THROW_EXCEPTION}</li>
  * </ul>
  */
@@ -49,6 +49,26 @@ public final class FactorySettingsBuilder
 	
 	/**
 	 * <p>String parameters, used for substitution in {@link BoundObject#sourcePath}, {@link BoundObject#propertyNamePrefix}, {@link com.configlinker.annotations.BoundProperty#name} and {@link BoundObject#httpHeaders}.
+	 * <p>If {@code parameters} is null or empty, current parameters would be just cleared.
+	 *
+	 * @param parameters map with parameters
+	 * @return this
+	 */
+	public FactorySettingsBuilder setParameters(Map<String, String> parameters)
+	{
+		if (closed)
+			throw FactoryConfigBuilderClosedException.getInstance();
+		
+		this.parameters.clear();
+		
+		if (parameters != null)
+			this.parameters.putAll(parameters);
+		
+		return this;
+	}
+	
+	/**
+	 * <p>String parameters, used for substitution in {@link BoundObject#sourcePath}, {@link BoundObject#propertyNamePrefix}, {@link com.configlinker.annotations.BoundProperty#name} and {@link BoundObject#httpHeaders}.
 	 *
 	 * @param key   Key
 	 * @param value Value
@@ -63,7 +83,7 @@ public final class FactorySettingsBuilder
 		if (key == null || key.isEmpty() || value == null || value.isEmpty())
 			throw new FactoryConfigBuilderException("'key' or 'value' null or empty.");
 		
-		parameters.put(key, value);
+		this.parameters.put(key, value);
 		return this;
 	}
 	
@@ -87,13 +107,33 @@ public final class FactorySettingsBuilder
 	
 	/**
 	 * <p>Use this method to add necessary headers to every request that will be made to receive configuration. This headers are used only if the {@link BoundObject#sourceScheme} is {@link SourceScheme#HTTP}.
+	 * <p>If {@code httpHeaders} is null or empty, current headers would be just cleared.
+	 *
+	 * @param httpHeaders - map with headers
+	 * @return this
+	 */
+	public FactorySettingsBuilder setHttpHeaders(Map<String, String> httpHeaders)
+	{
+		if (closed)
+			throw FactoryConfigBuilderClosedException.getInstance();
+		
+		this.httpHeaders.clear();
+		
+		if (httpHeaders != null)
+			this.httpHeaders.putAll(httpHeaders);
+		
+		return this;
+	}
+	
+	/**
+	 * <p>Use this method to add necessary headers to every request that will be made to receive configuration. This headers are used only if the {@link BoundObject#sourceScheme} is {@link SourceScheme#HTTP}.
 	 * This method do not merge values for the same header names. In duplicate case header will be simply replaced.
 	 *
 	 * @param name  Header name
 	 * @param value Header value
 	 * @return this
 	 */
-	public FactorySettingsBuilder setHttpHeader(String name, String value)
+	public FactorySettingsBuilder addHttpHeader(String name, String value)
 	{
 		if (closed)
 			throw FactoryConfigBuilderClosedException.getInstance();
@@ -133,9 +173,10 @@ public final class FactorySettingsBuilder
 	{
 		if (closed)
 			throw FactoryConfigBuilderClosedException.getInstance();
+		
 		if (trackingInterval < 15 || trackingInterval > 24 * 3600)
-			throw new IllegalArgumentException(
-			  "Tracking interval can not be less than 15 seconds and greater than 24 hours. You set '" + trackingInterval + "'.");
+			throw new IllegalArgumentException("Tracking interval can not be less than 15 seconds and greater than 86400 seconds (24 hours). You set '" + trackingInterval + "' seconds.");
+		
 		this.trackingInterval = trackingInterval;
 		return this;
 	}
@@ -151,6 +192,7 @@ public final class FactorySettingsBuilder
 	{
 		if (closed)
 			throw FactoryConfigBuilderClosedException.getInstance();
+		
 		this.charset = charset;
 		return this;
 	}
@@ -181,7 +223,12 @@ public final class FactorySettingsBuilder
 	{
 		if (closed)
 			throw FactoryConfigBuilderClosedException.getInstance();
-		this.errorBehavior = errorBehavior;
+		
+		if (errorBehavior == ErrorBehavior.INHERIT)
+			this.errorBehavior = ErrorBehavior.THROW_EXCEPTION;
+		else
+			this.errorBehavior = errorBehavior;
+		
 		return this;
 	}
 	
@@ -216,7 +263,7 @@ public final class FactorySettingsBuilder
 		return charset;
 	}
 	
-	public Whitespaces whitespaces()
+	public Whitespaces getWhitespaces()
 	{
 		return whitespaces;
 	}

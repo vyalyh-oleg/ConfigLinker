@@ -96,12 +96,12 @@ class BoundPropertyTest extends AbstractBaseTest
 	{
 		private final String email;
 		
-		public Email(String email)
+		Email(String email)
 		{
 			this.email = email;
 		}
 		
-		public String getEmail()
+		String getEmail()
 		{
 			return email;
 		}

@@ -193,7 +193,7 @@ final class AnnotationScanner {
 		
 		
 		// get ignoreWhiteSpaces
-		boolean ignoreWhiteSpaces = configBuilder.whitespaces() == Whitespaces.IGNORE;
+		boolean ignoreWhiteSpaces = configBuilder.getWhitespaces() == Whitespaces.IGNORE;
 			
 			
 		// create ConfigDescription

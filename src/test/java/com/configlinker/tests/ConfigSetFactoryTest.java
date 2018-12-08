@@ -12,10 +12,7 @@ class ConfigSetFactoryTest
 	void test_factoryProduceSameConfigInstances()
 	{
 		// the ConfigSets, produced by the factory, are the same for every call
-		
 	}
-
-
+	
 }
-
 

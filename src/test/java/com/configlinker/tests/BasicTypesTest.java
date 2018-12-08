@@ -197,7 +197,7 @@ class BasicTypesTest extends AbstractBaseTest
 	void test_typeMultilineString()
 	{
 		TypeMultilineString typeMultilineString = getSingleConfigInstance(TypeMultilineString.class);
-		// Take into account that default value for FactorySettingsBuilder.whitespaces() == Whitespaces.IGNORE
+		// Take into account that default value for FactorySettingsBuilder.getWhitespaces() == Whitespaces.IGNORE
 		Assertions.assertEquals("Just a simple multiline text", typeMultilineString.getValue1());
 		Assertions.assertEquals("Just a simple multiline text", typeMultilineString.getValue2());
 		Assertions.assertEquals("Just a simplemultiline text", typeMultilineString.getValue3());
