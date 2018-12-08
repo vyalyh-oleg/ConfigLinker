@@ -1,8 +1,8 @@
 package com.configlinker;
 
+import com.configlinker.enums.ErrorBehavior;
 import com.configlinker.enums.SourceScheme;
 import com.configlinker.enums.TrackPolicy;
-import com.configlinker.enums.ErrorBehavior;
 import com.configlinker.mappers.IPropertyMapper;
 
 import java.lang.reflect.Method;

@@ -13,9 +13,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-public final class ConfigSetFactory {
-
-	private ConfigSetFactory() {
+public final class ConfigSetFactory
+{
+	
+	private ConfigSetFactory()
+	{
 	}
 	
 	public static ConfigSet create(Class<?>... configInterfaces) throws AnnotationAnalyzeException, PropertyMapException
@@ -34,7 +36,8 @@ public final class ConfigSetFactory {
 		return create(builder, setConfigInterfaces);
 	}
 	
-	public static ConfigSet create(Set<Class<?>> configInterfaces) throws AnnotationAnalyzeException, PropertyMapException {
+	public static ConfigSet create(Set<Class<?>> configInterfaces) throws AnnotationAnalyzeException, PropertyMapException
+	{
 		return create(FactorySettingsBuilder.create(), configInterfaces);
 	}
 	
@@ -46,7 +49,7 @@ public final class ConfigSetFactory {
 		HashMap<Class<?>, ConfigDescription> mapConfigDescriptions = annotationScanner.scan(configInterfaces);
 		LoaderService loaderService = LoaderService.create(mapConfigDescriptions);
 		Proxy configProxy = (Proxy) ConfigProxyFactory.create(mapConfigDescriptions, loaderService);
-
+		
 		return new ConfigSet(configProxy);
 	}
 	
