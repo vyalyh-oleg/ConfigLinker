@@ -1,8 +1,10 @@
 package com.configlinker.annotations;
 
+import com.configlinker.FactorySettingsBuilder;
+import com.configlinker.enums.ErrorBehavior;
 import com.configlinker.IConfigChangeListener;
-import com.configlinker.ErrorBehavior;
-import com.configlinker.FactoryConfigBuilder;
+import com.configlinker.enums.SourceScheme;
+import com.configlinker.enums.TrackPolicy;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -27,7 +29,7 @@ public @interface BoundObject {
 	 * Must point to source where data can be found to fill in this object with necessary values.
 	 * <p>
 	 * You can use variables for substituting some parts of this path.
-	 * Variables can be set in {@link FactoryConfigBuilder#addParameter(String, String)}.
+	 * Variables can be set in {@link FactorySettingsBuilder#addParameter(String, String)}.
 	 * <p>
 	 * Example path:
 	 * <pre>"${substitution1}/path_part1/${substitution2}/path_part2/endPart"</pre>
@@ -37,10 +39,10 @@ public @interface BoundObject {
 
 	/**
 	 * <p>
-	 * Headers that are used to make requests to get configuration parameters (if the {@link BoundObject#sourceScheme} is {@link SourceScheme#HTTP}). These values are merged with values which you can set with {@link FactoryConfigBuilder}.
+	 * Headers that are used to make requests to get configuration parameters (if the {@link BoundObject#sourceScheme} is {@link SourceScheme#HTTP}). These values are merged with values which you can set with {@link FactorySettingsBuilder}.
 	 * <p>
 	 * You can use variables for substituting some parts of this path.
-	 * Variables can be set in {@link FactoryConfigBuilder#addParameter(String, String)}.
+	 * Variables can be set in {@link FactorySettingsBuilder#addParameter(String, String)}.
 	 * <p>
 	 * Example path:
 	 * <pre>"${substitution1}/path_part1/${substitution2}/path_part2/endName"</pre>
@@ -50,7 +52,7 @@ public @interface BoundObject {
 
 	/**
 	 * <p>This value is used to retrieve {@code Charset} object invoking {@link java.nio.charset.Charset#forName(String)}, and then it will be used to load configuration in raw text format.
-	 * <p>Default value inherited from {@link FactoryConfigBuilder#setCharset(Charset)} and equal {@code StandardCharsets.UTF_8}.
+	 * <p>Default value inherited from {@link FactorySettingsBuilder#setCharset(Charset)} and equal {@code StandardCharsets.UTF_8}.
 	 * <p>If you set any value here, it will be used instead default value.
 	 * @return -
 	 */
@@ -67,7 +69,7 @@ public @interface BoundObject {
 	 *
 	 * <p>
 	 * You can also use variables for substituting some parts of this prefix.
-	 * Variables should be set with {@link FactoryConfigBuilder#addParameter(String, String)}.
+	 * Variables should be set with {@link FactorySettingsBuilder#addParameter(String, String)}.
 	 * <p>
 	 * Example:
 	 * <pre>	"servers.${type}.srv1.configuration"</pre>
@@ -78,16 +80,16 @@ public @interface BoundObject {
 	String propertyNamePrefix() default "";
 
 	/**
-	 * <p>Default value is {@link TrackPolicy#INHERIT} which mean global policy will be used (specify in method {@link FactoryConfigBuilder#setTrackPolicy(BoundObject.TrackPolicy)}). To override such behaviour choose {@link TrackPolicy#DISABLE} or {@link TrackPolicy#ENABLE} value.
+	 * <p>Default value is {@link TrackPolicy#INHERIT} which mean global policy will be used (specify in method {@link FactorySettingsBuilder#setTrackPolicy(TrackPolicy)}). To override such behaviour choose {@link TrackPolicy#DISABLE} or {@link TrackPolicy#ENABLE} value.
 	 * @return -
 	 */
-	TrackPolicy trackPolicy() default TrackPolicy.INHERIT;
+	TrackPolicy trackingPolicy() default TrackPolicy.INHERIT;
 
 	/**
-	 * <p>Used only if here or in {@link FactoryConfigBuilder#setTrackPolicy(BoundObject.TrackPolicy)} specified {@link TrackPolicy#ENABLE}, and the {@link SourceScheme#HTTP}.
+	 * <p>Used only if here or in {@link FactorySettingsBuilder#setTrackPolicy(TrackPolicy)} specified {@link TrackPolicy#ENABLE}, and the {@link SourceScheme#HTTP}.
 	 * <p>Otherwise this parameter ignored.
-	 * <p>Default value is '0' which mean inherited behaviour (will be used value from {@code FactoryConfigBuilder} (equal '60' seconds).
-	 * <p>MIN value = 15 seconds, MAX value = 86400 seconds (24 hours = 24*3600 seconds).
+	 * <p>Default value is '0' which mean inherited behaviour (will be used value from {@code FactorySettingsBuilder} (equal '60' seconds).
+	 * <p>MIN value = 15 seconds, MAX value = 86400 seconds (1 day = 24 hours * 3600 seconds).
 	 * @return -
 	 */
 	int trackingInterval() default 0;
@@ -101,69 +103,8 @@ public @interface BoundObject {
 	/**
 	 * <p>
 	 * What to do if the property value does not exist in underlying persistent store.
-	 * Default value is {@link ErrorBehavior#INHERITED} and specified in {@link FactoryConfigBuilder#setErrorBehavior(ErrorBehavior)}
+	 * Default value is {@link ErrorBehavior#INHERIT} and specified in {@link FactorySettingsBuilder#setErrorBehavior(ErrorBehavior)}
 	 * @return -
 	 */
-	ErrorBehavior errorBehavior() default ErrorBehavior.INHERITED;
-
-	/**
-	 * Scheme describe how to access the data source.
-	 */
-	enum SourceScheme {
-		/**
-		 * <p>
-		 * Mean that concrete value will be get from {@link FactoryConfigBuilder#setSourceScheme(BoundObject.SourceScheme)}, and it is {@link SourceScheme#FILE} by default.
-		 */
-		INHERIT,
-		/**
-		 * <p>
-		 * Use when you set relative {@link BoundObject#sourcePath()} as file valid system path to load file that resides in classpath of running VM.
-		 */
-		CLASSPATH,
-		/**
-		 * <p>
-		 * Use when you set absolute or relative {@link BoundObject#sourcePath()} as valid file system path to load file from one of mounted file systems.
-		 */
-		FILE,
-		/**
-		 * <p>
-		 * Use when you set {@link BoundObject#sourcePath()} as valid URL to load file from HTTP/S server.
-		 */
-		HTTP,
-		/**
-		 * <p>
-		 * Choose when you are using special ConfigLinker server for configurations management of groups of server and/or services.<br>
-		 * <b>It is not implemented yet.</b>
-		 */
-		CONFIG_LINKER_SERVER
-		;
-	}
-
-	/**
-	 * Policy for refresh configuration parameters.
-	 */
-	enum TrackPolicy {
-		/**
-		 * <p>
-		 * Mean that concrete value will be set by {@link FactoryConfigBuilder#setTrackPolicy(BoundObject.TrackPolicy)}, and it is {@link TrackPolicy#DISABLE} by default.
-		 */
-		INHERIT,
-		/**
-		 * <p>
-		 * All changes, made in the underlying persistent configuration store, won't be tracked. The values will be loaded and cached only once during program startup.
-		 */
-		DISABLE,
-		/**
-		 * <p>All changes, made in the underlying persistent configuration store, will be tracked.
-		 * <p>The behavior depends on {@link SourceScheme}:
-		 * <ul>
-		 * <li>if {@link SourceScheme#CLASSPATH} -- track changes not allowed for this scheme.</li>
-		 * <li>if {@link SourceScheme#FILE} -- listen OS notification from file system. Should be supported by operation system.</li>
-		 * <li>if {@link SourceScheme#HTTP} -- refresh values from persistent store by schedule with specified period of time.</li>
-		 * <li>if {@link SourceScheme#CONFIG_LINKER_SERVER} -- listen notification from remote ConfigLinker server.</li>
-		 * </ul>
-		 */
-		ENABLE,
-		;
-	}
+	ErrorBehavior errorBehavior() default ErrorBehavior.INHERIT;
 }

@@ -6,6 +6,7 @@ buildscript {
 	repositories {
 		mavenLocal()
 
+/*
 		maven {
 			name "internal"
 			url project.'repo.internal.url'
@@ -17,25 +18,36 @@ buildscript {
 			url project.'repo.own.url'
 			credentials { username(archivaUserName); password(archivaUserPass) }
 		}
-
-//		mavenCentral()
+*/
+		maven {
+			url "https://plugins.gradle.org/m2/"
+		}
+		
+		mavenCentral()
 //		jcenter()
 	}
 	dependencies {
-		classpath group: 'org.junit.platform', name: 'junit-platform-gradle-plugin', version: project.properties['junit.platform.version']
+		classpath "com.adarshr:gradle-test-logger-plugin:1.5.0"
 	}
 }
+
+/*
+plugins {
+	id "com.adarshr.test-logger" version "1.5.0"
+}
+*/
 
 //apply plugin: 'java'
 apply plugin: 'java-library'
 apply plugin: 'maven'
 //apply plugin: 'application'
-apply plugin: 'org.junit.platform.gradle.plugin'
 
+apply plugin: 'com.adarshr.test-logger'
 
 repositories {
 	mavenLocal()
 
+/*
 	maven {
 		name "internal"
 		url project.'repo.internal.url'
@@ -47,8 +59,9 @@ repositories {
 		url project.'repo.own.url'
 		credentials { username(archivaUserName); password(archivaUserPass) }
 	}
+*/
 
-//	mavenCentral()
+	mavenCentral()
 //	jcenter()
 }
 
@@ -56,6 +69,7 @@ dependencies {
     // This dependency is found on compile classpath of this component and consumers.
 
 	implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+	implementation group: 'org.slf4j', name: 'jul-to-slf4j', version: '1.7.25'
 
 	// This dependency is exported to consumers, that is to say found on their compile classpath.
 //    api
@@ -73,7 +87,7 @@ dependencies {
 	testRuntimeOnly group: 'org.junit.platform', name: 'junit-platform-launcher', version: project.properties['junit.platform.version']
 //	testRuntimeOnly group: 'org.junit.platform', name: 'junit-platform-console', version: project.properties['junit.platform.version']
 //	testRuntimeOnly group: 'org.junit.platform', name: 'junit-platform-runner', version: project.properties['junit.platform.version']
-//	testRuntimeOnly group: 'org.junit.vintage', name: 'junit-vintage-engine', version: project.properties['4.12.1']
+//	testRuntimeOnly group: 'org.junit.vintage', name: 'junit-vintage-engine', version: project.properties['junit.jupiter.version']
 }
 
 
@@ -113,39 +127,126 @@ task sourcesJar(type: Jar) {
 }
 
 
+/*
+tasks.withType(JavaExec) {
+	if (System.getProperty('debug', 'false') == 'true') {
+		jvmArgs '-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=9009'
+	}
+}
+*/
+
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+
 test {
+	//debug=true
+	//failFast = true
+
+	systemProperty 'java.util.logging.config.file', 'logging.properties'
+	systemProperty 'org.slf4j.simpleLogger.defaultLogLevel', 'TRACE'
+	systemProperty 'user.timezone', 'UTC'
+	//systemProperty 'java.util.logging.manager', 'org.apache.logging.log4j.jul.LogManager'
+
 	workingDir "./test_workdir"
-}
+	
+	useJUnitPlatform{
+		// includeTags 'fast', 'smoke & feature-a'
+		// excludeTags 'slow', 'ci'
+		// includeEngines 'junit-jupiter'
+		// excludeEngines 'junit-vintage'
+	}
 
-junitPlatform {
-//	details 'tree'
-//	platformVersion 1.0
-//	logManager "org.apache.logging.log4j.jul.LogManager"
-	reportsDir "build/test-results/junit-platform" // this is the default
-//	 enableStandardTestTask true
+	testlogger {
+		// pick a theme - mocha, standard, plain, mocha-parallel, standard-parallel or plain-parallel
+		theme 'standard'
+
+		// set to false to disable detailed failure logs
+		showExceptions true
+
+		// set threshold in milliseconds to highlight slow tests
+		slowThreshold 1000
+
+		// displays a breakdown of passes, failures and skips along with total duration
+		showSummary true
+
+		// set to false to hide passed tests
+		showPassed true
+
+		// set to false to hide skipped tests
+		showSkipped true
+
+		// set to false to hide failed tests
+		showFailed true
+
+		// enable to see standard out and error streams inline with the test results
+		showStandardStreams false
+
+		// set to false to hide passed standard out and error streams
+		showPassedStandardStreams true
+
+		// set to false to hide skipped standard out and error streams
+		showSkippedStandardStreams true
+
+		// set to false to hide failed standard out and error streams
+		showFailedStandardStreams true
+	}
 /*
-	engines {
-		include 'junit-jupiter'
-		// exclude 'junit-vintage'
+	testLogging {
+//		events "passed", "skipped", "failed", "standardOut", "standardError"
+		events TestLogEvent.FAILED,
+				TestLogEvent.PASSED,
+				TestLogEvent.SKIPPED
+				//TestLogEvent.STANDARD_OUT,
+				//TestLogEvent.STANDARD_ERROR
+		exceptionFormat TestExceptionFormat.FULL
 	}
 */
+
 /*
-	tags {
-		include 'fast', 'smoke'
-		// exclude 'slow', 'ci'
+	testLogging {
+		// set options for log level LIFECYCLE
+		events TestLogEvent.FAILED,
+				TestLogEvent.PASSED,
+				TestLogEvent.SKIPPED,
+				TestLogEvent.STANDARD_OUT
+		exceptionFormat TestExceptionFormat.FULL
+		showExceptions true
+		showCauses true
+		showStackTraces true
+
+		// set options for log level DEBUG and INFO
+		debug {
+			events TestLogEvent.STARTED,
+					TestLogEvent.FAILED,
+					TestLogEvent.PASSED,
+					TestLogEvent.SKIPPED,
+					TestLogEvent.STANDARD_ERROR,
+					TestLogEvent.STANDARD_OUT
+			exceptionFormat TestExceptionFormat.FULL
+		}
+		info.events = debug.events
+		info.exceptionFormat = debug.exceptionFormat
+
+		afterSuite { desc, result ->
+			if (!desc.parent) { // will match the outermost suite
+				def output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
+				def startItem = '|  ', endItem = '  |'
+				def repeatLength = startItem.length() + output.length() + endItem.length()
+				println('\n' + ('-' * repeatLength) + '\n' + startItem + output + endItem + '\n' + ('-' * repeatLength))
+			}
+		}
 	}
 */
-//	includeClassNamePattern '.*Tests'
 }
 
 /*
-cleanJunitPlatformTest {
-	delete "./test_workdir"
+cleanTest {
+	delete "./test_workdir.tmp"
 }
 */
 
-junitPlatformTest.doFirst {
-	println "See reports here: '" + junitPlatform.reportsDir + "'."
+test.doFirst {
+	println "See reports here: '" + reportsDir + "'."
 /*
 	mkdir("./test_workdir")
 	copy {
@@ -153,9 +254,4 @@ junitPlatformTest.doFirst {
 		into "./test_workdir"
 	}
 */
-}
-
-junitPlatformTest {
-//	systemProperty 'org.slf4j.simpleLogger.defaultLogLevel', 'info'
-	workingDir "./test_workdir"
 }

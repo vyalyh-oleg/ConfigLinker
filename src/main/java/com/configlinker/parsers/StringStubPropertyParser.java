@@ -12,7 +12,7 @@ final class StringStubPropertyParser implements PropertyParser<String> {
 			rawValue = rawValue.trim();
 
 		if (regexpPattern != null && !regexpPattern.matcher(rawValue).matches())
-			throw new PropertyMatchException("Property '" + rawValue + "' don't match pattern '" + regexpPattern.toString() + "'.").logAndReturn();
+			throw new PropertyMatchException("Property value '" + rawValue + "' doesn't match pattern '" + regexpPattern.toString() + "'.").logAndReturn();
 
 		return rawValue;
 	}

@@ -2,7 +2,7 @@ package com.configlinker.parsers;
 
 import com.configlinker.exceptions.PropertyMatchException;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -15,8 +15,8 @@ final class MapPropertyParser implements PropertyParser<Map<String, String>> {
 		if (ignoreWhitespaces)
 			for (int i = 0; i < rawValues.length; i++)
 				rawValues[i] = rawValues[i].trim();
-
-		HashMap<String, String> values = new HashMap<>();
+		
+		LinkedHashMap<String, String> values = new LinkedHashMap<>();
 		String escapedDelimiterForKeyValue = Pattern.quote(delimiterForKeyValue);
 		for (String rawEntry : rawValues) {
 			String[] entry = rawEntry.split(escapedDelimiterForKeyValue);
@@ -30,9 +30,9 @@ final class MapPropertyParser implements PropertyParser<Map<String, String>> {
 			}
 
 			values.put(key, value);
-
+			
 			if (regexpPattern != null && !regexpPattern.matcher(value).matches())
-				throw new PropertyMatchException("Property '\'" + key + "\':\'" + value + "\'' don't match pattern '" + regexpPattern.toString() + "'.").logAndReturn();
+				throw new PropertyMatchException("Property value '" + value + "' for key '" + key + "' doesn't match pattern '" + regexpPattern.toString() + "'.").logAndReturn();
 		}
 
 		return values;

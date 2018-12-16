@@ -2,7 +2,7 @@ package com.configlinker.loaders;
 
 import com.configlinker.ConfigDescription;
 import com.configlinker.Loggers;
-import com.configlinker.annotations.BoundObject;
+import com.configlinker.enums.TrackPolicy;
 import com.configlinker.exceptions.PropertyLoadException;
 import com.configlinker.exceptions.PropertyMatchException;
 import com.configlinker.exceptions.PropertyValidateException;
@@ -51,7 +51,7 @@ final class PropertyFileLoader extends AbstractLoader {
 				throw new PropertyLoadException("Wrong file path '" + description.getSourcePath() + "' in annotation parameter @BoundObject.sourcePath() on interface '" + description.getConfInterface().getName() + "'.").logAndReturn().logAndReturn();
 			}
 
-			if (description.getTrackPolicy() == BoundObject.TrackPolicy.ENABLE)
+			if (description.getTrackPolicy() == TrackPolicy.ENABLE)
 				watchedFiles.computeIfAbsent(fullFilePath, path -> new HashSet<>()).add(description);
 		}
 	}
