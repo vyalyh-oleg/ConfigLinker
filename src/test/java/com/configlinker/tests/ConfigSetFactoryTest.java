@@ -19,7 +19,7 @@ class ConfigSetFactoryTest extends AbstractBaseTest
 	}
 	
 	@Test
-	void test_configInterfaceReturnsSameParameterInstance()
+	void test_configInterfaceReturnsSameParameterFromInstance()
 	{
 		NonEmptyValue nonEmptyValue = this.getSingleConfigInstance(NonEmptyValue.class);
 		Assertions.assertSame(nonEmptyValue.non_empty(), nonEmptyValue.non_empty());

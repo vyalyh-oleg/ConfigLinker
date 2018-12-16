@@ -325,6 +325,7 @@ class BoundPropertyTest extends AbstractBaseTest
 	{
 		ErrorBehaviorOverrideInProperty errorOverrideInProperty = getSingleConfigInstance(ErrorBehaviorOverrideInProperty.class);
 		Assertions.assertNull(errorOverrideInProperty.nullValueReturnNull());
+		Assertions.assertNull(errorOverrideInProperty.emptyValueReturnNull());
 	}
 	
 	@Test
@@ -332,6 +333,7 @@ class BoundPropertyTest extends AbstractBaseTest
 	{
 		ErrorBehaviorOverrideInObject errorOverrideInObject = getSingleConfigInstance(ErrorBehaviorOverrideInObject.class);
 		Assertions.assertNull(errorOverrideInObject.nullValueReturnNull());
+		Assertions.assertNull(errorOverrideInObject.emptyValueReturnNull());
 	}
 	
 	@Test
@@ -347,35 +349,65 @@ class BoundPropertyTest extends AbstractBaseTest
 	@Test
 	void test_errorBehaviorOverrideIn_BoundPropertyAndObject_2()
 	{
-		ErrorBehaviorOverrideInPropertyAndObject2 errorOverrideInPropertyAndObject2 = getSingleConfigInstance(ErrorBehaviorOverrideInPropertyAndObject2.class);
-		Assertions.assertNull(errorOverrideInPropertyAndObject2.nullValueReturnNull());
-		Assertions.assertEquals("", errorOverrideInPropertyAndObject2.emptyValueThrowException());
+		PropertyNotFoundException exception = Assertions.assertThrows(PropertyNotFoundException.class, () -> {
+			ErrorBehaviorOverrideInPropertyAndObject2 errorOverrideInPropertyAndObject2 = getSingleConfigInstance(ErrorBehaviorOverrideInPropertyAndObject2.class);
+		});
+		
+		Assertions.assertEquals(
+		  "Value for property 'workgroup.empty' not found, config interface 'com.configlinker.tests.ErrorBehaviorOverrideInPropertyAndObject2', method 'emptyValueThrowException'.",
+		  exception.getMessage());
 	}
 	
 	@Test
-	void test_errorBehavior_Default()
+	void test_errorBehaviorForNull_Default()
 	{
 		PropertyNotFoundException exception = Assertions.assertThrows(PropertyNotFoundException.class, () -> {
-			ErrorBehaviorDefault errorDefault = getSingleConfigInstance(ErrorBehaviorDefault.class);
+			ErrorBehaviorForNullDefault errorDefault = getSingleConfigInstance(ErrorBehaviorForNullDefault.class);
 		});
 		
-		Assertions.assertEquals("Value for property 'workgroup.null' not found, config interface 'com.configlinker.tests.ErrorBehaviorDefault', method 'nullValueDefaultErrorBehavior'.", exception.getMessage());
+		Assertions.assertEquals("Value for property 'workgroup.null' not found, config interface 'com.configlinker.tests.ErrorBehaviorForNullDefault', method 'nullValueDefaultErrorBehavior'.", exception.getMessage());
 		
 		
 		PropertyNotFoundException exception2 = Assertions.assertThrows(PropertyNotFoundException.class, () -> {
 			FactorySettingsBuilder factorySettingsBuilder = FactorySettingsBuilder.create().setErrorBehavior(ErrorBehavior.THROW_EXCEPTION);
-			ErrorBehaviorDefault errorDefault2 = getSingleConfigInstance(factorySettingsBuilder, ErrorBehaviorDefault.class);
+			ErrorBehaviorForNullDefault errorDefault2 = getSingleConfigInstance(factorySettingsBuilder, ErrorBehaviorForNullDefault.class);
 		});
 		
-		Assertions.assertEquals("Value for property 'workgroup.null' not found, config interface 'com.configlinker.tests.ErrorBehaviorDefault', method 'nullValueDefaultErrorBehavior'.", exception2.getMessage());
+		Assertions.assertEquals("Value for property 'workgroup.null' not found, config interface 'com.configlinker.tests.ErrorBehaviorForNullDefault', method 'nullValueDefaultErrorBehavior'.", exception2.getMessage());
 	}
 	
 	@Test
-	void test_errorBehaviorOverrideIn_FactorySettings()
+	void test_errorBehaviorForNullOverrideIn_FactorySettings()
 	{
 		FactorySettingsBuilder factorySettingsBuilder = FactorySettingsBuilder.create().setErrorBehavior(ErrorBehavior.RETURN_NULL);
-		ErrorBehaviorDefault errorDefault = getSingleConfigInstance(factorySettingsBuilder, ErrorBehaviorDefault.class);
+		ErrorBehaviorForNullDefault errorDefault = getSingleConfigInstance(factorySettingsBuilder, ErrorBehaviorForNullDefault.class);
 		Assertions.assertNull(errorDefault.nullValueDefaultErrorBehavior());
+	}
+	
+	@Test
+	void test_errorBehaviorForEmpty_Default()
+	{
+		PropertyNotFoundException exception = Assertions.assertThrows(PropertyNotFoundException.class, () -> {
+			ErrorBehaviorForEmptyDefault errorDefault = getSingleConfigInstance(ErrorBehaviorForEmptyDefault.class);
+		});
+		
+		Assertions.assertEquals("Value for property 'workgroup.empty' not found, config interface 'com.configlinker.tests.ErrorBehaviorForEmptyDefault', method 'emptyValueDefaultErrorBehavior'.", exception.getMessage());
+		
+		
+		PropertyNotFoundException exception2 = Assertions.assertThrows(PropertyNotFoundException.class, () -> {
+			FactorySettingsBuilder factorySettingsBuilder = FactorySettingsBuilder.create().setErrorBehavior(ErrorBehavior.THROW_EXCEPTION);
+			ErrorBehaviorForEmptyDefault errorDefault2 = getSingleConfigInstance(factorySettingsBuilder, ErrorBehaviorForEmptyDefault.class);
+		});
+		
+		Assertions.assertEquals("Value for property 'workgroup.empty' not found, config interface 'com.configlinker.tests.ErrorBehaviorForEmptyDefault', method 'emptyValueDefaultErrorBehavior'.", exception2.getMessage());
+	}
+	
+	@Test
+	void test_errorBehaviorForEmptyOverrideIn_FactorySettings()
+	{
+		FactorySettingsBuilder factorySettingsBuilder = FactorySettingsBuilder.create().setErrorBehavior(ErrorBehavior.RETURN_NULL);
+		ErrorBehaviorForEmptyDefault errorDefault = getSingleConfigInstance(factorySettingsBuilder, ErrorBehaviorForEmptyDefault.class);
+		Assertions.assertNull(errorDefault.emptyValueDefaultErrorBehavior());
 	}
 	
 	@Test
@@ -383,7 +415,7 @@ class BoundPropertyTest extends AbstractBaseTest
 	{
 		PropertyNotFoundException exception = Assertions.assertThrows(PropertyNotFoundException.class, () -> {
 			FactorySettingsBuilder factorySettingsBuilder = FactorySettingsBuilder.create().setErrorBehavior(ErrorBehavior.RETURN_NULL);
-			ErrorBehaviorOverrideInPropertyAndObject3 errorOverrideInPropertyAndObject3 = getSingleConfigInstance(ErrorBehaviorOverrideInPropertyAndObject3.class);
+			ErrorBehaviorOverrideInPropertyAndObject3 errorOverrideInPropertyAndObject3 = getSingleConfigInstance(factorySettingsBuilder, ErrorBehaviorOverrideInPropertyAndObject3.class);
 		});
 		
 		Assertions.assertEquals("Value for property 'workgroup.null' not found, config interface 'com.configlinker.tests.ErrorBehaviorOverrideInPropertyAndObject3', method 'nullValueThrowException'.", exception.getMessage());
@@ -392,10 +424,12 @@ class BoundPropertyTest extends AbstractBaseTest
 	@Test
 	void test_errorBehaviorOverrideIn_BoundPropertyAndObjectAndFactorySettings_2()
 	{
-		FactorySettingsBuilder factorySettingsBuilder = FactorySettingsBuilder.create().setErrorBehavior(ErrorBehavior.RETURN_NULL);
-		ErrorBehaviorOverrideInPropertyAndObject4 errorOverrideInPropertyAndObject4 = getSingleConfigInstance(ErrorBehaviorOverrideInPropertyAndObject4.class);
-		Assertions.assertNull(errorOverrideInPropertyAndObject4.nullValueReturnNull());
-		Assertions.assertEquals("", errorOverrideInPropertyAndObject4.emptyValueThrowException());
+		PropertyNotFoundException exception = Assertions.assertThrows(PropertyNotFoundException.class, () -> {
+			FactorySettingsBuilder factorySettingsBuilder = FactorySettingsBuilder.create().setErrorBehavior(ErrorBehavior.RETURN_NULL);
+			ErrorBehaviorOverrideInPropertyAndObject4 errorOverrideInPropertyAndObject4 = getSingleConfigInstance(factorySettingsBuilder, ErrorBehaviorOverrideInPropertyAndObject4.class);
+		});
+		
+		Assertions.assertEquals("Value for property 'workgroup.empty' not found, config interface 'com.configlinker.tests.ErrorBehaviorOverrideInPropertyAndObject4', method 'emptyValueThrowException'.", exception.getMessage());
 	}
 }
 
@@ -585,10 +619,17 @@ interface CustomValidatorMap_withError
 // --------------------------------------------------------------------------------
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
-interface ErrorBehaviorDefault
+interface ErrorBehaviorForNullDefault
 {
 	@BoundProperty(name = "workgroup.null")
 	String nullValueDefaultErrorBehavior();
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface ErrorBehaviorForEmptyDefault
+{
+	@BoundProperty(name = "workgroup.empty")
+	String emptyValueDefaultErrorBehavior();
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
@@ -596,6 +637,9 @@ interface ErrorBehaviorOverrideInProperty
 {
 	@BoundProperty(name = "workgroup.null", errorBehavior = ErrorBehavior.RETURN_NULL)
 	String nullValueReturnNull();
+	
+	@BoundProperty(name = "workgroup.empty", errorBehavior = ErrorBehavior.RETURN_NULL)
+	String emptyValueReturnNull();
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties", errorBehavior = ErrorBehavior.RETURN_NULL)
@@ -603,6 +647,9 @@ interface ErrorBehaviorOverrideInObject
 {
 	@BoundProperty(name = "workgroup.null")
 	String nullValueReturnNull();
+	
+	@BoundProperty(name = "workgroup.empty")
+	String emptyValueReturnNull();
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties", errorBehavior = ErrorBehavior.RETURN_NULL)

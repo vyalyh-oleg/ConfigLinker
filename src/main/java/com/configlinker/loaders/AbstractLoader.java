@@ -83,7 +83,7 @@ abstract class AbstractLoader
 			String rawValue = newProperties.getProperty(fullPropertyName);
 			
 			Object objValue = null;
-			if (rawValue == null)
+			if (rawValue == null || rawValue.isEmpty())
 			{
 				if (propertyDescription.getErrorBehavior() == ErrorBehavior.THROW_EXCEPTION)
 				{
