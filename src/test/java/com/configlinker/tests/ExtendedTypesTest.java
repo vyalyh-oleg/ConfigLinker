@@ -167,7 +167,7 @@ class ExtendedTypesTest extends AbstractBaseTest
 		Assertions.assertEquals("Cannot create object for return type in method 'java.net.InetAddress::getByName'.", exception.getMessage());
 		Throwable baseCause = exception.getCause().getCause();
 		Assertions.assertEquals(UnknownHostException.class, baseCause.getClass());
-		Assertions.assertEquals("192.256.12.10: Name or service not known", baseCause.getMessage());
+		Assertions.assertEquals("192.256.12.10: No address associated with hostname", baseCause.getMessage());
 	}
 	
 	@Test
