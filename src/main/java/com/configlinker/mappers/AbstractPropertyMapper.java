@@ -47,6 +47,7 @@ abstract class AbstractPropertyMapper<RAW_TYPE, MAPPED_TYPE> implements IPropert
 	@SuppressWarnings("unchecked")
 	public final MAPPED_TYPE mapFromString(String rawStringValue) throws PropertyMatchException, PropertyValidateException, PropertyMapException
 	{
+		// rawStringValue is NotNull
 		RAW_TYPE rawTypeObj = propertyParser.parse(rawStringValue, ignoreWhitespaces, this.regexpPattern, delimiterForList, delimiterForKeyValue);
 		MAPPED_TYPE mappedValue = mapFrom(rawTypeObj);
 		
@@ -75,14 +76,6 @@ abstract class AbstractPropertyMapper<RAW_TYPE, MAPPED_TYPE> implements IPropert
 		}
 		
 		return mappedValue;
-	}
-	
-	protected final <RETURN> RETURN createObjectFromString(String elementStringValue)
-	{
-		// TODO: additional check for generic type (customType), if return type is List, Set or Map
-		// TODO: additional mapper for each element if it is complex type
-		//PropertyParser propertyParser = ParserFactory.create(returnType, deserializationMethod);
-		return null;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -114,20 +107,18 @@ abstract class AbstractPropertyMapper<RAW_TYPE, MAPPED_TYPE> implements IPropert
 		}
 		catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e)
 		{
-			// TODO: implement errorBehaviour
 			throw new PropertyMapException(
 				"Cannot create object for return type in method '" + this.executable.getDeclaringClass().getName() + "::" + this.executable.getName() + "'.", e)
 				.logAndReturn();
 		}
 		
-		// TODO: implement errorBehaviour
 		if (returnElement == null)
 			throw new PropertyMapException(
 				"Cannot create object for return type in method '" + this.executable.getDeclaringClass().getName() + "::" + this.executable.getName() + "'.")
 				.logAndReturn();
 		
 /*
-		// TODO: implement errorBehaviour
+		// TODO: move from mapFromString() method?
 		if (this.validator != null)
 			this.validator.validate(returnElement);
 */

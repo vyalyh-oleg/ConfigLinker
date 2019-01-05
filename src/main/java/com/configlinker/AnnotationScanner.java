@@ -314,8 +314,4 @@ final class AnnotationScanner {
 
 		return propertyMethodDescription;
 	}
-
-	private void validateNestedBoundProperty() {
-		// TODO: implement functionality of parsing nested @BoundProperty classes or remove this method.
-	}
 }

@@ -96,15 +96,7 @@ abstract class AbstractLoader
 			}
 			else
 			{
-				try
-				{
-					objValue = propertyDescription.getMapper().mapFromString(rawValue);
-				}
-				catch (ConfigLinkerRuntimeException e)
-				{
-					if (propertyDescription.getErrorBehavior() == ErrorBehavior.THROW_EXCEPTION)
-						throw e;
-				}
+				objValue = propertyDescription.getMapper().mapFromString(rawValue);
 			}
 			
 			singleReturns.put(computeKeyHash(fullPropertyName, entryPropertyDescription.getKey()), objValue);
@@ -205,35 +197,28 @@ abstract class AbstractLoader
 		
 		String fullPropertyName = validateAndMakeVariableSubstitution(propertyDescription.getName(), methodArguments);
 		
-		Object objValue = this.multiReturnsMethodsCache.get(configInterface)
-			.computeIfAbsent(
-				computeKeyHash(fullPropertyName, method),
-				key -> {
-					Object value = null;
-					
-					String rawValue = this.rawProperties.get(configDescription.getSourcePath()).getProperty(fullPropertyName);
-					if ((rawValue == null || rawValue.isEmpty()) && propertyDescription.getErrorBehavior() == ErrorBehavior.THROW_EXCEPTION)
+		Object objValue = this.multiReturnsMethodsCache.get(configInterface).computeIfAbsent(
+			computeKeyHash(fullPropertyName, method),
+			key -> {
+				Object value = null;
+				
+				String rawValue = this.rawProperties.get(configDescription.getSourcePath()).getProperty(fullPropertyName);
+				if (rawValue == null || rawValue.isEmpty())
+				{
+					if (propertyDescription.getErrorBehavior() == ErrorBehavior.THROW_EXCEPTION)
 					{
 						throw new PropertyNotFoundException(
 							"Value for property '" + propertyDescription.getName() + "' not found, config interface '" + configInterface.getName() +
 								"', method '" + method.getName() + "'.").logAndReturn();
 					}
-					
-					if (rawValue != null)
-					{
-						try
-						{
-							value = propertyDescription.getMapper().mapFromString(rawValue);
-						}
-						catch (ConfigLinkerRuntimeException e)
-						{
-							if (propertyDescription.getErrorBehavior() == ErrorBehavior.THROW_EXCEPTION)
-								throw e;
-						}
-					}
-					
-					return value;
-				});
+				}
+				else
+				{
+					value = propertyDescription.getMapper().mapFromString(rawValue);
+				}
+				
+				return value;
+			});
 		
 		return objValue;
 	}
