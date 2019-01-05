@@ -40,12 +40,14 @@ abstract class AbstractLoader
 	
 	protected void startTrackChanges() throws PropertyLoadException
 	{
-		throw new PropertyLoadException("Cannot perform 'startTrackChanges', because tracking changes didn't implemented for '" + this.getClass().getName() + "'.").logAndReturn();
+		throw new PropertyLoadException(
+			"Cannot perform 'startTrackChanges', because tracking changes didn't implemented for '" + this.getClass().getName() + "'.").logAndReturn();
 	}
 	
 	protected void stopTrackChanges() throws PropertyLoadException
 	{
-		throw new PropertyLoadException("Cannot perform 'stopTrackChanges', because tracking changes didn't implemented for '" + this.getClass().getName() + "'.").logAndReturn();
+		throw new PropertyLoadException(
+			"Cannot perform 'stopTrackChanges', because tracking changes didn't implemented for '" + this.getClass().getName() + "'.").logAndReturn();
 	}
 	
 	final protected Collection<ConfigDescription> getConfigDescriptions()
@@ -58,7 +60,7 @@ abstract class AbstractLoader
 		for (ConfigDescription configDescription : this.configDescriptions.values())
 		{
 			Properties newProperties = this.rawProperties
-			  .computeIfAbsent(configDescription.getSourcePath(), (sourcePath) -> this.loadRawProperties(configDescription));
+				.computeIfAbsent(configDescription.getSourcePath(), (sourcePath) -> this.loadRawProperties(configDescription));
 			HashMap<Integer, Object> singleReturns = this.convertSingleRawPropertiesToObjects(configDescription, newProperties);
 			
 			this.singleReturnsMethodsCache.put(configDescription.getConfInterface(), singleReturns);
@@ -67,7 +69,7 @@ abstract class AbstractLoader
 	}
 	
 	private HashMap<Integer, Object> convertSingleRawPropertiesToObjects(ConfigDescription configDescription, Properties newProperties)
-	  throws PropertyLoadException, PropertyMatchException, PropertyValidateException, PropertyMapException
+		throws PropertyLoadException, PropertyMatchException, PropertyValidateException, PropertyMapException
 	{
 		Class<?> configInterface = configDescription.getConfInterface();
 		HashMap<Integer, Object> singleReturns = new HashMap<>();
@@ -88,8 +90,8 @@ abstract class AbstractLoader
 				if (propertyDescription.getErrorBehavior() == ErrorBehavior.THROW_EXCEPTION)
 				{
 					throw new PropertyNotFoundException(
-					  "Value for property '" + fullPropertyName + "' not found, config interface '" + configInterface.getName() +
-						"', method '" + entryPropertyDescription.getKey().getName() + "'.").logAndReturn();
+						"Value for property '" + fullPropertyName + "' not found, config interface '" + configInterface.getName() +
+							"', method '" + entryPropertyDescription.getKey().getName() + "'.").logAndReturn();
 				}
 			}
 			else
@@ -130,7 +132,8 @@ abstract class AbstractLoader
 			Loggers.getMainLogger().error("Cannot load raw properties for config interface '{}'.", description.getConfInterface().getName());
 			for (ConfigDescription configDescription : configDescriptions)
 			{
-				ConfigChangedEvent configChangedEvent = new ConfigChangedEvent(configDescription.getConfInterface(), configDescription.getSourcePath(), null, e);
+				ConfigChangedEvent configChangedEvent = new ConfigChangedEvent(configDescription.getConfInterface(), configDescription.getSourcePath(), null,
+					e);
 				configDescription.fireConfigChanged(configChangedEvent);
 			}
 			return;
@@ -191,8 +194,9 @@ abstract class AbstractLoader
 		configDescriptions.forEach(confDescr -> confDescr.fireConfigChanged(configChangedEvents.get(confDescr)));
 	}
 	
-	final Object getProperty(ConfigDescription configDescription, ConfigDescription.PropertyDescription propertyDescription, Method method, HashMap<String, String> methodArguments)
-	  throws ConfigProxyException, PropertyValidateException, PropertyMatchException, PropertyLoadException
+	final Object getProperty(ConfigDescription configDescription, ConfigDescription.PropertyDescription propertyDescription, Method method,
+		HashMap<String, String> methodArguments)
+		throws ConfigProxyException, PropertyValidateException, PropertyMatchException, PropertyLoadException
 	{
 		Class<?> configInterface = configDescription.getConfInterface();
 		
@@ -202,24 +206,34 @@ abstract class AbstractLoader
 		String fullPropertyName = validateAndMakeVariableSubstitution(propertyDescription.getName(), methodArguments);
 		
 		Object objValue = this.multiReturnsMethodsCache.get(configInterface)
-		  .computeIfAbsent(
-			computeKeyHash(fullPropertyName, method),
-			key -> {
-				Object value = null;
-				
-				String rawValue = this.rawProperties.get(configDescription.getSourcePath()).getProperty(fullPropertyName);
-				if (rawValue == null && propertyDescription.getErrorBehavior() == ErrorBehavior.THROW_EXCEPTION)
-				{
-					throw new PropertyNotFoundException(
-					  "Value for property '" + propertyDescription.getName() + "' not found, config interface '" + configInterface.getName() +
-						"', method '" + method.getName() + "'.").logAndReturn();
-				}
-				
-				if (rawValue != null)
-					value = propertyDescription.getMapper().mapFromString(rawValue);
-				
-				return value;
-			});
+			.computeIfAbsent(
+				computeKeyHash(fullPropertyName, method),
+				key -> {
+					Object value = null;
+					
+					String rawValue = this.rawProperties.get(configDescription.getSourcePath()).getProperty(fullPropertyName);
+					if ((rawValue == null || rawValue.isEmpty()) && propertyDescription.getErrorBehavior() == ErrorBehavior.THROW_EXCEPTION)
+					{
+						throw new PropertyNotFoundException(
+							"Value for property '" + propertyDescription.getName() + "' not found, config interface '" + configInterface.getName() +
+								"', method '" + method.getName() + "'.").logAndReturn();
+					}
+					
+					if (rawValue != null)
+					{
+						try
+						{
+							value = propertyDescription.getMapper().mapFromString(rawValue);
+						}
+						catch (ConfigLinkerRuntimeException e)
+						{
+							if (propertyDescription.getErrorBehavior() == ErrorBehavior.THROW_EXCEPTION)
+								throw e;
+						}
+					}
+					
+					return value;
+				});
 		
 		return objValue;
 	}

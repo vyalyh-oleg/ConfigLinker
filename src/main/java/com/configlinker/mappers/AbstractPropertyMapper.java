@@ -31,7 +31,7 @@ abstract class AbstractPropertyMapper<RAW_TYPE, MAPPED_TYPE> implements IPropert
 	protected final IPropertyValidator validator;
 	
 	AbstractPropertyMapper(Class<?> returnType, PropertyParser<RAW_TYPE> propertyParser, boolean ignoreWhitespaces, Executable executable,
-	  Pattern regexpPattern, IPropertyValidator validator, String delimiterForList, String delimiterForKeyValue)
+		Pattern regexpPattern, IPropertyValidator validator, String delimiterForList, String delimiterForKeyValue)
 	{
 		this.returnType = returnType;
 		this.propertyParser = propertyParser;
@@ -44,17 +44,18 @@ abstract class AbstractPropertyMapper<RAW_TYPE, MAPPED_TYPE> implements IPropert
 	}
 	
 	@Override
+	@SuppressWarnings("unchecked")
 	public final MAPPED_TYPE mapFromString(String rawStringValue) throws PropertyMatchException, PropertyValidateException, PropertyMapException
 	{
-		// TODO: move regex checker here
+		RAW_TYPE rawTypeObj = propertyParser.parse(rawStringValue, ignoreWhitespaces, this.regexpPattern, delimiterForList, delimiterForKeyValue);
+		MAPPED_TYPE mappedValue = mapFrom(rawTypeObj);
 		
-		MAPPED_TYPE mappedValue = mapFrom(propertyParser.parse(rawStringValue, ignoreWhitespaces, this.regexpPattern, delimiterForList, delimiterForKeyValue));
-		
-		// TODO: implement errorBehaviour
 		if (mappedValue == null)
+		{
 			throw new PropertyMapException(
-			  "Cannot create mapped value from raw string '" + rawStringValue + "' for method '" + this.executable.getDeclaringClass()
-				.getName() + "::" + this.executable.getName() + "'.").logAndReturn();
+				"Cannot create mapped value from raw string '" + rawStringValue + "' for method '" + this.executable.getDeclaringClass()
+					.getName() + "::" + this.executable.getName() + "'.").logAndReturn();
+		}
 		
 		if (this.validator != null)
 		{
@@ -62,10 +63,10 @@ abstract class AbstractPropertyMapper<RAW_TYPE, MAPPED_TYPE> implements IPropert
 				Arrays.stream((Object[]) mappedValue).forEach(this.validator::validate);
 			
 			else if (List.class.isAssignableFrom(this.returnType))
-				((List<?>) mappedValue).stream().forEach(this.validator::validate);
+				((List<?>) mappedValue).forEach(this.validator::validate);
 			
 			else if (Set.class.isAssignableFrom(this.returnType))
-				((Set<?>) mappedValue).stream().forEach(this.validator::validate);
+				((Set<?>) mappedValue).forEach(this.validator::validate);
 			
 			else if (Map.class.isAssignableFrom(this.returnType))
 				((Map<?, ?>) mappedValue).entrySet().stream().map(entry -> new Object[]{entry.getKey(), entry.getValue()}).forEach(this.validator::validate);
@@ -104,7 +105,8 @@ abstract class AbstractPropertyMapper<RAW_TYPE, MAPPED_TYPE> implements IPropert
 			
 			if (returnElement == null && IDeserializer.class.isAssignableFrom(this.executable.getDeclaringClass()))
 			{
-				Constructor<? extends IDeserializer> constructor = (Constructor<? extends IDeserializer>) this.executable.getDeclaringClass().getDeclaredConstructor();
+				Constructor<? extends IDeserializer> constructor =
+					(Constructor<? extends IDeserializer>) this.executable.getDeclaringClass().getDeclaredConstructor();
 				constructor.setAccessible(true);
 				IDeserializer deserizlizerInstance = constructor.newInstance();
 				returnElement = (RETURN_TYPE) ((Method) this.executable).invoke(deserizlizerInstance, elementValue);
@@ -114,15 +116,15 @@ abstract class AbstractPropertyMapper<RAW_TYPE, MAPPED_TYPE> implements IPropert
 		{
 			// TODO: implement errorBehaviour
 			throw new PropertyMapException(
-			  "Cannot create object for return type in method '" + this.executable.getDeclaringClass().getName() + "::" + this.executable.getName() + "'.", e)
-			  .logAndReturn();
+				"Cannot create object for return type in method '" + this.executable.getDeclaringClass().getName() + "::" + this.executable.getName() + "'.", e)
+				.logAndReturn();
 		}
 		
 		// TODO: implement errorBehaviour
 		if (returnElement == null)
 			throw new PropertyMapException(
-			  "Cannot create object for return type in method '" + this.executable.getDeclaringClass().getName() + "::" + this.executable.getName() + "'.")
-			  .logAndReturn();
+				"Cannot create object for return type in method '" + this.executable.getDeclaringClass().getName() + "::" + this.executable.getName() + "'.")
+				.logAndReturn();
 		
 /*
 		// TODO: implement errorBehaviour
@@ -136,7 +138,7 @@ abstract class AbstractPropertyMapper<RAW_TYPE, MAPPED_TYPE> implements IPropert
 	// maybe it will be needed to change MapperFactory.getReturnElementForPredefinedType() method.
 	@SuppressWarnings("unchecked")
 	private <SRC_TYPE, RETURN_TYPE> RETURN_TYPE getReturnElementForPredefinedType(SRC_TYPE elementValue) throws InvocationTargetException,
-	  IllegalAccessException
+		IllegalAccessException
 	{
 		RETURN_TYPE returnElement;
 		

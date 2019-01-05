@@ -141,7 +141,7 @@ class BoundPropertyTest extends AbstractBaseTest
 	void test_whitespaceOverride()
 	{
 		CustomKeyValueDelimiter_whitespaceOverride langMap = this
-		  .getSingleConfigInstance(CustomKeyValueDelimiter_whitespaceOverride.class);
+			.getSingleConfigInstance(CustomKeyValueDelimiter_whitespaceOverride.class);
 		
 		Assertions.assertEquals(BoundPropertyTest.languageScoresInConfigFile, langMap.programmingLanguageScores());
 		Assertions.assertEquals(BoundPropertyTest.languageScoresInConfigFile_withSpaces, langMap.programmingLanguageScores_acceptWhitespaces());
@@ -164,7 +164,7 @@ class BoundPropertyTest extends AbstractBaseTest
 		});
 		
 		Assertions
-		  .assertEquals("Property value 'Association of Physicists of %Ukraine%' doesn't match pattern '[\\w\\d \"'().]{3,150}'.", exception.getMessage());
+			.assertEquals("Property value 'Association of Physicists of %Ukraine%' doesn't match pattern '[\\w\\d \"'().]{3,150}'.", exception.getMessage());
 		Assertions.assertNull(exception.getCause());
 	}
 	
@@ -183,8 +183,8 @@ class BoundPropertyTest extends AbstractBaseTest
 		});
 		
 		Assertions.assertEquals(
-		  "Property value 'vitaliy..mayko@physics.ua' doesn't match pattern '[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?'.",
-		  exception.getMessage());
+			"Property value 'vitaliy..mayko@physics.ua' doesn't match pattern '[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?'.",
+			exception.getMessage());
 		Assertions.assertNull(exception.getCause());
 	}
 	
@@ -343,19 +343,22 @@ class BoundPropertyTest extends AbstractBaseTest
 			ErrorBehaviorOverrideInPropertyAndObject errorOverrideInPropertyAndObject = getSingleConfigInstance(ErrorBehaviorOverrideInPropertyAndObject.class);
 		});
 		
-		Assertions.assertEquals("Value for property 'workgroup.null' not found, config interface 'com.configlinker.tests.ErrorBehaviorOverrideInPropertyAndObject', method 'nullValueThrowException'.", exception.getMessage());
+		Assertions.assertEquals(
+			"Value for property 'workgroup.null' not found, config interface 'com.configlinker.tests.ErrorBehaviorOverrideInPropertyAndObject', method 'nullValueThrowException'.",
+			exception.getMessage());
 	}
 	
 	@Test
 	void test_errorBehaviorOverrideIn_BoundPropertyAndObject_2()
 	{
 		PropertyNotFoundException exception = Assertions.assertThrows(PropertyNotFoundException.class, () -> {
-			ErrorBehaviorOverrideInPropertyAndObject2 errorOverrideInPropertyAndObject2 = getSingleConfigInstance(ErrorBehaviorOverrideInPropertyAndObject2.class);
+			ErrorBehaviorOverrideInPropertyAndObject2 errorOverrideInPropertyAndObject2 = getSingleConfigInstance(
+				ErrorBehaviorOverrideInPropertyAndObject2.class);
 		});
 		
 		Assertions.assertEquals(
-		  "Value for property 'workgroup.empty' not found, config interface 'com.configlinker.tests.ErrorBehaviorOverrideInPropertyAndObject2', method 'emptyValueThrowException'.",
-		  exception.getMessage());
+			"Value for property 'workgroup.empty' not found, config interface 'com.configlinker.tests.ErrorBehaviorOverrideInPropertyAndObject2', method 'emptyValueThrowException'.",
+			exception.getMessage());
 	}
 	
 	@Test
@@ -365,7 +368,9 @@ class BoundPropertyTest extends AbstractBaseTest
 			ErrorBehaviorForNullDefault errorDefault = getSingleConfigInstance(ErrorBehaviorForNullDefault.class);
 		});
 		
-		Assertions.assertEquals("Value for property 'workgroup.null' not found, config interface 'com.configlinker.tests.ErrorBehaviorForNullDefault', method 'nullValueDefaultErrorBehavior'.", exception.getMessage());
+		Assertions.assertEquals(
+			"Value for property 'workgroup.null' not found, config interface 'com.configlinker.tests.ErrorBehaviorForNullDefault', method 'nullValueDefaultErrorBehavior'.",
+			exception.getMessage());
 		
 		
 		PropertyNotFoundException exception2 = Assertions.assertThrows(PropertyNotFoundException.class, () -> {
@@ -373,7 +378,9 @@ class BoundPropertyTest extends AbstractBaseTest
 			ErrorBehaviorForNullDefault errorDefault2 = getSingleConfigInstance(factorySettingsBuilder, ErrorBehaviorForNullDefault.class);
 		});
 		
-		Assertions.assertEquals("Value for property 'workgroup.null' not found, config interface 'com.configlinker.tests.ErrorBehaviorForNullDefault', method 'nullValueDefaultErrorBehavior'.", exception2.getMessage());
+		Assertions.assertEquals(
+			"Value for property 'workgroup.null' not found, config interface 'com.configlinker.tests.ErrorBehaviorForNullDefault', method 'nullValueDefaultErrorBehavior'.",
+			exception2.getMessage());
 	}
 	
 	@Test
@@ -391,7 +398,9 @@ class BoundPropertyTest extends AbstractBaseTest
 			ErrorBehaviorForEmptyDefault errorDefault = getSingleConfigInstance(ErrorBehaviorForEmptyDefault.class);
 		});
 		
-		Assertions.assertEquals("Value for property 'workgroup.empty' not found, config interface 'com.configlinker.tests.ErrorBehaviorForEmptyDefault', method 'emptyValueDefaultErrorBehavior'.", exception.getMessage());
+		Assertions.assertEquals(
+			"Value for property 'workgroup.empty' not found, config interface 'com.configlinker.tests.ErrorBehaviorForEmptyDefault', method 'emptyValueDefaultErrorBehavior'.",
+			exception.getMessage());
 		
 		
 		PropertyNotFoundException exception2 = Assertions.assertThrows(PropertyNotFoundException.class, () -> {
@@ -399,7 +408,9 @@ class BoundPropertyTest extends AbstractBaseTest
 			ErrorBehaviorForEmptyDefault errorDefault2 = getSingleConfigInstance(factorySettingsBuilder, ErrorBehaviorForEmptyDefault.class);
 		});
 		
-		Assertions.assertEquals("Value for property 'workgroup.empty' not found, config interface 'com.configlinker.tests.ErrorBehaviorForEmptyDefault', method 'emptyValueDefaultErrorBehavior'.", exception2.getMessage());
+		Assertions.assertEquals(
+			"Value for property 'workgroup.empty' not found, config interface 'com.configlinker.tests.ErrorBehaviorForEmptyDefault', method 'emptyValueDefaultErrorBehavior'.",
+			exception2.getMessage());
 	}
 	
 	@Test
@@ -415,10 +426,13 @@ class BoundPropertyTest extends AbstractBaseTest
 	{
 		PropertyNotFoundException exception = Assertions.assertThrows(PropertyNotFoundException.class, () -> {
 			FactorySettingsBuilder factorySettingsBuilder = FactorySettingsBuilder.create().setErrorBehavior(ErrorBehavior.RETURN_NULL);
-			ErrorBehaviorOverrideInPropertyAndObject3 errorOverrideInPropertyAndObject3 = getSingleConfigInstance(factorySettingsBuilder, ErrorBehaviorOverrideInPropertyAndObject3.class);
+			ErrorBehaviorOverrideInPropertyAndObject3 errorOverrideInPropertyAndObject3 = getSingleConfigInstance(factorySettingsBuilder,
+				ErrorBehaviorOverrideInPropertyAndObject3.class);
 		});
 		
-		Assertions.assertEquals("Value for property 'workgroup.null' not found, config interface 'com.configlinker.tests.ErrorBehaviorOverrideInPropertyAndObject3', method 'nullValueThrowException'.", exception.getMessage());
+		Assertions.assertEquals(
+			"Value for property 'workgroup.null' not found, config interface 'com.configlinker.tests.ErrorBehaviorOverrideInPropertyAndObject3', method 'nullValueThrowException'.",
+			exception.getMessage());
 	}
 	
 	@Test
@@ -426,10 +440,13 @@ class BoundPropertyTest extends AbstractBaseTest
 	{
 		PropertyNotFoundException exception = Assertions.assertThrows(PropertyNotFoundException.class, () -> {
 			FactorySettingsBuilder factorySettingsBuilder = FactorySettingsBuilder.create().setErrorBehavior(ErrorBehavior.RETURN_NULL);
-			ErrorBehaviorOverrideInPropertyAndObject4 errorOverrideInPropertyAndObject4 = getSingleConfigInstance(factorySettingsBuilder, ErrorBehaviorOverrideInPropertyAndObject4.class);
+			ErrorBehaviorOverrideInPropertyAndObject4 errorOverrideInPropertyAndObject4 = getSingleConfigInstance(factorySettingsBuilder,
+				ErrorBehaviorOverrideInPropertyAndObject4.class);
 		});
 		
-		Assertions.assertEquals("Value for property 'workgroup.empty' not found, config interface 'com.configlinker.tests.ErrorBehaviorOverrideInPropertyAndObject4', method 'emptyValueThrowException'.", exception.getMessage());
+		Assertions.assertEquals(
+			"Value for property 'workgroup.empty' not found, config interface 'com.configlinker.tests.ErrorBehaviorOverrideInPropertyAndObject4', method 'emptyValueThrowException'.",
+			exception.getMessage());
 	}
 }
 
