@@ -24,4 +24,6 @@ class ConfigSetFactoryTest extends AbstractBaseTest
 		NonEmptyValue nonEmptyValue = this.getSingleConfigInstance(NonEmptyValue.class);
 		Assertions.assertSame(nonEmptyValue.non_empty(), nonEmptyValue.non_empty());
 	}
+	
+	// TODO: If the return type is array -- it will be always copied before return to eliminate changes and assure that it stay unmodifiable.
 }
