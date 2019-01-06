@@ -60,19 +60,31 @@ abstract class AbstractPropertyMapper<RAW_TYPE, MAPPED_TYPE> implements IPropert
 		
 		if (this.validator != null)
 		{
-			if (mappedValue.getClass().isArray())
-				Arrays.stream((Object[]) mappedValue).forEach(this.validator::validate);
-			
-			else if (List.class.isAssignableFrom(this.returnType))
-				((List<?>) mappedValue).forEach(this.validator::validate);
-			
-			else if (Set.class.isAssignableFrom(this.returnType))
-				((Set<?>) mappedValue).forEach(this.validator::validate);
-			
-			else if (Map.class.isAssignableFrom(this.returnType))
-				((Map<?, ?>) mappedValue).entrySet().stream().map(entry -> new Object[]{entry.getKey(), entry.getValue()}).forEach(this.validator::validate);
-			else
-				this.validator.validate(mappedValue);
+			try
+			{
+				if (mappedValue.getClass().isArray())
+					Arrays.stream((Object[]) mappedValue).forEach(this.validator::validate);
+				
+				else if (List.class.isAssignableFrom(this.returnType))
+					((List<?>) mappedValue).forEach(this.validator::validate);
+				
+				else if (Set.class.isAssignableFrom(this.returnType))
+					((Set<?>) mappedValue).forEach(this.validator::validate);
+				
+				else if (Map.class.isAssignableFrom(this.returnType))
+					((Map<?, ?>) mappedValue).entrySet().stream().map(entry -> new Object[]{entry.getKey(), entry.getValue()})
+						.forEach(this.validator::validate);
+				else
+					this.validator.validate(mappedValue);
+			}
+			catch (PropertyValidateException e)
+			{
+				throw e;
+			}
+			catch (Exception e1)
+			{
+				throw new PropertyValidateException(e1.getMessage(), e1).logAndReturn();
+			}
 		}
 		
 		return mappedValue;

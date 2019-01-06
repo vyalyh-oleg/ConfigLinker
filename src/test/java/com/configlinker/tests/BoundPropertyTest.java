@@ -747,12 +747,12 @@ class Email
 	}
 }
 
-class EmailObjDomainValidator implements IPropertyValidator<String>
+class EmailObjDomainValidator implements IPropertyValidator<Email>
 {
 	@Override
-	public void validate(String value) throws PropertyValidateException
+	public void validate(Email value) throws PropertyValidateException
 	{
-		if (!value.endsWith("@physics.ua"))
+		if (!value.getEmail().endsWith("@physics.ua"))
 			throw new PropertyValidateException("'" + value + "' not in 'physics.ua' domain.");
 	}
 }
@@ -765,7 +765,7 @@ class EmailObjMapDomainValidator implements IPropertyValidator<Object[]>
 		// value[0] -- key, and is always String
 		// value[1] -- value, could be any object depending from return type in interface method
 		
-		if (!((String) value[1]).endsWith("@physics.ua"))
+		if (!((Email) value[1]).getEmail().endsWith("@physics.ua"))
 			throw new PropertyValidateException("'" + value[1] + "' for key '" + value[0] + "' not in 'physics.ua' domain.");
 	}
 }
@@ -773,70 +773,70 @@ class EmailObjMapDomainValidator implements IPropertyValidator<Object[]>
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
 interface CustomValidatorObj
 {
-	@BoundProperty(name = "workgroup.email", validator = EmailDomainValidator.class)
+	@BoundProperty(name = "workgroup.email", validator = EmailObjDomainValidator.class)
 	Email email();
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
 interface CustomValidatorObj_withError
 {
-	@BoundProperty(name = "workgroup.email.error", validator = EmailDomainValidator.class)
+	@BoundProperty(name = "workgroup.email.error", validator = EmailObjDomainValidator.class)
 	Email email();
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
 interface CustomValidatorArrayObj
 {
-	@BoundProperty(name = "workgroup.emails", validator = EmailDomainValidator.class)
+	@BoundProperty(name = "workgroup.emails", validator = EmailObjDomainValidator.class)
 	Email[] emailsArray();
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
 interface CustomValidatorArrayObj_withError
 {
-	@BoundProperty(name = "workgroup.emails.error", validator = EmailDomainValidator.class)
+	@BoundProperty(name = "workgroup.emails.error", validator = EmailObjDomainValidator.class)
 	Email[] emailsArray();
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
 interface CustomValidatorListObj
 {
-	@BoundProperty(name = "workgroup.emails", validator = EmailDomainValidator.class)
+	@BoundProperty(name = "workgroup.emails", validator = EmailObjDomainValidator.class)
 	List<Email> emailsList();
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
 interface CustomValidatorListObj_withError
 {
-	@BoundProperty(name = "workgroup.emails.error", validator = EmailDomainValidator.class)
+	@BoundProperty(name = "workgroup.emails.error", validator = EmailObjDomainValidator.class)
 	List<Email> emailsList();
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
 interface CustomValidatorSetObj
 {
-	@BoundProperty(name = "workgroup.emails", validator = EmailDomainValidator.class)
+	@BoundProperty(name = "workgroup.emails", validator = EmailObjDomainValidator.class)
 	Set<Email> emailsSet();
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
 interface CustomValidatorSetObj_withError
 {
-	@BoundProperty(name = "workgroup.emails.error", validator = EmailDomainValidator.class)
+	@BoundProperty(name = "workgroup.emails.error", validator = EmailObjDomainValidator.class)
 	Set<Email> emailsSet();
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
 interface CustomValidatorMapObj
 {
-	@BoundProperty(name = "workgroup.emails.map", validator = EmailMapDomainValidator.class)
+	@BoundProperty(name = "workgroup.emails.map", validator = EmailObjMapDomainValidator.class)
 	Map<String, Email> emailsMap();
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
 interface CustomValidatorMapObj_withError
 {
-	@BoundProperty(name = "workgroup.emails.map.error", validator = EmailMapDomainValidator.class)
+	@BoundProperty(name = "workgroup.emails.map.error", validator = EmailObjMapDomainValidator.class)
 	Map<String, Email> emailsMap();
 }
 
