@@ -7,5 +7,5 @@ import org.junit.jupiter.api.TestInstance;
 @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
 public class PropertyVariableSubstitutionTest extends AbstractBaseTest
 {
-
+	// propertyNamePrefix in BoundObject
 }
