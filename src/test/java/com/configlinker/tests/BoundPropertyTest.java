@@ -7,8 +7,10 @@ import com.configlinker.annotations.BoundObject;
 import com.configlinker.annotations.BoundProperty;
 import com.configlinker.enums.ErrorBehavior;
 import com.configlinker.enums.Whitespaces;
+import com.configlinker.exceptions.PropertyMapException;
 import com.configlinker.exceptions.PropertyMatchException;
 import com.configlinker.exceptions.PropertyNotFoundException;
+import com.configlinker.exceptions.PropertyParseException;
 import com.configlinker.exceptions.PropertyValidateException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -89,22 +91,6 @@ class BoundPropertyTest extends AbstractBaseTest
 		emailObjects.add(new Email("zinovij.nazarchuk@physics.ua"));
 		emailObjects.add(new Email("mark.gabovich@physics.ua"));
 		emailObjectsFromConfig = Collections.unmodifiableList(emailObjects);
-	}
-	
-	
-	private static class Email
-	{
-		private final String email;
-		
-		Email(String email)
-		{
-			this.email = email;
-		}
-		
-		String getEmail()
-		{
-			return email;
-		}
 	}
 	
 	// --------------------------------------------------------------------------------
@@ -312,11 +298,105 @@ class BoundPropertyTest extends AbstractBaseTest
 		Assertions.assertNull(exception.getCause());
 	}
 	
-	// TODO: tests for validate values: object, arrayOfObjects listOfObjects, setOfObjects, mapOfObjects
-	
+	// tests for validate custom object values: object, arrayOfObjects listOfObjects, setOfObjects, mapOfObjects
 	// --------------------------------------------------------------------------------
-	// emailObjectsFromConfig
 	
+	@Test
+	void test_customValidatorObj()
+	{
+		CustomValidatorObj email = this.getSingleConfigInstance(CustomValidatorObj.class);
+		Assertions.assertEquals(new Email("mark.gabovich@physics.ua"), email.email());
+	}
+	
+	@Test
+	void test_customValidatorObj_error()
+	{
+		PropertyValidateException exception = Assertions.assertThrows(PropertyValidateException.class, () -> {
+			CustomValidatorObj_withError email = this.getSingleConfigInstance(CustomValidatorObj_withError.class);
+		});
+		
+		Assertions.assertEquals("'zinovij#nazarchuk@physic.ua' not in 'physics.ua' domain.", exception.getMessage());
+		Assertions.assertNull(exception.getCause());
+	}
+	
+	@Test
+	void test_customValidatorArrayObj()
+	{
+		CustomValidatorArrayObj emails = this.getSingleConfigInstance(CustomValidatorArrayObj.class);
+		Assertions.assertArrayEquals(emailObjectsFromConfig.toArray(new Email[emailObjectsFromConfig.size()]), emails.emailsArray());
+	}
+	
+	@Test
+	void test_customValidatorArrayObj_error()
+	{
+		PropertyValidateException exception = Assertions.assertThrows(PropertyValidateException.class, () -> {
+			CustomValidatorArrayObj_withError emails = this.getSingleConfigInstance(CustomValidatorArrayObj_withError.class);
+		});
+		
+		Assertions.assertEquals("'zinovij#nazarchuk@physic.ua' not in 'physics.ua' domain.", exception.getMessage());
+		Assertions.assertNull(exception.getCause());
+	}
+	
+	@Test
+	void test_customValidatorListObj()
+	{
+		CustomValidatorListObj emails = this.getSingleConfigInstance(CustomValidatorListObj.class);
+		Assertions.assertEquals(emailObjectsFromConfig, emails.emailsList());
+	}
+	
+	@Test
+	void test_customValidatorListObj_error()
+	{
+		PropertyValidateException exception = Assertions.assertThrows(PropertyValidateException.class, () -> {
+			CustomValidatorListObj_withError emails = this.getSingleConfigInstance(CustomValidatorListObj_withError.class);
+		});
+		
+		Assertions.assertEquals("'zinovij#nazarchuk@physic.ua' not in 'physics.ua' domain.", exception.getMessage());
+		Assertions.assertNull(exception.getCause());
+	}
+	
+	@Test
+	void test_customValidatorSetObj()
+	{
+		LinkedHashSet<Email> emailsSetInConfig = new LinkedHashSet<>(emailObjectsFromConfig);
+		
+		CustomValidatorSetObj emails = this.getSingleConfigInstance(CustomValidatorSetObj.class);
+		Assertions.assertEquals(emailsSetInConfig, emails.emailsSet());
+	}
+	
+	@Test
+	void test_customValidatorSetObj_error()
+	{
+		PropertyValidateException exception = Assertions.assertThrows(PropertyValidateException.class, () -> {
+			CustomValidatorSetObj_withError emails = this.getSingleConfigInstance(CustomValidatorSetObj_withError.class);
+		});
+		
+		Assertions.assertEquals("'zinovij#nazarchuk@physic.ua' not in 'physics.ua' domain.", exception.getMessage());
+		Assertions.assertNull(exception.getCause());
+	}
+	
+	@Test
+	void test_customValidatorMapObj()
+	{
+		LinkedHashMap<String, Email> emailsMapFromConfig = new LinkedHashMap<>();
+		emailsMapFromConfig.put("vitaliy", new Email("vitaliy.mayko@physics.ua"));
+		emailsMapFromConfig.put("zinovij", new Email("zinovij.nazarchuk@physics.ua"));
+		emailsMapFromConfig.put("mark", new Email("mark.gabovich@physics.ua"));
+		
+		CustomValidatorMapObj emails = this.getSingleConfigInstance(CustomValidatorMapObj.class);
+		Assertions.assertEquals(emailsMapFromConfig, emails.emailsMap());
+	}
+	
+	@Test
+	void test_customValidatorMapObj_error()
+	{
+		PropertyValidateException exception = Assertions.assertThrows(PropertyValidateException.class, () -> {
+			CustomValidatorMapObj_withError emails = this.getSingleConfigInstance(CustomValidatorMapObj_withError.class);
+		});
+		
+		Assertions.assertEquals("'zinovij#nazarchuk@physic.ua' for key 'zinovij' not in 'physics.ua' domain.", exception.getMessage());
+		Assertions.assertNull(exception.getCause());
+	}
 	
 	// --------------------------------------------------------------------------------
 	
@@ -448,6 +528,37 @@ class BoundPropertyTest extends AbstractBaseTest
 			"Value for property 'workgroup.empty' not found, config interface 'com.configlinker.tests.ErrorBehaviorOverrideInPropertyAndObject4', method 'emptyValueThrowException'.",
 			exception.getMessage());
 	}
+	
+	// check throwing error on property parse (PropertyMatchException) and property map (PropertyMapException), when behaviour == NULL
+	// --------------------------------------------------------------------------------
+	
+	@Test
+	void test_errorBehaviorReturnNull_onRegexError()
+	{
+		PropertyMatchException exception = Assertions.assertThrows(PropertyMatchException.class, () -> {
+			Regex_withError_returnNullBehaviour errorOnRegex = getSingleConfigInstance(Regex_withError_returnNullBehaviour.class);
+		});
+		
+		Assertions.assertEquals("Property value '22O' doesn't match pattern '^\\d{3}$'.", exception.getMessage());
+	}
+	
+	@Test
+	void test_errorBehaviorReturnNull_onValidateError()
+	{
+		PropertyValidateException exception = Assertions.assertThrows(PropertyValidateException.class, () -> {
+			Validator_withError_returnNullBehaviour errorOnValidate = getSingleConfigInstance(Validator_withError_returnNullBehaviour.class);
+		});
+		
+		Assertions.assertEquals("'22O' not equal to '220'.", exception.getMessage());
+	}
+	
+	@Test
+	void test_errorBehaviorReturnNull_onMappingError()
+	{
+		PropertyMapException exception = Assertions.assertThrows(PropertyMapException.class, () -> {
+			PropertyMapException_returnNullBehaviour errorOnMapping = getSingleConfigInstance(PropertyMapException_returnNullBehaviour.class);
+		});
+	}
 }
 
 // --------------------------------------------------------------------------------
@@ -550,7 +661,7 @@ class EmailDomainValidator implements IPropertyValidator<String>
 	}
 }
 
-class EmailDomainMapValidator implements IPropertyValidator<Object[]>
+class EmailMapDomainValidator implements IPropertyValidator<Object[]>
 {
 	@Override
 	public void validate(Object[] value) throws PropertyValidateException
@@ -622,15 +733,143 @@ interface CustomValidatorSet_withError
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
 interface CustomValidatorMap
 {
-	@BoundProperty(name = "workgroup.emails.map", validator = EmailDomainMapValidator.class)
+	@BoundProperty(name = "workgroup.emails.map", validator = EmailMapDomainValidator.class)
 	Map<String, String> emailsMap();
 }
 
 @BoundObject(sourcePath = "configs/bound_property_functionality.properties")
 interface CustomValidatorMap_withError
 {
-	@BoundProperty(name = "workgroup.emails.map.error", validator = EmailDomainMapValidator.class)
+	@BoundProperty(name = "workgroup.emails.map.error", validator = EmailMapDomainValidator.class)
 	Map<String, String> emailsMap();
+}
+
+// --------------------------------------------------------------------------------
+
+class Email
+{
+	private final String email;
+	
+	Email(String email)
+	{
+		this.email = email;
+	}
+	
+	String getEmail()
+	{
+		return email;
+	}
+	
+	@Override
+	public boolean equals(Object o)
+	{
+		if (this == o) return true;
+		if (!(o instanceof Email)) return false;
+		
+		Email email1 = (Email) o;
+		
+		return getEmail().equals(email1.getEmail());
+	}
+	
+	@Override
+	public int hashCode()
+	{
+		return getEmail().hashCode();
+	}
+}
+
+class EmailObjDomainValidator implements IPropertyValidator<Email>
+{
+	@Override
+	public void validate(Email value) throws PropertyValidateException
+	{
+		if (!value.getEmail().endsWith("@physics.ua"))
+			throw new PropertyValidateException("'" + value.getEmail() + "' not in 'physics.ua' domain.");
+	}
+}
+
+class EmailObjMapDomainValidator implements IPropertyValidator<Object[]>
+{
+	@Override
+	public void validate(Object[] value) throws PropertyValidateException
+	{
+		// value[0] -- key, and is always String
+		// value[1] -- value, could be any object depending from return type in interface method
+		
+		Email emailObj = (Email) value[1];
+		if (!(emailObj.getEmail().endsWith("@physics.ua")))
+			throw new PropertyValidateException("'" + emailObj.getEmail() + "' for key '" + value[0] + "' not in 'physics.ua' domain.");
+	}
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface CustomValidatorObj
+{
+	@BoundProperty(name = "workgroup.email", validator = EmailObjDomainValidator.class)
+	Email email();
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface CustomValidatorObj_withError
+{
+	@BoundProperty(name = "workgroup.email.error", validator = EmailObjDomainValidator.class)
+	Email email();
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface CustomValidatorArrayObj
+{
+	@BoundProperty(name = "workgroup.emails", validator = EmailObjDomainValidator.class)
+	Email[] emailsArray();
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface CustomValidatorArrayObj_withError
+{
+	@BoundProperty(name = "workgroup.emails.error", validator = EmailObjDomainValidator.class)
+	Email[] emailsArray();
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface CustomValidatorListObj
+{
+	@BoundProperty(name = "workgroup.emails", validator = EmailObjDomainValidator.class)
+	List<Email> emailsList();
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface CustomValidatorListObj_withError
+{
+	@BoundProperty(name = "workgroup.emails.error", validator = EmailObjDomainValidator.class)
+	List<Email> emailsList();
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface CustomValidatorSetObj
+{
+	@BoundProperty(name = "workgroup.emails", validator = EmailObjDomainValidator.class)
+	Set<Email> emailsSet();
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface CustomValidatorSetObj_withError
+{
+	@BoundProperty(name = "workgroup.emails.error", validator = EmailObjDomainValidator.class)
+	Set<Email> emailsSet();
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface CustomValidatorMapObj
+{
+	@BoundProperty(name = "workgroup.emails.map", validator = EmailObjMapDomainValidator.class)
+	Map<String, Email> emailsMap();
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface CustomValidatorMapObj_withError
+{
+	@BoundProperty(name = "workgroup.emails.map.error", validator = EmailObjMapDomainValidator.class)
+	Map<String, Email> emailsMap();
 }
 
 // --------------------------------------------------------------------------------
@@ -707,4 +946,37 @@ interface ErrorBehaviorOverrideInPropertyAndObject4
 	
 	@BoundProperty(name = "workgroup.empty")
 	String emptyValueThrowException();
+}
+
+// --------------------------------------------------------------------------------
+
+class ValueValidator implements IPropertyValidator<String>
+{
+	@Override
+	public void validate(String value) throws PropertyValidateException
+	{
+		if (!value.equals("220"))
+			throw new PropertyValidateException("'" + value + "' not equal to '220'.");
+	}
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface Regex_withError_returnNullBehaviour
+{
+	@BoundProperty(name = "workgroup.intvalue", regex = "^\\d{3}$", errorBehavior = ErrorBehavior.RETURN_NULL)
+	String value();
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface Validator_withError_returnNullBehaviour
+{
+	@BoundProperty(name = "workgroup.intvalue", validator = ValueValidator.class, errorBehavior = ErrorBehavior.RETURN_NULL)
+	String value();
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface PropertyMapException_returnNullBehaviour
+{
+	@BoundProperty(name = "workgroup.intvalue", errorBehavior = ErrorBehavior.RETURN_NULL)
+	Integer value();
 }
