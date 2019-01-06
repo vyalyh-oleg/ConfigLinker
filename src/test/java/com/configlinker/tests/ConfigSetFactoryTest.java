@@ -25,5 +25,6 @@ class ConfigSetFactoryTest extends AbstractBaseTest
 		Assertions.assertSame(nonEmptyValue.non_empty(), nonEmptyValue.non_empty());
 	}
 	
-	// TODO: If the return type is array -- it will be always copied before return to eliminate changes and assure that it stay unmodifiable.
+	// If the return type is array, it will be always return the same array, so the array object cannot be used as unmodifiable (immutable representations of set of properties).
+	// Use List, Set or Map instead.
 }

@@ -7,8 +7,10 @@ import com.configlinker.annotations.BoundObject;
 import com.configlinker.annotations.BoundProperty;
 import com.configlinker.enums.ErrorBehavior;
 import com.configlinker.enums.Whitespaces;
+import com.configlinker.exceptions.PropertyMapException;
 import com.configlinker.exceptions.PropertyMatchException;
 import com.configlinker.exceptions.PropertyNotFoundException;
+import com.configlinker.exceptions.PropertyParseException;
 import com.configlinker.exceptions.PropertyValidateException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -527,9 +529,36 @@ class BoundPropertyTest extends AbstractBaseTest
 			exception.getMessage());
 	}
 	
-	// TODO: check throwing error on property parse (PropertyMatchException) and property map (PropertyMapException), when behaviour == NULL
+	// check throwing error on property parse (PropertyMatchException) and property map (PropertyMapException), when behaviour == NULL
+	// --------------------------------------------------------------------------------
 	
+	@Test
+	void test_errorBehaviorReturnNull_onRegexError()
+	{
+		PropertyMatchException exception = Assertions.assertThrows(PropertyMatchException.class, () -> {
+			Regex_withError_returnNullBehaviour errorOnRegex = getSingleConfigInstance(Regex_withError_returnNullBehaviour.class);
+		});
+		
+		Assertions.assertEquals("Property value '22O' doesn't match pattern '^\\d{3}$'.", exception.getMessage());
+	}
 	
+	@Test
+	void test_errorBehaviorReturnNull_onValidateError()
+	{
+		PropertyValidateException exception = Assertions.assertThrows(PropertyValidateException.class, () -> {
+			Validator_withError_returnNullBehaviour errorOnValidate = getSingleConfigInstance(Validator_withError_returnNullBehaviour.class);
+		});
+		
+		Assertions.assertEquals("'22O' not equal to '220'.", exception.getMessage());
+	}
+	
+	@Test
+	void test_errorBehaviorReturnNull_onMappingError()
+	{
+		PropertyMapException exception = Assertions.assertThrows(PropertyMapException.class, () -> {
+			PropertyMapException_returnNullBehaviour errorOnMapping = getSingleConfigInstance(PropertyMapException_returnNullBehaviour.class);
+		});
+	}
 }
 
 // --------------------------------------------------------------------------------
@@ -917,4 +946,37 @@ interface ErrorBehaviorOverrideInPropertyAndObject4
 	
 	@BoundProperty(name = "workgroup.empty")
 	String emptyValueThrowException();
+}
+
+// --------------------------------------------------------------------------------
+
+class ValueValidator implements IPropertyValidator<String>
+{
+	@Override
+	public void validate(String value) throws PropertyValidateException
+	{
+		if (!value.equals("220"))
+			throw new PropertyValidateException("'" + value + "' not equal to '220'.");
+	}
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface Regex_withError_returnNullBehaviour
+{
+	@BoundProperty(name = "workgroup.intvalue", regex = "^\\d{3}$", errorBehavior = ErrorBehavior.RETURN_NULL)
+	String value();
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface Validator_withError_returnNullBehaviour
+{
+	@BoundProperty(name = "workgroup.intvalue", validator = ValueValidator.class, errorBehavior = ErrorBehavior.RETURN_NULL)
+	String value();
+}
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface PropertyMapException_returnNullBehaviour
+{
+	@BoundProperty(name = "workgroup.intvalue", errorBehavior = ErrorBehavior.RETURN_NULL)
+	Integer value();
 }
