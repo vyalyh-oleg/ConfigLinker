@@ -528,6 +528,8 @@ class BoundPropertyTest extends AbstractBaseTest
 	}
 	
 	// TODO: check throwing error on property parse (PropertyMatchException) and property map (PropertyMapException), when behaviour == NULL
+	
+	
 }
 
 // --------------------------------------------------------------------------------
@@ -753,7 +755,7 @@ class EmailObjDomainValidator implements IPropertyValidator<Email>
 	public void validate(Email value) throws PropertyValidateException
 	{
 		if (!value.getEmail().endsWith("@physics.ua"))
-			throw new PropertyValidateException("'" + value + "' not in 'physics.ua' domain.");
+			throw new PropertyValidateException("'" + value.getEmail() + "' not in 'physics.ua' domain.");
 	}
 }
 
@@ -765,8 +767,9 @@ class EmailObjMapDomainValidator implements IPropertyValidator<Object[]>
 		// value[0] -- key, and is always String
 		// value[1] -- value, could be any object depending from return type in interface method
 		
-		if (!((Email) value[1]).getEmail().endsWith("@physics.ua"))
-			throw new PropertyValidateException("'" + value[1] + "' for key '" + value[0] + "' not in 'physics.ua' domain.");
+		Email emailObj = (Email) value[1];
+		if (!(emailObj.getEmail().endsWith("@physics.ua")))
+			throw new PropertyValidateException("'" + emailObj.getEmail() + "' for key '" + value[0] + "' not in 'physics.ua' domain.");
 	}
 }
 
