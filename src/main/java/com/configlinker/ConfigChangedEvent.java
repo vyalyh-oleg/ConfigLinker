@@ -40,8 +40,8 @@ final public class ConfigChangedEvent
 	}
 	
 	/**
-	 * @return The exception with the reason if an error occurred during updating configuration.<br>
-	 * In such case {@link #getRawValues()} can return null (if the error happened before new properties have been loaded).
+	 * @return The exception with the reason if an error occurred during configuration update.<br>
+	 * In such case {@link #getRawValues()} can return null (if the error had happened before new properties was loaded).
 	 */
 	public ConfigLinkerRuntimeException getException()
 	{

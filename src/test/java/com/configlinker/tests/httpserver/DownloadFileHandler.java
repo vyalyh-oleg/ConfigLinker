@@ -34,12 +34,18 @@ public class DownloadFileHandler implements HttpHandler
 		String fileName = fullPath.substring(PATH.length());
 		Path filePath = folderPath.resolve(fileName);
 		
+		// TODO: log request info to the file in 'test_workdir/logs' directory
+		// 1-line: fileName
+		// 2-line: headers (one by line)
+		// n-line: blank
+		// n+1 line: another request data
+		
 		httpExchange.getResponseHeaders().add("Content-Type", "text/plain");
 		
 		if (!Files.exists(filePath))
 		{
 			byte[] msg = ("File '" + fileName + "' not found.").getBytes();
-			httpExchange.sendResponseHeaders(400, msg.length);
+			httpExchange.sendResponseHeaders(404, msg.length);
 			httpExchange.getResponseBody().write(msg);
 		}
 		else

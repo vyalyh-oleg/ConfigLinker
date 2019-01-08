@@ -16,14 +16,14 @@ class LoadersTest extends AbstractBaseTest
 	void test_ClasspathLoader()
 	{
 		LoadFromClasspath loadFromClasspath = getSingleConfigInstance(LoadFromClasspath.class);
-		Assertions.assertEquals("classpath_config.properties", loadFromClasspath.getConfigName());
+		Assertions.assertEquals("value from classpath_config.properties", loadFromClasspath.getConfigName());
 	}
 	
 	@Test
 	void test_PropertyFileLoader()
 	{
 		LoadFromFile loadFromFile = getSingleConfigInstance(LoadFromFile.class);
-		Assertions.assertEquals("workdir_config.properties", loadFromFile.getConfigName());
+		Assertions.assertEquals("value from workdir_config.properties", loadFromFile.getConfigName());
 	}
 	
 	@Test
@@ -35,7 +35,7 @@ class LoadersTest extends AbstractBaseTest
 			SimpleHttpServer.start();
 			
 			LoadFromHttp loadFromHttp = getSingleConfigInstance(LoadFromHttp.class);
-			Assertions.assertEquals("http_config.properties", loadFromHttp.getConfigName());
+			Assertions.assertEquals("value from http_config.properties", loadFromHttp.getConfigName());
 		}
 		finally
 		{
@@ -43,10 +43,34 @@ class LoadersTest extends AbstractBaseTest
 		}
 	}
 	
-	@Test @Disabled("TODO: implement")
+	// httpHeaders
+	@Disabled("TODO: implement")
+	@Test
+	void test_HttpLoaderWithCustomHeaders()
+	{
+		// TODO: implement test_HttpLoaderWithCustomHeaders
+		try
+		{
+			SimpleHttpServer.prepare();
+			SimpleHttpServer.start();
+			
+			LoadFromHttp loadFromHttp = getSingleConfigInstance(LoadFromHttp.class);
+			Assertions.assertEquals("value from classpath_config.properties", loadFromHttp.getConfigName());
+			
+			// check headers from log file in 'test_workdir/logs'
+		}
+		finally
+		{
+			// delete all log files
+			SimpleHttpServer.shutdown();
+		}
+	}
+	
+	@Test
+	@Disabled("TODO: implement")
 	void test_ConfigLinkerLoader()
 	{
-		// TODO: implement
+		// TODO: implement test_ConfigLinkerLoader
 		Assertions.fail("Not implemented.");
 	}
 }
@@ -69,6 +93,14 @@ interface LoadFromClasspath
 
 @BoundObject(sourcePath = "http://" + SimpleHttpServer.hostName + ":" + SimpleHttpServer.port + DownloadFileHandler.PATH + "http_config.properties", sourceScheme = SourceScheme.HTTP)
 interface LoadFromHttp
+{
+	@BoundProperty(name = "config.name")
+	String getConfigName();
+}
+
+@BoundObject(sourcePath = "http://" + SimpleHttpServer.hostName + ":" + SimpleHttpServer.port + DownloadFileHandler.PATH + "http_config.properties", sourceScheme = SourceScheme.HTTP,
+	httpHeaders = {"Authorize:<my-secret-key>", "Server-Id: 1234567890"})
+interface LoadFromHttpWithHeaders
 {
 	@BoundProperty(name = "config.name")
 	String getConfigName();
