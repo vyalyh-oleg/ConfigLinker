@@ -8,14 +8,31 @@ import com.configlinker.enums.SourceScheme;
 import com.configlinker.enums.TrackPolicy;
 import com.configlinker.tests.httpserver.DownloadFileHandler;
 import com.configlinker.tests.httpserver.SimpleHttpServer;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Properties;
 
 
 @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
 class BoundObjectTrackChangesTest extends AbstractBaseTest
 {
+	private static final Path templatePropertyFilePath = Paths.get("./configs/track_changes.template.properties");
+	private static final String nameKey = "change.name";
+	private static final String originalName = "John";
+	private static final String newName = "Joe";
+	private static final String surnameKey = "change.surname";
+	private static final String originalSurname = "Kirigaya";
+	private static final String newSurname = "Black";
+	
 	@Test
 	void someTest()
 	{
@@ -25,10 +42,49 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 		//FactorySettingsBuilder.create().setListener
 	}
 	
-	@Test @Disabled
-	void test_trackFileChanges()
+	private void changeProperties(Path filePath) throws IOException
 	{
+		try (InputStream propFileIS = Files.newInputStream(filePath);
+		     OutputStream propFileOS = Files.newOutputStream(filePath))
+		{
+			Properties fileProp = new Properties();
+			fileProp.load(propFileIS);
+			fileProp.put(nameKey, newName);
+			fileProp.put(surnameKey, newSurname);
+			fileProp.store(propFileOS, "Modified");
+		}
+	}
 	
+	@Test
+	void test_trackFileChanges() throws InterruptedException, IOException
+	{
+		Path trackFilePath = null;
+		try
+		{
+			trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes.file.properties");
+			Files.copy(templatePropertyFilePath, trackFilePath);
+			TrackFileChanges trackFileChanges = getSingleConfigInstance(TrackFileChanges.class);
+			Assertions.assertEquals(originalName, trackFileChanges.name());
+			Assertions.assertEquals(originalSurname, trackFileChanges.surname());
+			changeProperties(trackFilePath);
+			Thread.sleep(5000);
+			Assertions.assertEquals(newName, trackFileChanges.name());
+			Assertions.assertEquals(newSurname, trackFileChanges.surname());
+		}
+		finally
+		{
+			if (trackFilePath != null)
+			{
+				try
+				{
+					Files.deleteIfExists(trackFilePath);
+				}
+				catch (IOException ignore)
+				{
+					ignore.printStackTrace();
+				}
+			}
+		}
 	}
 	
 	@Test @Disabled
@@ -50,7 +106,7 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 	}
 	
 	@Test @Disabled
-	void test_trackHttpChangesWithCustomIntervalAndListener()
+	void test_trackFileChangesAndListener()
 	{
 	
 	}
