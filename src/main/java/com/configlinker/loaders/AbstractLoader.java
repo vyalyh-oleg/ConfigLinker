@@ -13,7 +13,11 @@ import com.configlinker.exceptions.PropertyMatchException;
 import com.configlinker.exceptions.PropertyNotFoundException;
 import com.configlinker.exceptions.PropertyValidateException;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -41,21 +45,41 @@ abstract class AbstractLoader
 	protected void startTrackChanges() throws PropertyLoadException
 	{
 		throw new PropertyLoadException(
-			"Cannot perform 'startTrackChanges', because tracking changes didn't implemented for '" + this.getClass().getName() + "'.").logAndReturn();
+			"Cannot perform 'startTrackChanges', because tracking changes didn't implemented for '" + this.getClass().getName() + "'.")
+			.logAndReturn();
 	}
 	
 	protected void stopTrackChanges() throws PropertyLoadException
 	{
 		throw new PropertyLoadException(
-			"Cannot perform 'stopTrackChanges', because tracking changes didn't implemented for '" + this.getClass().getName() + "'.").logAndReturn();
+			"Cannot perform 'stopTrackChanges', because tracking changes didn't implemented for '" + this.getClass().getName() + "'.")
+			.logAndReturn();
 	}
 	
-	final protected Collection<ConfigDescription> getConfigDescriptions()
+	final Collection<ConfigDescription> getConfigDescriptions()
 	{
 		return this.configDescriptions.values();
 	}
 	
-	final protected void loadProperties() throws PropertyLoadException, PropertyValidateException, PropertyMatchException, PropertyMapException
+	Properties readPropertiesFileFromDisk(Path fullFilePath, ConfigDescription configDescription)
+	{
+		try (BufferedReader propFileReader = Files.newBufferedReader(fullFilePath, configDescription.getCharset()))
+		{
+			Properties newProperties = new Properties();
+			newProperties.load(propFileReader);
+			propFileReader.close();
+			return newProperties;
+		}
+		catch (IOException e)
+		{
+			throw new PropertyLoadException(
+				"Error during loading raw properties from file '" + fullFilePath + "' with charset '" + configDescription.getCharset().toString()
+					+ "', config interface: '" + configDescription.getConfInterface().getName() + "'.", e)
+				.logAndReturn();
+		}
+	}
+	
+	final void loadProperties() throws PropertyLoadException, PropertyValidateException, PropertyMatchException, PropertyMapException
 	{
 		for (ConfigDescription configDescription : this.configDescriptions.values())
 		{
@@ -90,8 +114,9 @@ abstract class AbstractLoader
 				if (propertyDescription.getErrorBehavior() == ErrorBehavior.THROW_EXCEPTION)
 				{
 					throw new PropertyNotFoundException(
-						"Value for property '" + fullPropertyName + "' not found, config interface '" + configInterface.getName() +
-							"', method '" + entryPropertyDescription.getKey().getName() + "'.").logAndReturn();
+						"Value for property '" + fullPropertyName + "' not found, config interface '" + configInterface.getName()
+							+ "', method '" + entryPropertyDescription.getKey().getName() + "'.")
+						.logAndReturn();
 				}
 			}
 			else
@@ -110,7 +135,7 @@ abstract class AbstractLoader
 	 *
 	 * @param configDescriptions -
 	 */
-	final protected void refreshProperties(Set<ConfigDescription> configDescriptions)
+	final void refreshProperties(Set<ConfigDescription> configDescriptions)
 	{
 		ConfigDescription description = configDescriptions.iterator().next();
 		Properties oldProperties = rawProperties.get(description.getSourcePath());
@@ -124,8 +149,8 @@ abstract class AbstractLoader
 			Loggers.getMainLogger().error("Cannot load raw properties for config interface '{}'.", description.getConfInterface().getName());
 			for (ConfigDescription configDescription : configDescriptions)
 			{
-				ConfigChangedEvent configChangedEvent = new ConfigChangedEvent(configDescription.getConfInterface(), configDescription.getSourcePath(), null,
-					e);
+				ConfigChangedEvent configChangedEvent = new ConfigChangedEvent(configDescription.getConfInterface(), configDescription.getSourcePath(),
+					null, e);
 				configDescription.fireConfigChanged(configChangedEvent);
 			}
 			return;
@@ -208,8 +233,9 @@ abstract class AbstractLoader
 					if (propertyDescription.getErrorBehavior() == ErrorBehavior.THROW_EXCEPTION)
 					{
 						throw new PropertyNotFoundException(
-							"Value for property '" + propertyDescription.getName() + "' not found, config interface '" + configInterface.getName() +
-								"', method '" + method.getName() + "'.").logAndReturn();
+							"Value for property '" + propertyDescription.getName() + "' not found, config interface '" + configInterface.getName()
+								+ "', method '" + method.getName() + "'.")
+							.logAndReturn();
 					}
 				}
 				else

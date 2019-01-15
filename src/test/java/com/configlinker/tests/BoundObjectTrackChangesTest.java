@@ -4,6 +4,7 @@ import com.configlinker.ConfigChangedEvent;
 import com.configlinker.IConfigChangeListener;
 import com.configlinker.annotations.BoundObject;
 import com.configlinker.annotations.BoundProperty;
+import com.configlinker.enums.ErrorBehavior;
 import com.configlinker.enums.SourceScheme;
 import com.configlinker.enums.TrackPolicy;
 import com.configlinker.tests.httpserver.DownloadFileHandler;
@@ -19,6 +20,8 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.util.Properties;
 
 
@@ -33,23 +36,56 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 	private static final String originalSurname = "Kirigaya";
 	private static final String newSurname = "Black";
 	
-	@Test
-	void someTest()
-	{
-		// trackPolicy
-		// trackInterval
-		// changeListener
-		//FactorySettingsBuilder.create().setListener
-	}
+	// trackPolicy
+	// trackInterval
+	// changeListener
+	//FactorySettingsBuilder.create().setListener
 	
 	private void changeProperties(Path filePath) throws IOException
 	{
-		try (InputStream propFileIS = Files.newInputStream(filePath);
-		     OutputStream propFileOS = Files.newOutputStream(filePath))
+		Properties fileProp;
+		try (InputStream propFileIS = Files.newInputStream(filePath))
 		{
-			Properties fileProp = new Properties();
+			fileProp = new Properties();
 			fileProp.load(propFileIS);
+		}
+		
+		try (OutputStream propFileOS = Files.newOutputStream(filePath, StandardOpenOption.WRITE))
+		{
 			fileProp.put(nameKey, newName);
+			fileProp.put(surnameKey, newSurname);
+			fileProp.store(propFileOS, "Modified");
+		}
+	}
+	
+	private void partiallyChangeProperties(Path filePath) throws IOException
+	{
+		Properties fileProp;
+		try (InputStream propFileIS = Files.newInputStream(filePath))
+		{
+			fileProp = new Properties();
+			fileProp.load(propFileIS);
+		}
+		
+		try (OutputStream propFileOS = Files.newOutputStream(filePath, StandardOpenOption.WRITE))
+		{
+			fileProp.put(nameKey, newName);
+			fileProp.store(propFileOS, "Modified");
+		}
+	}
+	
+	private void partiallyRemoveAndChangeProperties(Path filePath) throws IOException
+	{
+		Properties fileProp;
+		try (InputStream propFileIS = Files.newInputStream(filePath))
+		{
+			fileProp = new Properties();
+			fileProp.load(propFileIS);
+		}
+		
+		try (OutputStream propFileOS = Files.newOutputStream(filePath, StandardOpenOption.WRITE))
+		{
+			fileProp.remove(nameKey);
 			fileProp.put(surnameKey, newSurname);
 			fileProp.store(propFileOS, "Modified");
 		}
@@ -62,12 +98,12 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 		try
 		{
 			trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes.file.properties");
-			Files.copy(templatePropertyFilePath, trackFilePath);
+			Files.copy(templatePropertyFilePath, trackFilePath, StandardCopyOption.REPLACE_EXISTING);
 			TrackFileChanges trackFileChanges = getSingleConfigInstance(TrackFileChanges.class);
 			Assertions.assertEquals(originalName, trackFileChanges.name());
 			Assertions.assertEquals(originalSurname, trackFileChanges.surname());
 			changeProperties(trackFilePath);
-			Thread.sleep(5000);
+			Thread.sleep(10000);
 			Assertions.assertEquals(newName, trackFileChanges.name());
 			Assertions.assertEquals(newSurname, trackFileChanges.surname());
 		}
@@ -87,10 +123,127 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 		}
 	}
 	
-	@Test @Disabled
+	@Test
+	void test_trackFilePartialChanges() throws InterruptedException, IOException
+	{
+		Path trackFilePath = null;
+		try
+		{
+			trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes.file.properties");
+			Files.copy(templatePropertyFilePath, trackFilePath, StandardCopyOption.REPLACE_EXISTING);
+			TrackFileChanges trackFileChanges = getSingleConfigInstance(TrackFileChanges.class);
+			Assertions.assertEquals(originalName, trackFileChanges.name());
+			Assertions.assertEquals(originalSurname, trackFileChanges.surname());
+			partiallyChangeProperties(trackFilePath);
+			Thread.sleep(10000);
+			Assertions.assertEquals(newName, trackFileChanges.name());
+			Assertions.assertEquals(originalSurname, trackFileChanges.surname());
+		}
+		finally
+		{
+			if (trackFilePath != null)
+			{
+				try
+				{
+					Files.deleteIfExists(trackFilePath);
+				}
+				catch (IOException ignore)
+				{
+					ignore.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	@Test
+	void test_trackFilePartialChangesWithThrowBehaviour() throws InterruptedException, IOException
+	{
+		Path trackFilePath = null;
+		try
+		{
+			trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes.file.properties");
+			Files.copy(templatePropertyFilePath, trackFilePath, StandardCopyOption.REPLACE_EXISTING);
+			TrackFileChanges trackFileChanges = getSingleConfigInstance(TrackFileChanges.class);
+			Assertions.assertEquals(originalName, trackFileChanges.name());
+			Assertions.assertEquals(originalSurname, trackFileChanges.surname());
+			partiallyRemoveAndChangeProperties(trackFilePath);
+			Thread.sleep(10000);
+			Assertions.assertEquals(newName, trackFileChanges.name());
+			Assertions.assertEquals(originalSurname, trackFileChanges.surname());
+		}
+		finally
+		{
+			if (trackFilePath != null)
+			{
+				try
+				{
+					Files.deleteIfExists(trackFilePath);
+				}
+				catch (IOException ignore)
+				{
+					ignore.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	@Test
+	void test_trackFilePartialChangesWithNullBehaviour() throws InterruptedException, IOException
+	{
+		Path trackFilePath = null;
+		try
+		{
+			trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes.file.properties");
+			Files.copy(templatePropertyFilePath, trackFilePath, StandardCopyOption.REPLACE_EXISTING);
+			TrackFileChangesNullBehaviour trackFileChanges = getSingleConfigInstance(TrackFileChangesNullBehaviour.class);
+			Assertions.assertEquals(originalName, trackFileChanges.name());
+			Assertions.assertEquals(originalSurname, trackFileChanges.surname());
+			partiallyRemoveAndChangeProperties(trackFilePath);
+			Thread.sleep(10000);
+			Assertions.assertEquals(newName, trackFileChanges.name());
+			Assertions.assertEquals(originalSurname, trackFileChanges.surname());
+		}
+		finally
+		{
+			if (trackFilePath != null)
+			{
+				try
+				{
+					Files.deleteIfExists(trackFilePath);
+				}
+				catch (IOException ignore)
+				{
+					ignore.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	@Test
 	void test_trackFileClasspathChanges()
 	{
-	
+		Path trackFilePath = null;
+		try
+		{
+			trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes.classpath.properties");
+			Files.copy(templatePropertyFilePath, trackFilePath, StandardCopyOption.REPLACE_EXISTING);
+			TrackFileClasspathChanges trackFileChanges = getSingleConfigInstance(TrackFileClasspathChanges.class);
+			Assertions.assertEquals(originalName, trackFileChanges.name());
+			Assertions.assertEquals(originalSurname, trackFileChanges.surname());
+			partiallyChangeProperties(trackFilePath);
+			Thread.sleep(10000);
+			Assertions.assertEquals(newName, trackFileChanges.name());
+			Assertions.assertEquals(originalSurname, trackFileChanges.surname());
+		}
+		catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		
 	}
 	
 	@Test @Disabled
@@ -122,7 +275,17 @@ interface TrackFileChanges
 	String surname();
 }
 
-@BoundObject(sourceScheme = SourceScheme.CLASSPATH, sourcePath = "./configs/track_changes.classpath.properties", trackingPolicy = TrackPolicy.ENABLE)
+@BoundObject(sourcePath = "./configs/track_changes.file.properties", trackingPolicy = TrackPolicy.ENABLE)
+interface TrackFileChangesNullBehaviour
+{
+	@BoundProperty(name = "change.name", errorBehavior = ErrorBehavior.RETURN_NULL)
+	String name();
+	
+	@BoundProperty(name = "change.surname")
+	String surname();
+}
+
+@BoundObject(sourceScheme = SourceScheme.CLASSPATH, sourcePath = "./track_changes.classpath.properties", trackingPolicy = TrackPolicy.ENABLE)
 interface TrackFileClasspathChanges
 {
 	@BoundProperty(name = "change.name")

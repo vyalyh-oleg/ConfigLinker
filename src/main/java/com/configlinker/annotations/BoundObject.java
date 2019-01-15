@@ -25,13 +25,11 @@ public @interface BoundObject {
 	SourceScheme sourceScheme() default SourceScheme.INHERIT;
 
 	/**
-	 * <p>
-	 * Must point to source where data can be found to fill in this object with necessary values.
-	 * <p>
-	 * You can use variables for substituting some parts of this path.
-	 * Variables can be set in {@link FactorySettingsBuilder#addParameter(String, String)}.
-	 * <p>
-	 * Example path:
+	 * <p>Must point to source where data can be found to fill in this object with necessary values.
+	 * <p>You can use variables for substituting some parts of this path.
+	 * <br>Variables can be set in {@link FactorySettingsBuilder#addParameter(String, String)}.
+	 * <p>Path could be relative to the current working directory or to the root of classpath (depends on {@link SourceScheme}).
+	 * <p>Example path:
 	 * <pre>"${substitution1}/path_part1/${substitution2}/path_part2/endPart"</pre>
 	 * @return -
 	 */
