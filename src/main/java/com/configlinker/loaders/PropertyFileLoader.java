@@ -7,11 +7,9 @@ import com.configlinker.exceptions.PropertyLoadException;
 import com.configlinker.exceptions.PropertyMatchException;
 import com.configlinker.exceptions.PropertyValidateException;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardWatchEventKinds;
@@ -44,23 +42,28 @@ class PropertyFileLoader extends AbstractLoader
 		this.startTrackChanges();
 	}
 	
+	protected Path getFullFilePath(ConfigDescription configDescription)
+	{
+		Path fullFilePath = Paths.get(configDescription.getSourcePath()).normalize().toAbsolutePath();
+		
+		if (!Files.exists(fullFilePath))
+		{
+			throw new PropertyLoadException(
+				"Configuration file '" + fullFilePath.getFileName().toString() + "' not exists, full file path: '" + fullFilePath
+					.toString() + "'; see annotation parameter @BoundObject.sourcePath() on interface '" + configDescription.getConfInterface()
+					.getName() + "'.").logAndReturn();
+		}
+		
+		return fullFilePath;
+	}
+	
 	@Override
 	protected void prepareLoader() throws PropertyLoadException
 	{
 		Path fullFilePath;
 		for (ConfigDescription description : getConfigDescriptions())
 		{
-			try
-			{
-				fullFilePath = Paths.get(description.getSourcePath()).normalize().toAbsolutePath();
-			}
-			catch (InvalidPathException e)
-			{
-				throw new PropertyLoadException(
-					"Wrong file path '" + description.getSourcePath() + "' in annotation parameter @BoundObject.sourcePath() on interface '" + description
-						.getConfInterface().getName() + "'.").logAndReturn().logAndReturn();
-			}
-			
+			fullFilePath = getFullFilePath(description);
 			if (description.getTrackPolicy() == TrackPolicy.ENABLE)
 				watchedFiles.computeIfAbsent(fullFilePath, path -> new HashSet<>()).add(description);
 		}
@@ -69,14 +72,7 @@ class PropertyFileLoader extends AbstractLoader
 	@Override
 	protected Properties loadRawProperties(ConfigDescription configDescription) throws PropertyLoadException
 	{
-		Path fullFilePath = Paths.get(configDescription.getSourcePath()).normalize().toAbsolutePath();
-		
-		if (!Files.exists(fullFilePath))
-			throw new PropertyLoadException(
-				"Configuration file '" + fullFilePath.getFileName().toString() + "' not exists, full file path: '" + fullFilePath
-					.toString() + "'; see annotation parameter @BoundObject.sourcePath() on interface '" + configDescription.getConfInterface()
-					.getName() + "'.").logAndReturn();
-		
+		Path fullFilePath = getFullFilePath(configDescription);
 		return readPropertiesFileFromDisk(fullFilePath, configDescription);
 	}
 	

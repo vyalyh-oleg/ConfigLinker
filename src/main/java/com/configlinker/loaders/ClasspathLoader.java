@@ -10,7 +10,6 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.Properties;
 
 
 final class ClasspathLoader extends PropertyFileLoader
@@ -21,19 +20,14 @@ final class ClasspathLoader extends PropertyFileLoader
 	}
 	
 	@Override
-	protected void prepareLoader()
-	{
-	
-	}
-	
-	@Override
-	protected Properties loadRawProperties(ConfigDescription configDescription) throws PropertyLoadException
+	final protected Path getFullFilePath(ConfigDescription configDescription)
 	{
 		Path relativeFilePath = Paths.get(configDescription.getSourcePath()).normalize();
 		if (relativeFilePath.isAbsolute())
 		{
-			throw new PropertyLoadException("'" + configDescription.getConfInterface()
-				.getName() + "' doesn't accept absolute path, only relative, because ConfigLinker searches configuration files in your classpath directories or 'jar' files. Actual source path:'" + relativeFilePath + "'.")
+			throw new PropertyLoadException("'" + configDescription.getConfInterface().getName()
+				+ "' doesn't accept absolute path, only relative, because ConfigLinker searches configuration files in your classpath directories or 'jar' files. Actual source path:'"
+				+ relativeFilePath + "'.")
 				.logAndReturn();
 		}
 		
@@ -52,10 +46,10 @@ final class ClasspathLoader extends PropertyFileLoader
 		catch (URISyntaxException e)
 		{
 			throw new PropertyLoadException("'" + this.getClass()
-				.getSimpleName() + "' couldn't get resource from classpath and convert it to ordinary 'Path' object. Actual resource URL:'" + resource
-				.toString() + "'.").logAndReturn();
+				.getSimpleName() + "' couldn't get resource from classpath and convert it to ordinary 'Path' object. Actual resource URL:'" + resource.toString() + "'.")
+				.logAndReturn();
 		}
 		
-		return readPropertiesFileFromDisk(fullFilePath, configDescription);
+		return fullFilePath;
 	}
 }
