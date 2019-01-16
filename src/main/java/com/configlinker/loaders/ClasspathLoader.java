@@ -13,15 +13,11 @@ import java.util.HashMap;
 import java.util.Properties;
 
 
-final class ClasspathLoader extends AbstractLoader
+final class ClasspathLoader extends PropertyFileLoader
 {
 	ClasspathLoader(HashMap<Class<?>, ConfigDescription> configDescriptions) throws PropertyLoadException, PropertyValidateException, PropertyMatchException
 	{
 		super(configDescriptions);
-		
-		// invoke only in final loader instance (subclass of 'AbstractLoader')
-		this.prepareLoader();
-		this.loadProperties();
 	}
 	
 	@Override
@@ -35,8 +31,11 @@ final class ClasspathLoader extends AbstractLoader
 	{
 		Path relativeFilePath = Paths.get(configDescription.getSourcePath()).normalize();
 		if (relativeFilePath.isAbsolute())
-			throw new PropertyLoadException("'" + configDescription.getConfInterface().getName() + "' doesn't accept absolute path, only relative, because ConfigLinker searches configuration files in your classpath directories or 'jar' files. Actual source path:'" + relativeFilePath + "'.")
+		{
+			throw new PropertyLoadException("'" + configDescription.getConfInterface()
+				.getName() + "' doesn't accept absolute path, only relative, because ConfigLinker searches configuration files in your classpath directories or 'jar' files. Actual source path:'" + relativeFilePath + "'.")
 				.logAndReturn();
+		}
 		
 		URL resource = ClasspathLoader.class.getClassLoader().getResource(relativeFilePath.toString());
 		if (resource == null)
@@ -58,17 +57,5 @@ final class ClasspathLoader extends AbstractLoader
 		}
 		
 		return readPropertiesFileFromDisk(fullFilePath, configDescription);
-	}
-	
-	@Override
-	protected void startTrackChanges() throws PropertyLoadException
-	{
-		throw new PropertyLoadException("'" + this.getClass().getSimpleName() + "' doesn't support tracking changes.").logAndReturn();
-	}
-	
-	@Override
-	protected void stopTrackChanges() throws PropertyLoadException
-	{
-		throw new PropertyLoadException("'" + this.getClass().getSimpleName() + "' doesn't support tracking changes.").logAndReturn();
 	}
 }

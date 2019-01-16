@@ -198,7 +198,7 @@ abstract class AbstractLoader
 			
 			ConfigChangedEvent configChangedEvent = new ConfigChangedEvent(configInterface, configDescription.getSourcePath(), changedValues, convertException);
 			configChangedEvents.put(configDescription, configChangedEvent);
-			singleReturnsMethodsCache.put(configDescription.getConfInterface(), singleReturns);
+			singleReturnsMethodsCache.put(configInterface, singleReturns);
 		}
 		
 		if (!error)

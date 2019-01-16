@@ -28,7 +28,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-final class PropertyFileLoader extends AbstractLoader
+class PropertyFileLoader extends AbstractLoader
 {
 	private ExecutorService executorService;
 	private Map<Path, Set<ConfigDescription>> watchedFiles = new HashMap<>();

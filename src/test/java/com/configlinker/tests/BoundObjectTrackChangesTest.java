@@ -168,7 +168,7 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 			Assertions.assertEquals(originalSurname, trackFileChanges.surname());
 			partiallyRemoveAndChangeProperties(trackFilePath);
 			Thread.sleep(10000);
-			Assertions.assertEquals(newName, trackFileChanges.name());
+			Assertions.assertEquals(originalName, trackFileChanges.name());
 			Assertions.assertEquals(originalSurname, trackFileChanges.surname());
 		}
 		finally
@@ -179,9 +179,9 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 				{
 					Files.deleteIfExists(trackFilePath);
 				}
-				catch (IOException ignore)
+				catch (IOException e)
 				{
-					ignore.printStackTrace();
+					e.printStackTrace();
 				}
 			}
 		}
@@ -195,13 +195,13 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 		{
 			trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes.file.properties");
 			Files.copy(templatePropertyFilePath, trackFilePath, StandardCopyOption.REPLACE_EXISTING);
-			TrackFileChangesNullBehaviour trackFileChanges = getSingleConfigInstance(TrackFileChangesNullBehaviour.class);
-			Assertions.assertEquals(originalName, trackFileChanges.name());
-			Assertions.assertEquals(originalSurname, trackFileChanges.surname());
+			TrackFileChangesNullBehaviour trackFileChangesNullBehaviour = getSingleConfigInstance(TrackFileChangesNullBehaviour.class);
+			Assertions.assertEquals(originalName, trackFileChangesNullBehaviour.name());
+			Assertions.assertEquals(originalSurname, trackFileChangesNullBehaviour.surname());
 			partiallyRemoveAndChangeProperties(trackFilePath);
 			Thread.sleep(10000);
-			Assertions.assertEquals(newName, trackFileChanges.name());
-			Assertions.assertEquals(originalSurname, trackFileChanges.surname());
+			Assertions.assertNull(trackFileChangesNullBehaviour.name());
+			Assertions.assertEquals(newSurname, trackFileChangesNullBehaviour.surname());
 		}
 		finally
 		{
@@ -211,54 +211,62 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 				{
 					Files.deleteIfExists(trackFilePath);
 				}
-				catch (IOException ignore)
+				catch (IOException e)
 				{
-					ignore.printStackTrace();
+					e.printStackTrace();
 				}
 			}
 		}
 	}
 	
 	@Test
-	void test_trackFileClasspathChanges()
+	void test_trackFileClasspathChanges() throws IOException, InterruptedException
 	{
 		Path trackFilePath = null;
 		try
 		{
-			trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes.classpath.properties");
+			trackFilePath = Paths.get(BoundObjectTrackChangesTest.class.getClassLoader().getResource(".").getPath(), "track_changes.classpath.properties");
 			Files.copy(templatePropertyFilePath, trackFilePath, StandardCopyOption.REPLACE_EXISTING);
-			TrackFileClasspathChanges trackFileChanges = getSingleConfigInstance(TrackFileClasspathChanges.class);
-			Assertions.assertEquals(originalName, trackFileChanges.name());
-			Assertions.assertEquals(originalSurname, trackFileChanges.surname());
+			TrackFileClasspathChanges trackFileClasspathChanges = getSingleConfigInstance(TrackFileClasspathChanges.class);
+			Assertions.assertEquals(originalName, trackFileClasspathChanges.name());
+			Assertions.assertEquals(originalSurname, trackFileClasspathChanges.surname());
 			partiallyChangeProperties(trackFilePath);
 			Thread.sleep(10000);
-			Assertions.assertEquals(newName, trackFileChanges.name());
-			Assertions.assertEquals(originalSurname, trackFileChanges.surname());
+			Assertions.assertEquals(newName, trackFileClasspathChanges.name());
+			Assertions.assertEquals(originalSurname, trackFileClasspathChanges.surname());
 		}
-		catch (InterruptedException e)
+		finally
 		{
-			e.printStackTrace();
+			if (trackFilePath != null)
+			{
+				try
+				{
+					Files.deleteIfExists(trackFilePath);
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
+			}
 		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-		
 	}
 	
-	@Test @Disabled
+	@Test
+	@Disabled
 	void test_trackHttpChanges()
 	{
 	
 	}
 	
-	@Test @Disabled
+	@Test
+	@Disabled
 	void test_trackHttpChangesWithCustomInterval()
 	{
 	
 	}
 	
-	@Test @Disabled
+	@Test
+	@Disabled
 	void test_trackFileChangesAndListener()
 	{
 	

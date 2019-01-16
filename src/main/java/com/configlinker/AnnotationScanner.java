@@ -149,12 +149,7 @@ final class AnnotationScanner {
 		TrackPolicy trackPolicy = boundObjectAnnotation.trackingPolicy();
 		if (trackPolicy == TrackPolicy.INHERIT)
 			trackPolicy = configBuilder.getTrackPolicy();
-
-		if (trackPolicy == TrackPolicy.ENABLE && sourceScheme == SourceScheme.CLASSPATH) {
-			String msg = "You can not track changes for " + SourceScheme.class.getSimpleName() + "=='" + SourceScheme.CLASSPATH.name() + "', config interface '" + configInterface.getName() + "'; please, use for such purposes '" + SourceScheme.FILE.name() + "'.";
-			throw new AnnotationAnalyzeException(msg).logAndReturn();
-		}
-
+		
 
 		// get tracking interval
 		int trackingInterval = boundObjectAnnotation.trackingInterval();
