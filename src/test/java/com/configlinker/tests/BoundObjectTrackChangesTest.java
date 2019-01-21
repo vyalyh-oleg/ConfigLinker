@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
+import java.util.Map;
 import java.util.Properties;
 
 
@@ -430,7 +431,9 @@ class MyConfigChangeListener implements IConfigChangeListener
 	public void configChanged(ConfigChangedEvent configChangedEvent)
 	{
 		Assertions.assertNull(configChangedEvent.getException());
-		configChangedEvent.getConfigInterface();
+		Assertions.assertEquals(TrackFileChangesWithChangeListener.class, configChangedEvent.getConfigInterface() );
+		Assertions.assertEquals("./configs/track_changes_listener.file.properties", configChangedEvent.getSourcePath() );
+		Map<String, ConfigChangedEvent.ValuesPair> rawValues = configChangedEvent.getRawValues();
 	}
 }
 
