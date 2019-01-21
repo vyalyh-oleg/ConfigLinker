@@ -15,7 +15,7 @@ public class SimpleHttpServer
 	public static final String hostName = "localhost";
 	public static final int port = 7070;
 	
-	private static final int stopDelay = 3;
+	private static final int stopDelay = 2;
 	
 	private static HttpServer httpServer;
 	

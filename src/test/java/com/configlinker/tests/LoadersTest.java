@@ -27,12 +27,13 @@ class LoadersTest extends AbstractBaseTest
 	}
 	
 	@Test
-	void test_HttpLoader()
+	void test_HttpLoader() throws InterruptedException
 	{
 		try
 		{
 			SimpleHttpServer.prepare();
 			SimpleHttpServer.start();
+			Thread.sleep(1000);
 			
 			LoadFromHttp loadFromHttp = getSingleConfigInstance(LoadFromHttp.class);
 			Assertions.assertEquals("value from http_config.properties", loadFromHttp.getConfigName());
@@ -46,13 +47,14 @@ class LoadersTest extends AbstractBaseTest
 	// httpHeaders
 	@Disabled("TODO: implement")
 	@Test
-	void test_HttpLoaderWithCustomHeaders()
+	void test_HttpLoaderWithCustomHeaders() throws InterruptedException
 	{
 		// TODO: implement test_HttpLoaderWithCustomHeaders
 		try
 		{
 			SimpleHttpServer.prepare();
 			SimpleHttpServer.start();
+			Thread.sleep(1000);
 			
 			LoadFromHttp loadFromHttp = getSingleConfigInstance(LoadFromHttp.class);
 			Assertions.assertEquals("value from classpath_config.properties", loadFromHttp.getConfigName());
@@ -66,12 +68,11 @@ class LoadersTest extends AbstractBaseTest
 		}
 	}
 	
-	@Test
-	@Disabled("TODO: implement")
+	@Test @Disabled("TODO: implement")
 	void test_ConfigLinkerLoader()
 	{
 		// TODO: implement test_ConfigLinkerLoader
-		Assertions.fail("Not implemented.");
+		Assertions.fail("test_ConfigLinkerLoader not implemented.");
 	}
 }
 

@@ -36,10 +36,6 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 	private static final String originalSurname = "Kirigaya";
 	private static final String newSurname = "Black";
 	
-	// trackPolicy
-	// trackInterval
-	// changeListener
-	//FactorySettingsBuilder.create().setListener
 	
 	private void changeProperties(Path filePath) throws IOException
 	{
@@ -91,6 +87,7 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 		}
 	}
 	
+	
 	@Test
 	void test_trackFileChanges() throws InterruptedException, IOException
 	{
@@ -115,9 +112,9 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 				{
 					Files.deleteIfExists(trackFilePath);
 				}
-				catch (IOException ignore)
+				catch (IOException e)
 				{
-					ignore.printStackTrace();
+					e.printStackTrace();
 				}
 			}
 		}
@@ -147,9 +144,9 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 				{
 					Files.deleteIfExists(trackFilePath);
 				}
-				catch (IOException ignore)
+				catch (IOException e)
 				{
-					ignore.printStackTrace();
+					e.printStackTrace();
 				}
 			}
 		}
@@ -252,25 +249,121 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 	}
 	
 	@Test
-	@Disabled
-	void test_trackHttpChanges()
+	void test_trackHttpChanges() throws IOException, InterruptedException
 	{
-	
+		Path trackFilePath = null;
+		
+		try
+		{
+			trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes.http.properties");
+			Files.copy(templatePropertyFilePath, trackFilePath, StandardCopyOption.REPLACE_EXISTING);
+			
+			SimpleHttpServer.prepare();
+			SimpleHttpServer.start();
+			Thread.sleep(1000);
+			
+			TrackHttpChanges trackHttpChanges = getSingleConfigInstance(TrackHttpChanges.class);
+			Assertions.assertEquals(originalName, trackHttpChanges.name());
+			Assertions.assertEquals(originalSurname, trackHttpChanges.surname());
+			changeProperties(trackFilePath);
+			Thread.sleep(61000);
+			
+			Assertions.assertEquals(newName, trackHttpChanges.name());
+			Assertions.assertEquals(newSurname, trackHttpChanges.surname());
+		}
+		finally
+		{
+			SimpleHttpServer.shutdown();
+			
+			if (trackFilePath != null)
+			{
+				try
+				{
+					Files.deleteIfExists(trackFilePath);
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 	
 	@Test
-	@Disabled
-	void test_trackHttpChangesWithCustomInterval()
+	void test_trackHttpChangesWithCustomInterval() throws InterruptedException, IOException
 	{
-	
+		Path trackFilePath = null;
+		
+		try
+		{
+			trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes.http-interval.properties");
+			Files.copy(templatePropertyFilePath, trackFilePath, StandardCopyOption.REPLACE_EXISTING);
+			
+			SimpleHttpServer.prepare();
+			SimpleHttpServer.start();
+			Thread.sleep(1000);
+			
+			TrackHttpChangesWithInterval trackHttpChangesWithInterval = getSingleConfigInstance(TrackHttpChangesWithInterval.class);
+			Assertions.assertEquals(originalName, trackHttpChangesWithInterval.name());
+			Assertions.assertEquals(originalSurname, trackHttpChangesWithInterval.surname());
+			partiallyChangeProperties(trackFilePath);
+			Thread.sleep(16000);
+			
+			Assertions.assertEquals(newName, trackHttpChangesWithInterval.name());
+			Assertions.assertEquals(originalSurname, trackHttpChangesWithInterval.surname());
+		}
+		finally
+		{
+			SimpleHttpServer.shutdown();
+			
+			if (trackFilePath != null)
+			{
+				try
+				{
+					Files.deleteIfExists(trackFilePath);
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 	
 	@Test
-	@Disabled
-	void test_trackFileChangesAndListener()
+	void test_trackFileChangesAndListener() throws IOException, InterruptedException
 	{
-	
+		Path trackFilePath = null;
+		try
+		{
+			trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes_listener.file.properties");
+			Files.copy(templatePropertyFilePath, trackFilePath, StandardCopyOption.REPLACE_EXISTING);
+			TrackFileChangesWithChangeListener trackFileChangesWithChangeListener = getSingleConfigInstance(TrackFileChangesWithChangeListener.class);
+			Assertions.assertEquals(originalName, trackFileChangesWithChangeListener.name());
+			Assertions.assertEquals(originalSurname, trackFileChangesWithChangeListener.surname());
+			changeProperties(trackFilePath);
+			Thread.sleep(10000);
+			Assertions.assertEquals(newName, trackFileChangesWithChangeListener.name());
+			Assertions.assertEquals(newSurname, trackFileChangesWithChangeListener.surname());
+			Assertions.assertTrue(MyConfigChangeListener.wasCalled(), "MyConfigChangeListener was called");
+		}
+		finally
+		{
+			if (trackFilePath != null)
+			{
+				try
+				{
+					Files.deleteIfExists(trackFilePath);
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}
 	}
+	
+	// TODO: FactorySettingsBuilder.create().setListener -- set global listener
 }
 
 @BoundObject(sourcePath = "./configs/track_changes.file.properties", trackingPolicy = TrackPolicy.ENABLE)
@@ -313,7 +406,7 @@ interface TrackHttpChanges
 	String surname();
 }
 
-@BoundObject(sourceScheme = SourceScheme.HTTP, sourcePath = "http://" + SimpleHttpServer.hostName + ":" + SimpleHttpServer.port + DownloadFileHandler.PATH + "track_changes.http.properties",
+@BoundObject(sourceScheme = SourceScheme.HTTP, sourcePath = "http://" + SimpleHttpServer.hostName + ":" + SimpleHttpServer.port + DownloadFileHandler.PATH + "track_changes.http-interval.properties",
 	trackingPolicy = TrackPolicy.ENABLE, trackingInterval = 15)
 interface TrackHttpChangesWithInterval
 {
@@ -326,16 +419,23 @@ interface TrackHttpChangesWithInterval
 
 class MyConfigChangeListener implements IConfigChangeListener
 {
+	private static boolean wasCalled = false;
+	
+	static boolean wasCalled()
+	{
+		return wasCalled;
+	}
+	
 	@Override
 	public void configChanged(ConfigChangedEvent configChangedEvent)
 	{
-		// TODO: implement
+		Assertions.assertNull(configChangedEvent.getException());
+		configChangedEvent.getConfigInterface();
 	}
 }
 
-@BoundObject(sourceScheme = SourceScheme.HTTP, sourcePath = "http://" + SimpleHttpServer.hostName + ":" + SimpleHttpServer.port + DownloadFileHandler.PATH + "track_changes.http.properties",
-	trackingPolicy = TrackPolicy.ENABLE, trackingInterval = 15, changeListener = MyConfigChangeListener.class)
-interface TrackHttpChangesWithIntervalAndChangeListener
+@BoundObject(sourcePath = "./configs/track_changes_listener.file.properties", trackingPolicy = TrackPolicy.ENABLE, changeListener = MyConfigChangeListener.class)
+interface TrackFileChangesWithChangeListener
 {
 	@BoundProperty(name = "change.name")
 	String name();
