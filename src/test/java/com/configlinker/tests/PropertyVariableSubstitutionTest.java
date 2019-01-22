@@ -20,17 +20,17 @@ class PropertyVariableSubstitutionTest extends AbstractBaseTest
 }
 
 
-@BoundObject(sourcePath = "${substitution1}/path_part1/${substitution2}/path_part2/endPart")
-interface PropertyWithPrefix1
+@BoundObject(sourcePath = "path_part2/endPart", propertyNamePrefix = "servers.${type}.srv1.configuration")
+interface PropertyWithPrefix2
 {
-	@BoundProperty(name = "ordinary.value")
+	@BoundProperty(name = ".value")
 	String value();
 }
 
 @BoundObject(sourcePath = "${substitution1}/path_part1/${substitution2}/path_part2/endPart")
-interface PropertyWithPrefix2
+interface PropertyWithPrefix1
 {
-	@BoundProperty(name = ".value")
+	@BoundProperty(name = "ordinary.value")
 	String value();
 }
 

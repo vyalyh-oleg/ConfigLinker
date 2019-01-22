@@ -70,7 +70,7 @@ public @interface BoundObject {
 	 * Variables should be set with {@link FactorySettingsBuilder#addParameter(String, String)}.
 	 * <p>
 	 * Example:
-	 * <pre>	"servers.${type}.srv1.configuration"</pre>
+	 * <pre>	"servers.<b>${type}</b>.srv1.configuration"</pre>
 	 * Where the {@code type} can be for example "test" or "production", etc.:
 	 * <pre>	"servers.<b>test</b>.srv1.configuration"</pre>
 	 * @return -

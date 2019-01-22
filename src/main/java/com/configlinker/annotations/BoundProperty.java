@@ -24,13 +24,13 @@ public @interface BoundProperty {
 	 * Variables can be set in {@link FactorySettingsBuilder#addParameter(String, String)}.
 	 * <p>
 	 * Example:
-	 * <pre>	".configuration.${type}.memory.limit"</pre>
+	 * <pre>	".configuration.<b>${type}</b>.memory.limit"</pre>
 	 * Where the {@code 'type'} can be for example "test" or "production", etc.
 	 * <p>
 	 * <br>
 	 * <p>Name can also contain dynamic variables which can be used in runtime. For using this ability you must declare property getter method that accepts desired number of {@code String} or {@code Enum} arguments.</p>
 	 * Example:
-	 * <pre>	".configuration.${type}.@{group}.limit.@{border}"</pre>
+	 * <pre>	".configuration.<b>${type}</b>.<b>@{group}</b>.limit.<b>@{border}</b>"</pre>
 	 * The method might look like this:
 	 * <pre>	getServerLimitFor(String group, String border);</pre>
 	 * Where the {@code 'group'} can be "memory", "disk", "cpu", and {@code 'border'} -- "max", "min", "default".
