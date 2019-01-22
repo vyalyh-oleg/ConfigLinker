@@ -10,7 +10,6 @@ import com.configlinker.enums.TrackPolicy;
 import com.configlinker.tests.httpserver.DownloadFileHandler;
 import com.configlinker.tests.httpserver.SimpleHttpServer;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
@@ -30,12 +29,12 @@ import java.util.Properties;
 class BoundObjectTrackChangesTest extends AbstractBaseTest
 {
 	private static final Path templatePropertyFilePath = Paths.get("./configs/track_changes.template.properties");
-	private static final String nameKey = "change.name";
-	private static final String originalName = "John";
-	private static final String newName = "Joe";
-	private static final String surnameKey = "change.surname";
-	private static final String originalSurname = "Kirigaya";
-	private static final String newSurname = "Black";
+	static final String nameKey = "change.name";
+	static final String originalName = "John";
+	static final String newName = "Joe";
+	static final String surnameKey = "change.surname";
+	static final String originalSurname = "Kirigaya";
+	static final String newSurname = "Black";
 	
 	
 	private void changeProperties(Path filePath) throws IOException
@@ -332,7 +331,7 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 	}
 	
 	@Test
-	void test_trackFileChangesAndListener() throws IOException, InterruptedException
+	void test_trackFileChangesAndCallListener() throws IOException, InterruptedException
 	{
 		Path trackFilePath = null;
 		try
@@ -346,7 +345,40 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 			Thread.sleep(10000);
 			Assertions.assertEquals(newName, trackFileChangesWithChangeListener.name());
 			Assertions.assertEquals(newSurname, trackFileChangesWithChangeListener.surname());
-			Assertions.assertTrue(MyConfigChangeListener.wasCalled(), "MyConfigChangeListener was called");
+			Assertions.assertTrue(MyConfigChangeListener.wasCalled(), "MyConfigChangeListener wasn't called");
+		}
+		finally
+		{
+			if (trackFilePath != null)
+			{
+				try
+				{
+					Files.deleteIfExists(trackFilePath);
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	@Test
+	void test_trackFileChangesNullBehaviourAndCallListener() throws IOException, InterruptedException
+	{
+		Path trackFilePath = null;
+		try
+		{
+			trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes_nullbehaviour_listener.file.properties");
+			Files.copy(templatePropertyFilePath, trackFilePath, StandardCopyOption.REPLACE_EXISTING);
+			TrackFileChangesNullBehaviourWithChangeListener trackFileChangesNBWithChangeListener = getSingleConfigInstance(TrackFileChangesNullBehaviourWithChangeListener.class);
+			Assertions.assertEquals(originalName, trackFileChangesNBWithChangeListener.name());
+			Assertions.assertEquals(originalSurname, trackFileChangesNBWithChangeListener.surname());
+			partiallyRemoveAndChangeProperties(trackFilePath);
+			Thread.sleep(10000);
+			Assertions.assertNull(trackFileChangesNBWithChangeListener.name());
+			Assertions.assertEquals(newSurname, trackFileChangesNBWithChangeListener.surname());
+			Assertions.assertTrue(MyConfigChangeNullBehaviourListener.wasCalled(), "MyConfigChangeNullBehaviourListener wasn't called");
 		}
 		finally
 		{
@@ -434,6 +466,13 @@ class MyConfigChangeListener implements IConfigChangeListener
 		Assertions.assertEquals(TrackFileChangesWithChangeListener.class, configChangedEvent.getConfigInterface() );
 		Assertions.assertEquals("./configs/track_changes_listener.file.properties", configChangedEvent.getSourcePath() );
 		Map<String, ConfigChangedEvent.ValuesPair> rawValues = configChangedEvent.getRawValues();
+		
+		Assertions.assertEquals(BoundObjectTrackChangesTest.originalName, rawValues.get(BoundObjectTrackChangesTest.nameKey).getOldValue());
+		Assertions.assertEquals(BoundObjectTrackChangesTest.newName, rawValues.get(BoundObjectTrackChangesTest.nameKey).getNewValue());
+		Assertions.assertEquals(BoundObjectTrackChangesTest.originalSurname, rawValues.get(BoundObjectTrackChangesTest.surnameKey).getOldValue());
+		Assertions.assertEquals(BoundObjectTrackChangesTest.newSurname, rawValues.get(BoundObjectTrackChangesTest.surnameKey).getNewValue());
+		
+		wasCalled = true;
 	}
 }
 
@@ -441,6 +480,42 @@ class MyConfigChangeListener implements IConfigChangeListener
 interface TrackFileChangesWithChangeListener
 {
 	@BoundProperty(name = "change.name")
+	String name();
+	
+	@BoundProperty(name = "change.surname")
+	String surname();
+}
+
+class MyConfigChangeNullBehaviourListener implements IConfigChangeListener
+{
+	private static boolean wasCalled = false;
+	
+	static boolean wasCalled()
+	{
+		return wasCalled;
+	}
+	
+	@Override
+	public void configChanged(ConfigChangedEvent configChangedEvent)
+	{
+		Assertions.assertNull(configChangedEvent.getException());
+		Assertions.assertEquals(TrackFileChangesNullBehaviourWithChangeListener.class, configChangedEvent.getConfigInterface() );
+		Assertions.assertEquals("./configs/track_changes_nullbehaviour_listener.file.properties", configChangedEvent.getSourcePath() );
+		Map<String, ConfigChangedEvent.ValuesPair> rawValues = configChangedEvent.getRawValues();
+		
+		Assertions.assertEquals(BoundObjectTrackChangesTest.originalName, rawValues.get(BoundObjectTrackChangesTest.nameKey).getOldValue());
+		Assertions.assertNull(rawValues.get(BoundObjectTrackChangesTest.nameKey).getNewValue());
+		Assertions.assertEquals(BoundObjectTrackChangesTest.originalSurname, rawValues.get(BoundObjectTrackChangesTest.surnameKey).getOldValue());
+		Assertions.assertEquals(BoundObjectTrackChangesTest.newSurname, rawValues.get(BoundObjectTrackChangesTest.surnameKey).getNewValue());
+		
+		wasCalled = true;
+	}
+}
+
+@BoundObject(sourcePath = "./configs/track_changes_nullbehaviour_listener.file.properties", trackingPolicy = TrackPolicy.ENABLE, changeListener = MyConfigChangeNullBehaviourListener.class)
+interface TrackFileChangesNullBehaviourWithChangeListener
+{
+	@BoundProperty(name = "change.name", errorBehavior = ErrorBehavior.RETURN_NULL)
 	String name();
 	
 	@BoundProperty(name = "change.surname")

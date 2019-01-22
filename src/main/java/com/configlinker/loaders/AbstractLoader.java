@@ -170,7 +170,7 @@ abstract class AbstractLoader
 		
 		for (Map.Entry<Object, Object> newEntry : newProperties.entrySet())
 		{
-			if (!oldProperties.contains(newEntry.getKey()))
+			if (!oldProperties.containsKey(newEntry.getKey()))
 				changedValues.put((String) newEntry.getKey(), new ConfigChangedEvent.ValuesPair(null, (String) newEntry.getValue()));
 		}
 		
