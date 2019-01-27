@@ -82,6 +82,7 @@ class PropertyVariableSubstitutionTest extends AbstractBaseTest
 		FactorySettingsBuilder builder = FactorySettingsBuilder.create()
 			.addParameter("subfolder", "configs")
 			.addParameter("globalPrefix", "programming")
+			.addParameter("part", "languages")
 			.addParameter("lang", "PHP");
 		DynamicPropString_VarInAllParts properties = getSingleConfigInstance(builder, DynamicPropString_VarInAllParts.class);
 		
