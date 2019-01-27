@@ -298,11 +298,7 @@ class DynamicPropConfigChangeListener implements IConfigChangeListener
 		Map<String, ConfigChangedEvent.ValuesPair> rawValues = configChangedEvent.getRawValues();
 		Assertions.assertEquals(4, rawValues.size());
 		
-		Assertions.assertEquals(BoundObjectTrackChangesTest.originalName, rawValues.get(BoundObjectTrackChangesTest.nameKey).getOldValue());
-		Assertions.assertEquals(BoundObjectTrackChangesTest.newName, rawValues.get(BoundObjectTrackChangesTest.nameKey).getNewValue());
-		
-		Assertions.assertEquals(BoundObjectTrackChangesTest.originalSurname, rawValues.get(BoundObjectTrackChangesTest.surnameKey).getOldValue());
-		Assertions.assertEquals(BoundObjectTrackChangesTest.newSurname, rawValues.get(BoundObjectTrackChangesTest.surnameKey).getNewValue());
+		// TODO
 		
 		wasCalled = true;
 	}
