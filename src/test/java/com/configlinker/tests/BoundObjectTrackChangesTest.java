@@ -1,6 +1,7 @@
 package com.configlinker.tests;
 
 import com.configlinker.ConfigChangedEvent;
+import com.configlinker.ConfigSet;
 import com.configlinker.IConfigChangeListener;
 import com.configlinker.annotations.BoundObject;
 import com.configlinker.annotations.BoundProperty;
@@ -92,10 +93,14 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 	void test_trackFileChanges() throws InterruptedException, IOException
 	{
 		Path trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes.file.properties");
+		ConfigSet configSet = null;
+		
 		try
 		{
 			Files.copy(templatePropertyFilePath, trackFilePath, StandardCopyOption.REPLACE_EXISTING);
-			TrackFileChanges trackFileChanges = getSingleConfigInstance(TrackFileChanges.class);
+			configSet = getConfigSet(TrackFileChanges.class);
+			TrackFileChanges trackFileChanges = configSet.getConfigObject(TrackFileChanges.class);
+			
 			Assertions.assertEquals(originalName, trackFileChanges.name());
 			Assertions.assertEquals(originalSurname, trackFileChanges.surname());
 			changeProperties(trackFilePath);
@@ -105,14 +110,17 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 		}
 		finally
 		{
-				try
-				{
-					Files.deleteIfExists(trackFilePath);
-				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
-				}
+			try
+			{
+				if (configSet != null)
+					configSet.stopTrackChanges();
+				
+				Files.deleteIfExists(trackFilePath);
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -120,10 +128,14 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 	void test_trackFilePartialChanges() throws InterruptedException, IOException
 	{
 		Path trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes.file.properties");
+		ConfigSet configSet = null;
+		
 		try
 		{
 			Files.copy(templatePropertyFilePath, trackFilePath, StandardCopyOption.REPLACE_EXISTING);
-			TrackFileChanges trackFileChanges = getSingleConfigInstance(TrackFileChanges.class);
+			configSet = getConfigSet(TrackFileChanges.class);
+			TrackFileChanges trackFileChanges = configSet.getConfigObject(TrackFileChanges.class);
+			
 			Assertions.assertEquals(originalName, trackFileChanges.name());
 			Assertions.assertEquals(originalSurname, trackFileChanges.surname());
 			partiallyChangeProperties(trackFilePath);
@@ -135,6 +147,9 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 		{
 			try
 			{
+				if (configSet != null)
+					configSet.stopTrackChanges();
+				
 				Files.deleteIfExists(trackFilePath);
 			}
 			catch (IOException e)
@@ -145,14 +160,18 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 		}
 	}
 	
-	@Test
+	@Test //TODO: change listener for configChangedEvent.getException()
 	void test_trackFilePartialChangesWithThrowBehaviour() throws InterruptedException, IOException
 	{
 		Path trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes.file.properties");
+		ConfigSet configSet = null;
+		
 		try
 		{
 			Files.copy(templatePropertyFilePath, trackFilePath, StandardCopyOption.REPLACE_EXISTING);
-			TrackFileChanges trackFileChanges = getSingleConfigInstance(TrackFileChanges.class);
+			configSet = getConfigSet(TrackFileChanges.class);
+			TrackFileChanges trackFileChanges = configSet.getConfigObject(TrackFileChanges.class);
+			
 			Assertions.assertEquals(originalName, trackFileChanges.name());
 			Assertions.assertEquals(originalSurname, trackFileChanges.surname());
 			partiallyRemoveAndChangeProperties(trackFilePath);
@@ -162,6 +181,9 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 		}
 		finally
 		{
+			if (configSet != null)
+				configSet.stopTrackChanges();
+			
 			try
 			{
 				Files.deleteIfExists(trackFilePath);
@@ -177,10 +199,14 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 	void test_trackFilePartialChangesWithNullBehaviour() throws InterruptedException, IOException
 	{
 		Path trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes.file.properties");
+		ConfigSet configSet = null;
+		
 		try
 		{
 			Files.copy(templatePropertyFilePath, trackFilePath, StandardCopyOption.REPLACE_EXISTING);
-			TrackFileChangesNullBehaviour trackFileChangesNullBehaviour = getSingleConfigInstance(TrackFileChangesNullBehaviour.class);
+			configSet = getConfigSet(TrackFileChangesNullBehaviour.class);
+			TrackFileChangesNullBehaviour trackFileChangesNullBehaviour = configSet.getConfigObject(TrackFileChangesNullBehaviour.class);
+			
 			Assertions.assertEquals(originalName, trackFileChangesNullBehaviour.name());
 			Assertions.assertEquals(originalSurname, trackFileChangesNullBehaviour.surname());
 			partiallyRemoveAndChangeProperties(trackFilePath);
@@ -190,14 +216,17 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 		}
 		finally
 		{
-				try
-				{
-					Files.deleteIfExists(trackFilePath);
-				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
-				}
+			try
+			{
+				if (configSet != null)
+					configSet.stopTrackChanges();
+				
+				Files.deleteIfExists(trackFilePath);
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -205,11 +234,14 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 	void test_trackFileClasspathChanges() throws IOException, InterruptedException
 	{
 		Path trackFilePath = Paths.get(BoundObjectTrackChangesTest.class.getClassLoader().getResource(".").getPath(), "track_changes.classpath.properties");
+		ConfigSet configSet = null;
 		
 		try
 		{
 			Files.copy(templatePropertyFilePath, trackFilePath, StandardCopyOption.REPLACE_EXISTING);
-			TrackFileClasspathChanges trackFileClasspathChanges = getSingleConfigInstance(TrackFileClasspathChanges.class);
+			configSet = getConfigSet(TrackFileClasspathChanges.class);
+			TrackFileClasspathChanges trackFileClasspathChanges = configSet.getConfigObject(TrackFileClasspathChanges.class);
+			
 			Assertions.assertEquals(originalName, trackFileClasspathChanges.name());
 			Assertions.assertEquals(originalSurname, trackFileClasspathChanges.surname());
 			partiallyChangeProperties(trackFilePath);
@@ -221,6 +253,9 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 		{
 			try
 			{
+				if (configSet != null)
+					configSet.stopTrackChanges();
+				
 				Files.deleteIfExists(trackFilePath);
 			}
 			catch (IOException e)
@@ -234,6 +269,7 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 	void test_trackHttpChanges() throws IOException, InterruptedException
 	{
 		Path trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes.http.properties");
+		ConfigSet configSet = null;
 		
 		try
 		{
@@ -243,7 +279,9 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 			SimpleHttpServer.start();
 			Thread.sleep(1000);
 			
-			TrackHttpChanges trackHttpChanges = getSingleConfigInstance(TrackHttpChanges.class);
+			configSet = getConfigSet(TrackHttpChanges.class);
+			TrackHttpChanges trackHttpChanges = configSet.getConfigObject(TrackHttpChanges.class);
+			
 			Assertions.assertEquals(originalName, trackHttpChanges.name());
 			Assertions.assertEquals(originalSurname, trackHttpChanges.surname());
 			changeProperties(trackFilePath);
@@ -258,6 +296,9 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 			
 			try
 			{
+				if (configSet != null)
+					configSet.stopTrackChanges();
+				
 				Files.deleteIfExists(trackFilePath);
 			}
 			catch (IOException e)
@@ -271,6 +312,7 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 	void test_trackHttpChangesWithCustomInterval() throws InterruptedException, IOException
 	{
 		Path trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes.http-interval.properties");
+		ConfigSet configSet = null;
 		
 		try
 		{
@@ -280,7 +322,9 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 			SimpleHttpServer.start();
 			Thread.sleep(1000);
 			
-			TrackHttpChangesWithInterval trackHttpChangesWithInterval = getSingleConfigInstance(TrackHttpChangesWithInterval.class);
+			configSet = getConfigSet(TrackHttpChangesWithInterval.class);
+			TrackHttpChangesWithInterval trackHttpChangesWithInterval = configSet.getConfigObject(TrackHttpChangesWithInterval.class);
+			
 			Assertions.assertEquals(originalName, trackHttpChangesWithInterval.name());
 			Assertions.assertEquals(originalSurname, trackHttpChangesWithInterval.surname());
 			partiallyChangeProperties(trackFilePath);
@@ -295,6 +339,9 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 			
 			try
 			{
+				if (configSet != null)
+					configSet.stopTrackChanges();
+				
 				Files.deleteIfExists(trackFilePath);
 			}
 			catch (IOException e)
@@ -308,23 +355,29 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 	void test_trackFileChangesAndCallListener() throws IOException, InterruptedException
 	{
 		Path trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes_listener.file.properties");
+		ConfigSet configSet = null;
+		
 		try
 		{
-			
 			Files.copy(templatePropertyFilePath, trackFilePath, StandardCopyOption.REPLACE_EXISTING);
-			TrackFileChangesWithChangeListener trackFileChangesWithChangeListener = getSingleConfigInstance(TrackFileChangesWithChangeListener.class);
+			configSet = getConfigSet(TrackFileChangesWithChangeListener.class);
+			TrackFileChangesWithChangeListener trackFileChangesWithChangeListener = configSet.getConfigObject(TrackFileChangesWithChangeListener.class);
+			
 			Assertions.assertEquals(originalName, trackFileChangesWithChangeListener.name());
 			Assertions.assertEquals(originalSurname, trackFileChangesWithChangeListener.surname());
 			changeProperties(trackFilePath);
 			Thread.sleep(10000);
 			Assertions.assertEquals(newName, trackFileChangesWithChangeListener.name());
 			Assertions.assertEquals(newSurname, trackFileChangesWithChangeListener.surname());
-			Assertions.assertTrue(MyConfigChangeListener.wasCalled(), "MyConfigChangeListener wasn't called");
+			Assertions.assertTrue(MyConfigChangeListener.wasCalled(), "MyConfigChangeListener wasn't called or didn't pass the assertions.");
 		}
 		finally
 		{
 			try
 			{
+				if (configSet != null)
+					configSet.stopTrackChanges();
+				
 				Files.deleteIfExists(trackFilePath);
 			}
 			catch (IOException e)
@@ -338,23 +391,29 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 	void test_trackFileChangesNullBehaviourAndCallListener() throws IOException, InterruptedException
 	{
 		Path trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes_nullbehaviour_listener.file.properties");
+		ConfigSet configSet = null;
+		
 		try
 		{
 			Files.copy(templatePropertyFilePath, trackFilePath, StandardCopyOption.REPLACE_EXISTING);
-			TrackFileChangesNullBehaviourWithChangeListener trackFileChangesNBWithChangeListener = getSingleConfigInstance(TrackFileChangesNullBehaviourWithChangeListener.class);
+			configSet = getConfigSet(TrackFileChangesNullBehaviourWithChangeListener.class);
+			TrackFileChangesNullBehaviourWithChangeListener trackFileChangesNBWithChangeListener = configSet.getConfigObject(TrackFileChangesNullBehaviourWithChangeListener.class);
+			
 			Assertions.assertEquals(originalName, trackFileChangesNBWithChangeListener.name());
 			Assertions.assertEquals(originalSurname, trackFileChangesNBWithChangeListener.surname());
 			partiallyRemoveAndChangeProperties(trackFilePath);
 			Thread.sleep(10000);
 			Assertions.assertNull(trackFileChangesNBWithChangeListener.name());
 			Assertions.assertEquals(newSurname, trackFileChangesNBWithChangeListener.surname());
-			Assertions.assertTrue(MyConfigChangeNullBehaviourListener.wasCalled(), "MyConfigChangeNullBehaviourListener wasn't called");
+			Assertions.assertTrue(MyConfigChangeNullBehaviourListener.wasCalled(), "MyConfigChangeNullBehaviourListener wasn't called or didn't pass the assertions.");
 		}
 		finally
 		{
-			
 			try
 			{
+				if (configSet != null)
+					configSet.stopTrackChanges();
+				
 				Files.deleteIfExists(trackFilePath);
 			}
 			catch (IOException e)
@@ -431,9 +490,10 @@ class MyConfigChangeListener implements IConfigChangeListener
 	public void configChanged(ConfigChangedEvent configChangedEvent)
 	{
 		Assertions.assertNull(configChangedEvent.getException());
-		Assertions.assertEquals(TrackFileChangesWithChangeListener.class, configChangedEvent.getConfigInterface() );
-		Assertions.assertEquals("./configs/track_changes_listener.file.properties", configChangedEvent.getSourcePath() );
+		Assertions.assertEquals(TrackFileChangesWithChangeListener.class, configChangedEvent.getConfigInterface());
+		Assertions.assertEquals("./configs/track_changes_listener.file.properties", configChangedEvent.getSourcePath());
 		Map<String, ConfigChangedEvent.ValuesPair> rawValues = configChangedEvent.getRawValues();
+		Assertions.assertEquals(2, rawValues.size());
 		
 		Assertions.assertEquals(BoundObjectTrackChangesTest.originalName, rawValues.get(BoundObjectTrackChangesTest.nameKey).getOldValue());
 		Assertions.assertEquals(BoundObjectTrackChangesTest.newName, rawValues.get(BoundObjectTrackChangesTest.nameKey).getNewValue());
@@ -467,9 +527,10 @@ class MyConfigChangeNullBehaviourListener implements IConfigChangeListener
 	public void configChanged(ConfigChangedEvent configChangedEvent)
 	{
 		Assertions.assertNull(configChangedEvent.getException());
-		Assertions.assertEquals(TrackFileChangesNullBehaviourWithChangeListener.class, configChangedEvent.getConfigInterface() );
-		Assertions.assertEquals("./configs/track_changes_nullbehaviour_listener.file.properties", configChangedEvent.getSourcePath() );
+		Assertions.assertEquals(TrackFileChangesNullBehaviourWithChangeListener.class, configChangedEvent.getConfigInterface());
+		Assertions.assertEquals("./configs/track_changes_nullbehaviour_listener.file.properties", configChangedEvent.getSourcePath());
 		Map<String, ConfigChangedEvent.ValuesPair> rawValues = configChangedEvent.getRawValues();
+		Assertions.assertEquals(2, rawValues.size());
 		
 		Assertions.assertEquals(BoundObjectTrackChangesTest.originalName, rawValues.get(BoundObjectTrackChangesTest.nameKey).getOldValue());
 		Assertions.assertNull(rawValues.get(BoundObjectTrackChangesTest.nameKey).getNewValue());

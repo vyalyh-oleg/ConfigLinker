@@ -1,7 +1,10 @@
 package com.configlinker.tests;
 
 
+import com.configlinker.ConfigChangedEvent;
+import com.configlinker.ConfigSet;
 import com.configlinker.FactorySettingsBuilder;
+import com.configlinker.IConfigChangeListener;
 import com.configlinker.annotations.BoundObject;
 import com.configlinker.annotations.BoundProperty;
 import com.configlinker.deserializers.DateType;
@@ -22,9 +25,9 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 
@@ -156,11 +159,13 @@ class PropertyVariableSubstitutionTest extends AbstractBaseTest
 		
 		Path originalFilePath = Paths.get("./configs/variable_substitution.properties");
 		Path trackFilePath = Paths.get(subfolder, configName);
+		ConfigSet configSet = null;
 		
 		try
 		{
 			Files.copy(originalFilePath, trackFilePath, StandardCopyOption.REPLACE_EXISTING);
-			DynamicProp_VarInAllParts_TrackChanges properties = getSingleConfigInstance(builder, DynamicProp_VarInAllParts_TrackChanges.class);
+			configSet = getConfigSet(builder, DynamicProp_VarInAllParts_TrackChanges.class);
+			DynamicProp_VarInAllParts_TrackChanges properties = configSet.getConfigObject(DynamicProp_VarInAllParts_TrackChanges.class);
 			
 			Assertions.assertEquals(paradigmsFromConfig, properties.declarativeParadigms());
 			Assertions.assertEquals("1", properties.langInfo(Lang.Java, Info.priority));
@@ -170,19 +175,23 @@ class PropertyVariableSubstitutionTest extends AbstractBaseTest
 			partiallyChangeProperties(trackFilePath);
 			Thread.sleep(10000);
 			
-			
 			final ArrayList<String> changedParadigms = new ArrayList<>();
-			paradigmsFromConfig.add("final result");
+			changedParadigms.add("final result");
 			
 			Assertions.assertEquals(changedParadigms, properties.declarativeParadigms());
 			Assertions.assertEquals("0", properties.langInfo(Lang.Java, Info.priority));
-			Assertions.assertEquals("Guido", properties.langInfo(Lang.Csh, Info.designed));
+			Assertions.assertEquals("Guido", properties.langInfo(Lang.Python, Info.designed));
 			Assertions.assertEquals("2000-01", properties.langInfo(Lang.Csh, Info.birthday));
+			
+			Assertions.assertTrue(DynamicPropConfigChangeListener.wasCalled(), "DynamicPropConfigChangeListener wasn't called or didn't pass the assertions.");
 		}
 		finally
 		{
 			try
 			{
+				if (configSet != null)
+					configSet.stopTrackChanges();
+				
 				Files.deleteIfExists(trackFilePath);
 			}
 			catch (IOException e)
@@ -271,7 +280,35 @@ interface DynamicPropStringEnum_VarInAllParts
 	String langInfo(Lang lang, Info info);
 }
 
-@BoundObject(sourcePath = "./${subfolder}/${configName}", propertyNamePrefix = "${globalPrefix}", trackingPolicy = TrackPolicy.ENABLE)
+class DynamicPropConfigChangeListener implements IConfigChangeListener
+{
+	private static boolean wasCalled = false;
+	
+	static boolean wasCalled()
+	{
+		return wasCalled;
+	}
+	
+	@Override
+	public void configChanged(ConfigChangedEvent configChangedEvent)
+	{
+		Assertions.assertNull(configChangedEvent.getException());
+		Assertions.assertEquals(DynamicProp_VarInAllParts_TrackChanges.class, configChangedEvent.getConfigInterface());
+		Assertions.assertEquals("./configs/variable_substitution.track_changes.properties", configChangedEvent.getSourcePath());
+		Map<String, ConfigChangedEvent.ValuesPair> rawValues = configChangedEvent.getRawValues();
+		Assertions.assertEquals(4, rawValues.size());
+		
+		Assertions.assertEquals(BoundObjectTrackChangesTest.originalName, rawValues.get(BoundObjectTrackChangesTest.nameKey).getOldValue());
+		Assertions.assertEquals(BoundObjectTrackChangesTest.newName, rawValues.get(BoundObjectTrackChangesTest.nameKey).getNewValue());
+		
+		Assertions.assertEquals(BoundObjectTrackChangesTest.originalSurname, rawValues.get(BoundObjectTrackChangesTest.surnameKey).getOldValue());
+		Assertions.assertEquals(BoundObjectTrackChangesTest.newSurname, rawValues.get(BoundObjectTrackChangesTest.surnameKey).getNewValue());
+		
+		wasCalled = true;
+	}
+}
+
+@BoundObject(sourcePath = "./${subfolder}/${configName}", propertyNamePrefix = "${globalPrefix}", trackingPolicy = TrackPolicy.ENABLE, changeListener = DynamicPropConfigChangeListener.class)
 interface DynamicProp_VarInAllParts_TrackChanges
 {
 	@BoundProperty(name = ".${part}.@{lang}.@{info}")

@@ -30,7 +30,8 @@ class PropertyFileLoader extends AbstractLoader
 {
 	private ExecutorService executorService;
 	private Map<Path, Set<ConfigDescription>> watchedFiles = new HashMap<>();
-	private boolean trackChanges = false;
+	private volatile boolean trackChanges = false;
+	private HashSet<WatchKey> watchKeys;
 	
 	PropertyFileLoader(HashMap<Class<?>, ConfigDescription> configDescriptions) throws PropertyValidateException, PropertyLoadException, PropertyMatchException
 	{
@@ -82,8 +83,9 @@ class PropertyFileLoader extends AbstractLoader
 		if (watchedFiles.isEmpty())
 			return;
 		
-		executorService = Executors.newCachedThreadPool(new ConfigLinkerThreadFactory(this.getClass().getSimpleName()));
 		trackChanges = true;
+		executorService = Executors.newCachedThreadPool(new ConfigLinkerThreadFactory(this.getClass().getSimpleName()));
+		watchKeys = new HashSet<>();
 		
 		try
 		{
@@ -105,6 +107,7 @@ class PropertyFileLoader extends AbstractLoader
 				}
 				
 				executorService.submit(() -> watchLoop(Collections.unmodifiableMap(registeredDirs), watchService));
+				watchKeys.addAll(registeredDirs.keySet());
 			}
 		}
 		catch (IOException e)
@@ -179,7 +182,11 @@ class PropertyFileLoader extends AbstractLoader
 	@Override
 	protected void stopTrackChanges()
 	{
+		if (!trackChanges)
+			return;
+		
 		trackChanges = false;
+		watchKeys.forEach(WatchKey::cancel);
 		executorService.shutdown();
 		executorService = null;
 	}

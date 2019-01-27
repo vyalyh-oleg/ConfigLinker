@@ -19,6 +19,11 @@ final public class LoaderService
 		this.loaders = loaders;
 	}
 	
+	public void stopTrackChanges()
+	{
+		this.loaders.values().forEach(AbstractLoader::stopTrackChanges);
+	}
+	
 	public static LoaderService create(HashMap<Class<?>, ConfigDescription> configDescriptions)
 	{
 		EnumMap<SourceScheme, HashMap<Class<?>, ConfigDescription>> schemeDescriptions = configDescriptions.values().stream()

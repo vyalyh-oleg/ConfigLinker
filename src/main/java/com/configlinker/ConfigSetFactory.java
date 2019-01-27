@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Function;
 
 
 public final class ConfigSetFactory
@@ -48,9 +49,10 @@ public final class ConfigSetFactory
 		AnnotationScanner annotationScanner = new AnnotationScanner(builder);
 		HashMap<Class<?>, ConfigDescription> mapConfigDescriptions = annotationScanner.scan(configInterfaces);
 		LoaderService loaderService = LoaderService.create(mapConfigDescriptions);
-		Proxy configProxy = (Proxy) ConfigProxyFactory.create(mapConfigDescriptions, loaderService);
+		Proxy configProxy = ConfigProxyFactory.create(mapConfigDescriptions, loaderService);
 		
-		return new ConfigSet(configProxy);
+		Runnable stopTrackChanges = loaderService::stopTrackChanges;
+		return new ConfigSet(configProxy, stopTrackChanges);
 	}
 	
 }
