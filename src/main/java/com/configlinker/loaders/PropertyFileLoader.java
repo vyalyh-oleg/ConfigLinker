@@ -76,8 +76,6 @@ class PropertyFileLoader extends AbstractLoader
 		return readPropertiesFileFromDisk(fullFilePath, configDescription);
 	}
 	
-
-	
 	@Override
 	protected void startTrackChanges() throws PropertyLoadException
 	{
