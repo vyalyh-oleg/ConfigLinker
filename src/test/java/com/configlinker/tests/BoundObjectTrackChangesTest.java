@@ -91,10 +91,9 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 	@Test
 	void test_trackFileChanges() throws InterruptedException, IOException
 	{
-		Path trackFilePath = null;
+		Path trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes.file.properties");
 		try
 		{
-			trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes.file.properties");
 			Files.copy(templatePropertyFilePath, trackFilePath, StandardCopyOption.REPLACE_EXISTING);
 			TrackFileChanges trackFileChanges = getSingleConfigInstance(TrackFileChanges.class);
 			Assertions.assertEquals(originalName, trackFileChanges.name());
@@ -106,8 +105,6 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 		}
 		finally
 		{
-			if (trackFilePath != null)
-			{
 				try
 				{
 					Files.deleteIfExists(trackFilePath);
@@ -116,17 +113,15 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 				{
 					e.printStackTrace();
 				}
-			}
 		}
 	}
 	
 	@Test
 	void test_trackFilePartialChanges() throws InterruptedException, IOException
 	{
-		Path trackFilePath = null;
+		Path trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes.file.properties");
 		try
 		{
-			trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes.file.properties");
 			Files.copy(templatePropertyFilePath, trackFilePath, StandardCopyOption.REPLACE_EXISTING);
 			TrackFileChanges trackFileChanges = getSingleConfigInstance(TrackFileChanges.class);
 			Assertions.assertEquals(originalName, trackFileChanges.name());
@@ -138,27 +133,24 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 		}
 		finally
 		{
-			if (trackFilePath != null)
+			try
 			{
-				try
-				{
-					Files.deleteIfExists(trackFilePath);
-				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
-				}
+				Files.deleteIfExists(trackFilePath);
 			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+			
 		}
 	}
 	
 	@Test
 	void test_trackFilePartialChangesWithThrowBehaviour() throws InterruptedException, IOException
 	{
-		Path trackFilePath = null;
+		Path trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes.file.properties");
 		try
 		{
-			trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes.file.properties");
 			Files.copy(templatePropertyFilePath, trackFilePath, StandardCopyOption.REPLACE_EXISTING);
 			TrackFileChanges trackFileChanges = getSingleConfigInstance(TrackFileChanges.class);
 			Assertions.assertEquals(originalName, trackFileChanges.name());
@@ -170,16 +162,13 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 		}
 		finally
 		{
-			if (trackFilePath != null)
+			try
 			{
-				try
-				{
-					Files.deleteIfExists(trackFilePath);
-				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
-				}
+				Files.deleteIfExists(trackFilePath);
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
 			}
 		}
 	}
@@ -187,10 +176,9 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 	@Test
 	void test_trackFilePartialChangesWithNullBehaviour() throws InterruptedException, IOException
 	{
-		Path trackFilePath = null;
+		Path trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes.file.properties");
 		try
 		{
-			trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes.file.properties");
 			Files.copy(templatePropertyFilePath, trackFilePath, StandardCopyOption.REPLACE_EXISTING);
 			TrackFileChangesNullBehaviour trackFileChangesNullBehaviour = getSingleConfigInstance(TrackFileChangesNullBehaviour.class);
 			Assertions.assertEquals(originalName, trackFileChangesNullBehaviour.name());
@@ -202,8 +190,6 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 		}
 		finally
 		{
-			if (trackFilePath != null)
-			{
 				try
 				{
 					Files.deleteIfExists(trackFilePath);
@@ -212,17 +198,16 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 				{
 					e.printStackTrace();
 				}
-			}
 		}
 	}
 	
 	@Test
 	void test_trackFileClasspathChanges() throws IOException, InterruptedException
 	{
-		Path trackFilePath = null;
+		Path trackFilePath = Paths.get(BoundObjectTrackChangesTest.class.getClassLoader().getResource(".").getPath(), "track_changes.classpath.properties");
+		
 		try
 		{
-			trackFilePath = Paths.get(BoundObjectTrackChangesTest.class.getClassLoader().getResource(".").getPath(), "track_changes.classpath.properties");
 			Files.copy(templatePropertyFilePath, trackFilePath, StandardCopyOption.REPLACE_EXISTING);
 			TrackFileClasspathChanges trackFileClasspathChanges = getSingleConfigInstance(TrackFileClasspathChanges.class);
 			Assertions.assertEquals(originalName, trackFileClasspathChanges.name());
@@ -234,16 +219,13 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 		}
 		finally
 		{
-			if (trackFilePath != null)
+			try
 			{
-				try
-				{
-					Files.deleteIfExists(trackFilePath);
-				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
-				}
+				Files.deleteIfExists(trackFilePath);
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
 			}
 		}
 	}
@@ -251,11 +233,10 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 	@Test
 	void test_trackHttpChanges() throws IOException, InterruptedException
 	{
-		Path trackFilePath = null;
+		Path trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes.http.properties");
 		
 		try
 		{
-			trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes.http.properties");
 			Files.copy(templatePropertyFilePath, trackFilePath, StandardCopyOption.REPLACE_EXISTING);
 			
 			SimpleHttpServer.prepare();
@@ -275,16 +256,13 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 		{
 			SimpleHttpServer.shutdown();
 			
-			if (trackFilePath != null)
+			try
 			{
-				try
-				{
-					Files.deleteIfExists(trackFilePath);
-				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
-				}
+				Files.deleteIfExists(trackFilePath);
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
 			}
 		}
 	}
@@ -292,11 +270,10 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 	@Test
 	void test_trackHttpChangesWithCustomInterval() throws InterruptedException, IOException
 	{
-		Path trackFilePath = null;
+		Path trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes.http-interval.properties");
 		
 		try
 		{
-			trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes.http-interval.properties");
 			Files.copy(templatePropertyFilePath, trackFilePath, StandardCopyOption.REPLACE_EXISTING);
 			
 			SimpleHttpServer.prepare();
@@ -316,16 +293,13 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 		{
 			SimpleHttpServer.shutdown();
 			
-			if (trackFilePath != null)
+			try
 			{
-				try
-				{
-					Files.deleteIfExists(trackFilePath);
-				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
-				}
+				Files.deleteIfExists(trackFilePath);
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
 			}
 		}
 	}
@@ -333,10 +307,10 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 	@Test
 	void test_trackFileChangesAndCallListener() throws IOException, InterruptedException
 	{
-		Path trackFilePath = null;
+		Path trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes_listener.file.properties");
 		try
 		{
-			trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes_listener.file.properties");
+			
 			Files.copy(templatePropertyFilePath, trackFilePath, StandardCopyOption.REPLACE_EXISTING);
 			TrackFileChangesWithChangeListener trackFileChangesWithChangeListener = getSingleConfigInstance(TrackFileChangesWithChangeListener.class);
 			Assertions.assertEquals(originalName, trackFileChangesWithChangeListener.name());
@@ -349,16 +323,13 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 		}
 		finally
 		{
-			if (trackFilePath != null)
+			try
 			{
-				try
-				{
-					Files.deleteIfExists(trackFilePath);
-				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
-				}
+				Files.deleteIfExists(trackFilePath);
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
 			}
 		}
 	}
@@ -366,10 +337,9 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 	@Test
 	void test_trackFileChangesNullBehaviourAndCallListener() throws IOException, InterruptedException
 	{
-		Path trackFilePath = null;
+		Path trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes_nullbehaviour_listener.file.properties");
 		try
 		{
-			trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes_nullbehaviour_listener.file.properties");
 			Files.copy(templatePropertyFilePath, trackFilePath, StandardCopyOption.REPLACE_EXISTING);
 			TrackFileChangesNullBehaviourWithChangeListener trackFileChangesNBWithChangeListener = getSingleConfigInstance(TrackFileChangesNullBehaviourWithChangeListener.class);
 			Assertions.assertEquals(originalName, trackFileChangesNBWithChangeListener.name());
@@ -382,16 +352,14 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 		}
 		finally
 		{
-			if (trackFilePath != null)
+			
+			try
 			{
-				try
-				{
-					Files.deleteIfExists(trackFilePath);
-				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
-				}
+				Files.deleteIfExists(trackFilePath);
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
 			}
 		}
 	}

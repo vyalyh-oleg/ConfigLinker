@@ -256,10 +256,10 @@ final class AnnotationScanner
 	{
 		Matcher matcher = searchPattern.matcher(template);
 		LinkedHashSet<String> findElements = new LinkedHashSet<>();
+		
 		while (matcher.find())
-		{
 			findElements.add(matcher.group());
-		}
+		
 		return findElements;
 	}
 	
@@ -288,7 +288,7 @@ final class AnnotationScanner
 	{
 		LinkedHashSet<String> dynamicParameters = findVariables(dynamicMethodParameterPattern, parameterNameTemplate);
 		Parameter[] methodParameters = method.getParameters();
-		ArrayList<String> parameterNames = new ArrayList<>();
+		LinkedHashSet<String> parameterNames = new LinkedHashSet<>();
 		
 		for (Parameter mp : methodParameters)
 		{
@@ -302,7 +302,6 @@ final class AnnotationScanner
 			}
 			
 			String parameterName = mp.getName();
-			parameterNames.add(parameterName);
 			
 			if (!dynamicParameters.contains("@{" + parameterName + "}"))
 			{
@@ -311,14 +310,15 @@ final class AnnotationScanner
 					"Syntax error in '@BoundProperty.name()' value. Incompatible signature in method '" + fullMethodName + "': parameter name '@{" + parameterName + "}' doesn't present in template '" + parameterNameTemplate + "'.")
 					.logAndReturn();
 			}
+			
+			parameterNames.add(parameterName);
 		}
 		
 		for (String dParam : dynamicParameters)
 		{
 			String paramName = dParam.substring(2, dParam.length() - 1);
-			boolean isPresentInParameters = parameterNames.contains(paramName);
 			
-			if (!isPresentInParameters)
+			if (!parameterNames.contains(paramName))
 			{
 				String fullMethodName = method.getDeclaringClass().getName() + "::" + method.getName();
 				throw new AnnotationAnalyzeException(
@@ -327,7 +327,7 @@ final class AnnotationScanner
 			}
 		}
 		
-		return dynamicParameters;
+		return parameterNames;
 	}
 	
 	private ConfigDescription.PropertyDescription validateConfigInterfaceMethod(Method propertyMethod, ConfigDescription configDescription) throws

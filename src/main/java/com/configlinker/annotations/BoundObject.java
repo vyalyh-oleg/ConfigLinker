@@ -25,25 +25,24 @@ public @interface BoundObject {
 	SourceScheme sourceScheme() default SourceScheme.INHERIT;
 
 	/**
-	 * <p>Must point to source where data can be found to fill in this object with necessary values.
-	 * <p>You can use variables for substituting some parts of this path.
-	 * <br>Variables can be set in {@link FactorySettingsBuilder#addParameter(String, String)}.
+	 * <p>Must point to source where properties can be found (they will be used to fill in this object with necessary values).
+	 * <p>Variables can be used for substituting some parts of this path.
+	 * <br>The name of variable can consist of letters, numbers and underscores.
+	 * <br>Variables should be set in {@link FactorySettingsBuilder#addParameter(String, String)}.
 	 * <p>Path could be relative to the current working directory or to the root of classpath (depends on {@link SourceScheme}).
 	 * <p>Example path:
-	 * <pre>"${substitution1}/path_part1/${substitution2}/path_part2/endPart"</pre>
+	 * <pre>"<b>${substitution1}</b>/path_part1/<b>${substitution2}</b>/path_part2/endPart"</pre>
 	 * @return -
 	 */
 	String sourcePath();
 
 	/**
-	 * <p>
-	 * Headers that are used to make requests to get configuration parameters (if the {@link BoundObject#sourceScheme} is {@link SourceScheme#HTTP}). These values are merged with values which you can set with {@link FactorySettingsBuilder}.
-	 * <p>
-	 * You can use variables for substituting some parts of this path.
-	 * Variables can be set in {@link FactorySettingsBuilder#addParameter(String, String)}.
-	 * <p>
-	 * Example path:
-	 * <pre>"${substitution1}/path_part1/${substitution2}/path_part2/endName"</pre>
+	 * <p>Headers that are used to make http(s) requests to get configuration parameters (if the {@link BoundObject#sourceScheme} is {@link SourceScheme#HTTP}). These values are merged with the values which you can set with {@link FactorySettingsBuilder}.
+	 * <p>Variables can be used for substituting some parts of the header.
+	 * <br>The name of variable can consist of letters, numbers and underscores.
+	 * <br>Variables should be set in {@link FactorySettingsBuilder#addParameter(String, String)}.
+	 * <p>Example:
+	 * <pre>"Auth-Token: <b>${auth_token}</b>"</pre>
 	 * @return -
 	 */
 	String[] httpHeaders() default "";
@@ -59,15 +58,15 @@ public @interface BoundObject {
 	/**
 	 * <p>The common names part of parameters group that is used to bind with methods of this annotated interface.<br>
 	 * If it is not specified you can use only full parameter names in {@link BoundProperty#name()}.<br>
-	 * If it has any value then both variants, full and prefix-aware can be used.</p>
+	 * If it has any value then both variants (full and prefix-aware) can be used.</p>
 	 *
 	 * <p>Example:<br>
-	 * If this parameter for example is set to {@code "mycompany"}, then the {@code @BoundProperty.name()} can be as {@code ".serverName"} (start with dot is obligatory). This means, the final parameter name, which will be searched in property file, is {@code "mycompany.serverName"}.<br>
+	 * If the prefix  is set to {@code "mycompany"}, then the {@code @BoundProperty.name()} can be as {@code ".serverName"} (start with dot is obligatory). This means, the final parameter name, which will be searched in property file, is {@code "mycompany.serverName"}.<br>
 	 * Without dot at the beginning {@code @BoundProperty.name()} is considered as full parameter name and the prefix is not taken into account.
 	 *
-	 * <p>
-	 * You can also use variables for substituting some parts of this prefix.
-	 * Variables should be set with {@link FactorySettingsBuilder#addParameter(String, String)}.
+	 * <p>You can also use variables for substituting some parts of the prefix.
+	 * <br>The name of variable can consist of letters, numbers and underscores.
+	 * <br>Variables should be set with {@link FactorySettingsBuilder#addParameter(String, String)}.
 	 * <p>
 	 * Example:
 	 * <pre>	"servers.<b>${type}</b>.srv1.configuration"</pre>

@@ -5,13 +5,27 @@ import com.configlinker.FactorySettingsBuilder;
 import com.configlinker.annotations.BoundObject;
 import com.configlinker.annotations.BoundProperty;
 import com.configlinker.deserializers.DateType;
+import com.configlinker.enums.TrackPolicy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 
 @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
@@ -73,7 +87,8 @@ class PropertyVariableSubstitutionTest extends AbstractBaseTest
 			.addParameter("lang", "PHP");
 		Prop_VarInAllParts properties = getSingleConfigInstance(builder, Prop_VarInAllParts.class);
 		
-		
+		Assertions.assertEquals(6, properties.langPriority());
+		Assertions.assertEquals(Date.from(LocalDate.of(1995, 1, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()), properties.langBirthday());
 	}
 	
 	@Test
@@ -82,11 +97,13 @@ class PropertyVariableSubstitutionTest extends AbstractBaseTest
 		FactorySettingsBuilder builder = FactorySettingsBuilder.create()
 			.addParameter("subfolder", "configs")
 			.addParameter("globalPrefix", "programming")
-			.addParameter("part", "languages")
-			.addParameter("lang", "PHP");
+			.addParameter("part", "languages");
 		DynamicPropString_VarInAllParts properties = getSingleConfigInstance(builder, DynamicPropString_VarInAllParts.class);
 		
-		
+		Assertions.assertEquals("Microsoft", properties.langAuthor("Csh"));
+		Assertions.assertEquals("Brendan Eich", properties.langAuthor("JavaScript"));
+		Assertions.assertEquals("1991-02-20", properties.langInfo("Python", "birthday"));
+		Assertions.assertEquals("7", properties.langInfo("JavaScript", "priority"));
 	}
 	
 	@Test
@@ -98,18 +115,81 @@ class PropertyVariableSubstitutionTest extends AbstractBaseTest
 			.addParameter("part", "languages");
 		DynamicPropStringEnum_VarInAllParts properties = getSingleConfigInstance(builder, DynamicPropStringEnum_VarInAllParts.class);
 		
+		Assertions.assertEquals("7", properties.langInfo(Lang.JavaScript, Info.priority));
+		Assertions.assertEquals("Zend Technologies", properties.langInfo(Lang.PHP, Info.designed));
+		Assertions.assertEquals("1972-01-01", properties.langInfo(Lang.C, Info.birthday));
+	}
+	
+	private void partiallyChangeProperties(Path filePath) throws IOException
+	{
+		Properties fileProp;
+		try (InputStream propFileIS = Files.newInputStream(filePath))
+		{
+			fileProp = new Properties();
+			fileProp.load(propFileIS);
+		}
 		
+		try (OutputStream propFileOS = Files.newOutputStream(filePath, StandardOpenOption.WRITE))
+		{
+			fileProp.put("programming.languages.Java.priority", "0");
+			fileProp.put("programming.languages.Python.designed", "Guido");
+			fileProp.put("programming.languages.Csh.birthday", "2000-01");
+			fileProp.put("programming.paradigm.declarative", "final result");
+			fileProp.store(propFileOS, "Modified");
+		}
 	}
 	
 	@Test
-	void test_dynamicProp_VarInAllParts_TrackChanges()
+	void test_dynamicProp_VarInAllParts_TrackChanges() throws IOException, InterruptedException
 	{
+		final ArrayList<String> paradigmsFromConfig = new ArrayList<>();
+		paradigmsFromConfig.add("functional");
+		paradigmsFromConfig.add("logic");
+		
+		final String subfolder = "configs";
+		final String configName = "variable_substitution.track_changes.properties";
 		FactorySettingsBuilder builder = FactorySettingsBuilder.create()
-			.addParameter("subfolder", "configs")
+			.addParameter("subfolder", subfolder)
+			.addParameter("configName", configName)
 			.addParameter("globalPrefix", "programming")
 			.addParameter("part", "languages");
-		DynamicProp_VarInAllParts_TrackChanges properties = getSingleConfigInstance(builder, DynamicProp_VarInAllParts_TrackChanges.class);
 		
+		Path originalFilePath = Paths.get("./configs/variable_substitution.properties");
+		Path trackFilePath = Paths.get(subfolder, configName);
+		
+		try
+		{
+			Files.copy(originalFilePath, trackFilePath, StandardCopyOption.REPLACE_EXISTING);
+			DynamicProp_VarInAllParts_TrackChanges properties = getSingleConfigInstance(builder, DynamicProp_VarInAllParts_TrackChanges.class);
+			
+			Assertions.assertEquals(paradigmsFromConfig, properties.declarativeParadigms());
+			Assertions.assertEquals("1", properties.langInfo(Lang.Java, Info.priority));
+			Assertions.assertEquals("Guido van Rossum", properties.langInfo(Lang.Python, Info.designed));
+			Assertions.assertEquals("2000-01-01", properties.langInfo(Lang.Csh, Info.birthday));
+			
+			partiallyChangeProperties(trackFilePath);
+			Thread.sleep(10000);
+			
+			
+			final ArrayList<String> changedParadigms = new ArrayList<>();
+			paradigmsFromConfig.add("final result");
+			
+			Assertions.assertEquals(changedParadigms, properties.declarativeParadigms());
+			Assertions.assertEquals("0", properties.langInfo(Lang.Java, Info.priority));
+			Assertions.assertEquals("Guido", properties.langInfo(Lang.Csh, Info.designed));
+			Assertions.assertEquals("2000-01", properties.langInfo(Lang.Csh, Info.birthday));
+		}
+		finally
+		{
+			try
+			{
+				Files.deleteIfExists(trackFilePath);
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
 		
 	}
 }
@@ -128,7 +208,7 @@ enum Lang
 @BoundObject(sourcePath = "./configs/variable_substitution.properties", propertyNamePrefix = "programming.languages")
 interface Prop_ValueWithPrefix
 {
-	@BoundProperty(name = ".java.priority")
+	@BoundProperty(name = ".Java.priority")
 	int javaPriority();
 }
 
@@ -191,13 +271,12 @@ interface DynamicPropStringEnum_VarInAllParts
 	String langInfo(Lang lang, Info info);
 }
 
-
-@BoundObject(sourcePath = "./${subfolder}/variable_substitution.properties", propertyNamePrefix = "${globalPrefix}")
+@BoundObject(sourcePath = "./${subfolder}/${configName}", propertyNamePrefix = "${globalPrefix}", trackingPolicy = TrackPolicy.ENABLE)
 interface DynamicProp_VarInAllParts_TrackChanges
 {
 	@BoundProperty(name = ".${part}.@{lang}.@{info}")
 	String langInfo(Lang lang, Info info);
 	
-	@BoundProperty(name = "programming.${part}.@{langName}.designed")
-	String langAuthor(String langName);
+	@BoundProperty(name = "programming.paradigm.declarative")
+	List<String> declarativeParadigms();
 }

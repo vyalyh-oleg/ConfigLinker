@@ -120,7 +120,7 @@ tasks.withType(JavaCompile) {
 	//enable compilation in a separate daemon process
 	//options.fork = true
 	options.compilerArgs += ["-parameters"]
-	println("Compiler arguments: " + options.allCompilerArgs)
+	println("Compiler arguments for $taskIdentity.name: " + options.allCompilerArgs)
 }
 
 task javadocJar(type: Jar) {

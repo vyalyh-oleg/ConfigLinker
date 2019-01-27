@@ -18,22 +18,25 @@ import java.lang.annotation.Target;
 public @interface BoundProperty {
 	/**
 	 * <p>Should contain string representation of property name that used in configuration.</p>
-	 * <p>If you set {@code @BoundObject.propertyNamePrefix} it will be added before this value, and <b>in that case this value should begin with a dot</b>. If it begins from any other acceptable symbols except dot, the value considered as full name and be used without {@code propertyNamePrefix}.</p>
-	 * <p>
-	 * You can use variables for substituting some parts of the name.
-	 * Variables can be set in {@link FactorySettingsBuilder#addParameter(String, String)}.
+	 * <p>If you set {@code @BoundObject.propertyNamePrefix} it will be added before this value, and <b>in that case the name of the value should begin with a dot</b>. If it begins from any other acceptable symbols except dot, the value considered as full name and be used without {@code propertyNamePrefix}.</p>
+	 * <p>You can use variables for substituting some parts of the name.
+	 * <br>The name of variable can consist of letters, numbers and underscores.
+	 * <br>Variables should be set in {@link FactorySettingsBuilder#addParameter(String, String)}.
 	 * <p>
 	 * Example:
 	 * <pre>	".configuration.<b>${type}</b>.memory.limit"</pre>
 	 * Where the {@code 'type'} can be for example "test" or "production", etc.
 	 * <p>
 	 * <br>
-	 * <p>Name can also contain dynamic variables which can be used in runtime. For using this ability you must declare property getter method that accepts desired number of {@code String} or {@code Enum} arguments.</p>
+	 * <p>Name can also contain dynamic variables which can be used in runtime. For using this ability you must declare property method that accepts desired number of {@code String} or {@code Enum} arguments.</p>
 	 * Example:
 	 * <pre>	".configuration.<b>${type}</b>.<b>@{group}</b>.limit.<b>@{border}</b>"</pre>
 	 * The method might look like this:
 	 * <pre>	getServerLimitFor(String group, String border);</pre>
 	 * Where the {@code 'group'} can be "memory", "disk", "cpu", and {@code 'border'} -- "max", "min", "default".
+	 * <p></p>
+	 * <p><b>IMPORTANT:</b>
+	 * <br>To use dynamic variables your interfaces must be compiled with {@code "javac -parameters"} argument.
 	 * @return -
 	 */
 	String name();
