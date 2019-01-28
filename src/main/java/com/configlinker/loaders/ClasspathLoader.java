@@ -46,7 +46,8 @@ final class ClasspathLoader extends PropertyFileLoader
 		catch (URISyntaxException e)
 		{
 			throw new PropertyLoadException("'" + this.getClass()
-				.getSimpleName() + "' couldn't get resource from classpath and convert it to ordinary 'Path' object. Actual resource URL:'" + resource.toString() + "'.")
+				.getSimpleName() + "' couldn't get resource from classpath and convert it to ordinary 'Path' object. Actual resource URL:'" + resource
+				.toString() + "'.")
 				.logAndReturn();
 		}
 		

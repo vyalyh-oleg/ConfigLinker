@@ -14,9 +14,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -41,50 +41,50 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 	private void changeProperties(Path filePath) throws IOException
 	{
 		Properties fileProp;
-		try (InputStream propFileIS = Files.newInputStream(filePath))
+		try (BufferedReader propFileReader = Files.newBufferedReader(filePath))
 		{
 			fileProp = new Properties();
-			fileProp.load(propFileIS);
+			fileProp.load(propFileReader);
 		}
 		
-		try (OutputStream propFileOS = Files.newOutputStream(filePath, StandardOpenOption.WRITE))
+		try (BufferedWriter propFileWriter = Files.newBufferedWriter(filePath, StandardOpenOption.WRITE))
 		{
 			fileProp.put(nameKey, newName);
 			fileProp.put(surnameKey, newSurname);
-			fileProp.store(propFileOS, "Modified");
+			fileProp.store(propFileWriter, "Modified");
 		}
 	}
 	
 	private void partiallyChangeProperties(Path filePath) throws IOException
 	{
 		Properties fileProp;
-		try (InputStream propFileIS = Files.newInputStream(filePath))
+		try (BufferedReader propFileReader = Files.newBufferedReader(filePath))
 		{
 			fileProp = new Properties();
-			fileProp.load(propFileIS);
+			fileProp.load(propFileReader);
 		}
 		
-		try (OutputStream propFileOS = Files.newOutputStream(filePath, StandardOpenOption.WRITE))
+		try (BufferedWriter propFileWriter = Files.newBufferedWriter(filePath, StandardOpenOption.WRITE))
 		{
 			fileProp.put(nameKey, newName);
-			fileProp.store(propFileOS, "Modified");
+			fileProp.store(propFileWriter, "Modified");
 		}
 	}
 	
 	private void partiallyRemoveAndChangeProperties(Path filePath) throws IOException
 	{
 		Properties fileProp;
-		try (InputStream propFileIS = Files.newInputStream(filePath))
+		try (BufferedReader propFileReader = Files.newBufferedReader(filePath))
 		{
 			fileProp = new Properties();
-			fileProp.load(propFileIS);
+			fileProp.load(propFileReader);
 		}
 		
-		try (OutputStream propFileOS = Files.newOutputStream(filePath, StandardOpenOption.WRITE))
+		try (BufferedWriter propFileWriter = Files.newBufferedWriter(filePath, StandardOpenOption.WRITE))
 		{
 			fileProp.remove(nameKey);
 			fileProp.put(surnameKey, newSurname);
-			fileProp.store(propFileOS, "Modified");
+			fileProp.store(propFileWriter, "Modified");
 		}
 	}
 	

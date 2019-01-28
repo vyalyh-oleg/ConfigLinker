@@ -7,6 +7,7 @@ import com.configlinker.exceptions.PropertyLoadException;
 import com.configlinker.exceptions.PropertyMatchException;
 import com.configlinker.exceptions.PropertyValidateException;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
@@ -75,6 +76,24 @@ class PropertyFileLoader extends AbstractLoader
 	{
 		Path fullFilePath = getFullFilePath(configDescription);
 		return readPropertiesFileFromDisk(fullFilePath, configDescription);
+	}
+	
+	private Properties readPropertiesFileFromDisk(Path fullFilePath, ConfigDescription configDescription)
+	{
+		try (BufferedReader propFileReader = Files.newBufferedReader(fullFilePath, configDescription.getCharset()))
+		{
+			Properties newProperties = new Properties();
+			newProperties.load(propFileReader);
+			propFileReader.close();
+			return newProperties;
+		}
+		catch (IOException e)
+		{
+			throw new PropertyLoadException(
+				"Error during loading raw properties from file '" + fullFilePath + "' with charset '" + configDescription.getCharset().toString()
+					+ "', config interface: '" + configDescription.getConfInterface().getName() + "'.", e)
+				.logAndReturn();
+		}
 	}
 	
 	@Override

@@ -13,11 +13,7 @@ import com.configlinker.exceptions.PropertyMatchException;
 import com.configlinker.exceptions.PropertyNotFoundException;
 import com.configlinker.exceptions.PropertyValidateException;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.lang.reflect.Method;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -59,24 +55,6 @@ abstract class AbstractLoader
 	final Collection<ConfigDescription> getConfigDescriptions()
 	{
 		return this.configDescriptions.values();
-	}
-	
-	Properties readPropertiesFileFromDisk(Path fullFilePath, ConfigDescription configDescription)
-	{
-		try (BufferedReader propFileReader = Files.newBufferedReader(fullFilePath, configDescription.getCharset()))
-		{
-			Properties newProperties = new Properties();
-			newProperties.load(propFileReader);
-			propFileReader.close();
-			return newProperties;
-		}
-		catch (IOException e)
-		{
-			throw new PropertyLoadException(
-				"Error during loading raw properties from file '" + fullFilePath + "' with charset '" + configDescription.getCharset().toString()
-					+ "', config interface: '" + configDescription.getConfInterface().getName() + "'.", e)
-				.logAndReturn();
-		}
 	}
 	
 	final void loadProperties() throws PropertyLoadException, PropertyValidateException, PropertyMatchException, PropertyMapException

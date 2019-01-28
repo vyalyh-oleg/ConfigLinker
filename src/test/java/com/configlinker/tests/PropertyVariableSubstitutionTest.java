@@ -13,9 +13,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -126,19 +128,22 @@ class PropertyVariableSubstitutionTest extends AbstractBaseTest
 	private void partiallyChangeProperties(Path filePath) throws IOException
 	{
 		Properties fileProp;
-		try (InputStream propFileIS = Files.newInputStream(filePath))
+		try (BufferedReader propFileReader = Files.newBufferedReader(filePath))
 		{
 			fileProp = new Properties();
-			fileProp.load(propFileIS);
+			fileProp.load(propFileReader);
 		}
 		
-		try (OutputStream propFileOS = Files.newOutputStream(filePath, StandardOpenOption.WRITE))
+		try (BufferedWriter propFileWriter = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(filePath, StandardOpenOption.WRITE)), 128 * 1024))
 		{
 			fileProp.put("programming.languages.Java.priority", "0");
 			fileProp.put("programming.languages.Python.designed", "Guido");
 			fileProp.put("programming.languages.Csh.birthday", "2000-01");
 			fileProp.put("programming.paradigm.declarative", "final result");
-			fileProp.store(propFileOS, "Modified");
+			
+			StringWriter sw = new StringWriter();
+			fileProp.store(sw, "Modified");
+			propFileWriter.write(sw.toString());
 		}
 	}
 	
@@ -296,10 +301,16 @@ class DynamicPropConfigChangeListener implements IConfigChangeListener
 		Assertions.assertEquals(DynamicProp_VarInAllParts_TrackChanges.class, configChangedEvent.getConfigInterface());
 		Assertions.assertEquals("./configs/variable_substitution.track_changes.properties", configChangedEvent.getSourcePath());
 		Map<String, ConfigChangedEvent.ValuesPair> rawValues = configChangedEvent.getRawValues();
-		Assertions.assertEquals(4, rawValues.size());
+		Assertions.assertEquals(4, rawValues.size());// TODO
 		
-		// TODO
-		
+		Assertions.assertEquals("1", rawValues.get("programming.languages.Java.priority").getOldValue());
+		Assertions.assertEquals("0", rawValues.get("programming.languages.Java.priority").getNewValue());
+		Assertions.assertEquals("Guido van Rossum", rawValues.get("programming.languages.Python.designed").getOldValue());
+		Assertions.assertEquals("Guido", rawValues.get("programming.languages.Python.designed").getNewValue());
+		Assertions.assertEquals("2000-01-01", rawValues.get("programming.languages.Csh.birthday").getOldValue());
+		Assertions.assertEquals("2000-01", rawValues.get("programming.languages.Csh.birthday").getNewValue());
+		Assertions.assertEquals("functional, logic", rawValues.get("programming.paradigm.declarative").getOldValue());
+		Assertions.assertEquals("final result", rawValues.get("programming.paradigm.declarative").getNewValue());
 		wasCalled = true;
 	}
 }
