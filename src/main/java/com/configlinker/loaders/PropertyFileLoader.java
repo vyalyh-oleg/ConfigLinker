@@ -175,7 +175,7 @@ class PropertyFileLoader extends AbstractLoader
 				
 				if (kind == StandardWatchEventKinds.ENTRY_MODIFY || kind == StandardWatchEventKinds.ENTRY_CREATE)
 				{
-					Loggers.getMainLogger().info("Configuration file has changed: '{}'.", fullFilePath);
+					Loggers.getMainLogger().info("Configuration file has been changed: '{}'.", fullFilePath);
 					this.refreshProperties(configDescriptions);
 					continue;
 				}

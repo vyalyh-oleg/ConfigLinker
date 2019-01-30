@@ -16,13 +16,10 @@ import org.junit.jupiter.api.TestInstance;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -134,16 +131,14 @@ class PropertyVariableSubstitutionTest extends AbstractBaseTest
 			fileProp.load(propFileReader);
 		}
 		
-		try (BufferedWriter propFileWriter = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(filePath, StandardOpenOption.WRITE)), 128 * 1024))
+		try (BufferedWriter propFileWriter = Files.newBufferedWriter(filePath))
 		{
 			fileProp.put("programming.languages.Java.priority", "0");
 			fileProp.put("programming.languages.Python.designed", "Guido");
 			fileProp.put("programming.languages.Csh.birthday", "2000-01");
 			fileProp.put("programming.paradigm.declarative", "final result");
 			
-			StringWriter sw = new StringWriter();
-			fileProp.store(sw, "Modified");
-			propFileWriter.write(sw.toString());
+			fileProp.store(propFileWriter, "Modified");
 		}
 	}
 	
@@ -204,7 +199,6 @@ class PropertyVariableSubstitutionTest extends AbstractBaseTest
 				e.printStackTrace();
 			}
 		}
-		
 	}
 }
 

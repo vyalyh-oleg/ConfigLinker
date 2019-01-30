@@ -47,7 +47,7 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 			fileProp.load(propFileReader);
 		}
 		
-		try (BufferedWriter propFileWriter = Files.newBufferedWriter(filePath, StandardOpenOption.WRITE))
+		try (BufferedWriter propFileWriter = Files.newBufferedWriter(filePath))
 		{
 			fileProp.put(nameKey, newName);
 			fileProp.put(surnameKey, newSurname);
@@ -64,7 +64,7 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 			fileProp.load(propFileReader);
 		}
 		
-		try (BufferedWriter propFileWriter = Files.newBufferedWriter(filePath, StandardOpenOption.WRITE))
+		try (BufferedWriter propFileWriter = Files.newBufferedWriter(filePath))
 		{
 			fileProp.put(nameKey, newName);
 			fileProp.store(propFileWriter, "Modified");
@@ -80,7 +80,7 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 			fileProp.load(propFileReader);
 		}
 		
-		try (BufferedWriter propFileWriter = Files.newBufferedWriter(filePath, StandardOpenOption.WRITE))
+		try (BufferedWriter propFileWriter = Files.newBufferedWriter(filePath))
 		{
 			fileProp.remove(nameKey);
 			fileProp.put(surnameKey, newSurname);
@@ -160,7 +160,7 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 		}
 	}
 	
-	@Test //TODO: change listener for configChangedEvent.getException()
+	@Test //TODO: add listener for configChangedEvent.getException()
 	void test_trackFilePartialChangesWithThrowBehaviour() throws InterruptedException, IOException
 	{
 		Path trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes.file.properties");
