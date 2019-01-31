@@ -18,7 +18,6 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -131,9 +130,25 @@ final class AnnotationScanner
 		Map<String, String> httpHeaders = null;
 		String[] customHttpHeaders = boundObjectAnnotation.httpHeaders();
 		if (!(customHttpHeaders.length == 1 && customHttpHeaders[0].isEmpty()))
+		{
 			if (sourceScheme == SourceScheme.HTTP)
 			{
 				httpHeaders = new HashMap<>(this.configBuilder.getHttpHeaders());
+				for (Map.Entry<String, String> headerEntry : this.configBuilder.getHttpHeaders().entrySet())
+				{
+					if (!headerEntry.getKey().trim().isEmpty())
+					{
+						String headerName = validateAndMakeVariableSubstitution(headerEntry.getKey());
+						String headerValue = validateAndMakeVariableSubstitution(headerEntry.getValue());
+						httpHeaders.put(headerName.trim().toLowerCase(), headerValue);
+					}
+					else
+						throw new AnnotationAnalyzeException(
+							"Syntax error in headers that was put into 'FactorySettingsBuilder', header '" + headerEntry.getKey() + ":" + headerEntry.getValue()
+								+ "' has empty name; interface '" + configInterface.getName())
+							.logAndReturn();
+				}
+				
 				String header;
 				int colonIndex;
 				for (String httpHeader : customHttpHeaders)
@@ -142,14 +157,14 @@ final class AnnotationScanner
 					{
 						header = validateAndMakeVariableSubstitution(httpHeader);
 						colonIndex = header.indexOf(':');
-						if (colonIndex == -1)
+						if (colonIndex == -1 || header.substring(0, colonIndex).trim().isEmpty())
 						{
 							throw new AnnotationAnalyzeException(
-								"Syntax error in '@BoundObject.httpHeaders()': '" + httpHeader + "' value; interface '" + configInterface
-									.getName() + "': header name and value should be separated with colon ':'").logAndReturn();
+								"Syntax error in '@BoundObject.httpHeaders()', header '" + httpHeader + "'; interface '" + configInterface.getName()
+									+ "'; header name and value should be separated with colon ':' and the header name cannot be empty.")
+								.logAndReturn();
 						}
-						httpHeaders.put(header.substring(0, colonIndex).trim(),
-							header.substring(colonIndex + 1, header.length()).trim());
+						httpHeaders.put(header.substring(0, colonIndex).trim().toLowerCase(), header.substring(colonIndex + 1).trim());
 					}
 					catch (IllegalArgumentException e)
 					{
@@ -161,9 +176,10 @@ final class AnnotationScanner
 			}
 			else
 				throw new AnnotationAnalyzeException(
-					"Setting custom http headers in '@BoundObject.httpHeaders()' is allowed only if 'BoundObject.SourceScheme == SourceScheme.HTTP'; interface  '" + configInterface
-						.getName() + "'.").logAndReturn();
-		
+					"Setting custom http headers in '@BoundObject.httpHeaders()' is allowed only if 'BoundObject.SourceScheme == SourceScheme.HTTP'; interface  '"
+						+ configInterface.getName() + "'.")
+					.logAndReturn();
+		}
 		
 		// get charset of raw configuration text
 		String charsetName = boundObjectAnnotation.charsetName();
@@ -258,7 +274,9 @@ final class AnnotationScanner
 		LinkedHashSet<String> findElements = new LinkedHashSet<>();
 		
 		while (matcher.find())
+		{
 			findElements.add(matcher.group());
+		}
 		
 		return findElements;
 	}
@@ -297,8 +315,9 @@ final class AnnotationScanner
 			{
 				String fullMethodName = method.getDeclaringClass().getName() + "::" + method.getName();
 				throw new AnnotationAnalyzeException(
-					"Syntax error in '@BoundProperty.name()' value. Wrong signature in method '" + fullMethodName + "': it should use only String or Enum types as arguments, but found '" + parameterType
-						.getName() + "'.").logAndReturn();
+					"Syntax error in '@BoundProperty.name()' value. Wrong signature in method '" + fullMethodName
+						+ "': it should use only String or Enum types as arguments, but found '" + parameterType.getName() + "'.")
+					.logAndReturn();
 			}
 			
 			String parameterName = mp.getName();
@@ -307,7 +326,8 @@ final class AnnotationScanner
 			{
 				String fullMethodName = method.getDeclaringClass().getName() + "::" + method.getName();
 				throw new AnnotationAnalyzeException(
-					"Syntax error in '@BoundProperty.name()' value. Incompatible signature in method '" + fullMethodName + "': parameter name '@{" + parameterName + "}' doesn't present in template '" + parameterNameTemplate + "'.")
+					"Syntax error in '@BoundProperty.name()' value. Incompatible signature in method '" + fullMethodName
+						+ "': parameter name '@{" + parameterName + "}' doesn't present in template '" + parameterNameTemplate + "'.")
 					.logAndReturn();
 			}
 			
@@ -322,7 +342,8 @@ final class AnnotationScanner
 			{
 				String fullMethodName = method.getDeclaringClass().getName() + "::" + method.getName();
 				throw new AnnotationAnalyzeException(
-					"Syntax error in '@BoundProperty.name()' value. Incompatible signature in method '" + fullMethodName + "': template variable '" + dParam + "' doesn't present in method parameters.")
+					"Syntax error in '@BoundProperty.name()' value. Incompatible signature in method '" + fullMethodName + "': template variable '" + dParam
+						+ "' doesn't present in method parameters.")
 					.logAndReturn();
 			}
 		}

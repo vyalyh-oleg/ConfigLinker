@@ -6,6 +6,7 @@ import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -22,7 +23,13 @@ public class SimpleHttpServer
 	
 	private SimpleHttpServer() { }
 	
+	
 	public static void prepare()
+	{
+		prepare(null);
+	}
+	
+	public static void prepare(RequestCallbackListener callback)
 	{
 		try
 		{
@@ -34,7 +41,7 @@ public class SimpleHttpServer
 		}
 		
 		// create contexts with mapping to path
-		HttpContext getTaskContext = httpServer.createContext(DownloadFileHandler.PATH, new DownloadFileHandler());
+		HttpContext getTaskContext = httpServer.createContext(DownloadFileHandler.PATH, new DownloadFileHandler(callback));
 		
 		// set executor to server
 		Executor executor = Executors.newFixedThreadPool(3, new SimpleThreadFactory(SimpleHttpServer.class.getSimpleName(), true));
@@ -60,5 +67,15 @@ public class SimpleHttpServer
 	{
 		if (httpServer != null)
 			httpServer.stop(stopDelay);
+	}
+	
+	public interface RequestCallbackListener
+	{
+		String RequestURIPath = "RequestURIPath";
+		String FilePath = "FilePath";
+		String FileName = "FileName";
+		
+		void afterRequestReceived(Map<String, String> requestData);
+		void beforeResponseSend(Map<String, String> responseData);
 	}
 }

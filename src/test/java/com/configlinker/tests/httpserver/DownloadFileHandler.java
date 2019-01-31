@@ -1,6 +1,7 @@
 package com.configlinker.tests.httpserver;
 
 
+import com.configlinker.tests.httpserver.SimpleHttpServer.RequestCallbackListener;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -8,23 +9,28 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class DownloadFileHandler implements HttpHandler
 {
 	public static final String PATH = "/configs/";
-	public static final String default_folder = "./configs";
+	public static final String DEFAULT_FOLDER = "./configs";
 	
 	private final Path folderPath;
+	private final RequestCallbackListener callback;
 	
-	public DownloadFileHandler()
+	
+	DownloadFileHandler(RequestCallbackListener callback)
 	{
-		this(default_folder);
+		this(DEFAULT_FOLDER, callback);
 	}
 	
-	public DownloadFileHandler(String folderPath)
+	DownloadFileHandler(String folderPath, RequestCallbackListener callback)
 	{
 		this.folderPath = Paths.get(folderPath).normalize().toAbsolutePath();
+		this.callback = callback;
 	}
 	
 	@Override
@@ -34,11 +40,20 @@ public class DownloadFileHandler implements HttpHandler
 		String fileName = fullPath.substring(PATH.length());
 		Path filePath = folderPath.resolve(fileName);
 		
-		// TODO: log request info to the file in 'test_workdir/logs' directory
-		// 1-line: fileName
-		// 2-line: headers (one by line)
-		// n-line: blank
-		// n+1 line: another request data
+		if (callback != null)
+		{
+			HashMap<String, String> requestData = new HashMap<>();
+			requestData.put(RequestCallbackListener.RequestURIPath, fullPath);
+			requestData.put(RequestCallbackListener.FilePath, filePath.toString());
+			requestData.put(RequestCallbackListener.FileName, fileName);
+			
+			for (Map.Entry<String, java.util.List<String>> header : httpExchange.getRequestHeaders().entrySet())
+			{
+				requestData.put(header.getKey(), header.getValue().get(0));
+			}
+			
+			callback.afterRequestReceived(requestData);
+		}
 		
 		httpExchange.getResponseHeaders().add("Content-Type", "text/plain");
 		

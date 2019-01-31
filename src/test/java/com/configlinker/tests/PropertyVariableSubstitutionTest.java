@@ -9,6 +9,7 @@ import com.configlinker.annotations.BoundObject;
 import com.configlinker.annotations.BoundProperty;
 import com.configlinker.deserializers.DateType;
 import com.configlinker.enums.TrackPolicy;
+import com.configlinker.tests.httpserver.SimpleHttpServer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -25,6 +26,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -200,6 +202,48 @@ class PropertyVariableSubstitutionTest extends AbstractBaseTest
 			}
 		}
 	}
+	
+	@Test
+	void test_HttpLoader_WithFactoryHeadersAndBoundObjectHeaders_WithVar() throws InterruptedException
+	{
+		// predefined headers
+		HashMap<String,String> headers = new HashMap<>();
+		headers.put("Authorize-Key", "my-secret-key--dd-ee-ff");
+		headers.put("Server-Id", "1234567890_11");
+		headers.put("Client-Id", "0987654321_00");
+		
+		Map<String, String>[] request = new Map[1];
+		SimpleHttpServer.RequestCallbackListener callbackListener = new SimpleHttpServer.RequestCallbackListener()
+		{
+			@Override
+			public void afterRequestReceived(Map<String, String> requestData)
+			{
+				request[0] = requestData;
+			}
+			
+			@Override
+			public void beforeResponseSend(Map<String, String> responseData)
+			{
+			}
+		};
+		
+		try
+		{
+			SimpleHttpServer.prepare();
+			SimpleHttpServer.start();
+			Thread.sleep(1000);
+			
+			LoadFromHttp loadFromHttp = getSingleConfigInstance(LoadFromHttp.class);
+			Assertions.assertEquals("value from classpath_config.properties", loadFromHttp.getConfigName());
+			
+			// TODO: check headers
+			//request
+		}
+		finally
+		{
+			SimpleHttpServer.shutdown();
+		}
+	}
 }
 
 
@@ -295,7 +339,7 @@ class DynamicPropConfigChangeListener implements IConfigChangeListener
 		Assertions.assertEquals(DynamicProp_VarInAllParts_TrackChanges.class, configChangedEvent.getConfigInterface());
 		Assertions.assertEquals("./configs/variable_substitution.track_changes.properties", configChangedEvent.getSourcePath());
 		Map<String, ConfigChangedEvent.ValuesPair> rawValues = configChangedEvent.getRawValues();
-		Assertions.assertEquals(4, rawValues.size());// TODO
+		Assertions.assertEquals(4, rawValues.size());
 		
 		Assertions.assertEquals("1", rawValues.get("programming.languages.Java.priority").getOldValue());
 		Assertions.assertEquals("0", rawValues.get("programming.languages.Java.priority").getNewValue());

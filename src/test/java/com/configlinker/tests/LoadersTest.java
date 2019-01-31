@@ -9,6 +9,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 class LoadersTest extends AbstractBaseTest
 {
@@ -44,12 +47,72 @@ class LoadersTest extends AbstractBaseTest
 		}
 	}
 	
-	// httpHeaders
-	@Disabled("TODO: implement")
 	@Test
-	void test_HttpLoaderWithCustomHeaders() throws InterruptedException
+	void test_HttpLoader_WithFactoryHeaders() throws InterruptedException
 	{
-		// TODO: implement test_HttpLoaderWithCustomHeaders
+		// predefined headers
+		HashMap<String,String> headers = new HashMap<>();
+		headers.put("Authorize-Key", "my-secret-key--aa-bb-cc");
+		headers.put("Server-Id", "1234567890");
+		
+		Map<String, String>[] request = new Map[1];
+		SimpleHttpServer.RequestCallbackListener callbackListener = new SimpleHttpServer.RequestCallbackListener()
+		{
+			@Override
+			public void afterRequestReceived(Map<String, String> requestData)
+			{
+				request[0] = requestData;
+			}
+			
+			@Override
+			public void beforeResponseSend(Map<String, String> responseData)
+			{
+			}
+		};
+		
+		try
+		{
+			SimpleHttpServer.prepare(callbackListener);
+			SimpleHttpServer.start();
+			Thread.sleep(1000);
+			
+			LoadFromHttp loadFromHttp = getSingleConfigInstance(LoadFromHttp.class);
+			Assertions.assertEquals("value from classpath_config.properties", loadFromHttp.getConfigName());
+			
+			// TODO: check headers
+			//request
+		}
+		finally
+		{
+			SimpleHttpServer.shutdown();
+		}
+	}
+	
+	@Test
+	void test_HttpLoader_WithFactoryHeaders_WithBoundObjectHeaders() throws InterruptedException
+	{
+		// predefined headers
+		HashMap<String,String> headers = new HashMap<>();
+		headers.put("Authorize-Key", "my-secret-key--dd-ee-ff");
+		headers.put("Server-Id", "1234567890_11");
+		headers.put("Client-Id", "0987654321_00");
+		
+		Map<String, String>[] request = new Map[1];
+		SimpleHttpServer.RequestCallbackListener callbackListener = new SimpleHttpServer.RequestCallbackListener()
+		{
+			@Override
+			public void afterRequestReceived(Map<String, String> requestData)
+			{
+				request[0] = requestData;
+			}
+			
+			@Override
+			public void beforeResponseSend(Map<String, String> responseData)
+			{
+			
+			}
+		};
+		
 		try
 		{
 			SimpleHttpServer.prepare();
@@ -59,19 +122,19 @@ class LoadersTest extends AbstractBaseTest
 			LoadFromHttp loadFromHttp = getSingleConfigInstance(LoadFromHttp.class);
 			Assertions.assertEquals("value from classpath_config.properties", loadFromHttp.getConfigName());
 			
-			// check headers from log file in 'test_workdir/logs'
+			// TODO: check headers
+			//request
 		}
 		finally
 		{
-			// delete all log files
 			SimpleHttpServer.shutdown();
 		}
 	}
 	
+	// TODO: implement test_ConfigLinkerLoader
 	@Test @Disabled("TODO: implement")
 	void test_ConfigLinkerLoader()
 	{
-		// TODO: implement test_ConfigLinkerLoader
 		Assertions.fail("test_ConfigLinkerLoader not implemented.");
 	}
 }
@@ -100,7 +163,7 @@ interface LoadFromHttp
 }
 
 @BoundObject(sourcePath = "http://" + SimpleHttpServer.hostName + ":" + SimpleHttpServer.port + DownloadFileHandler.PATH + "http_config.properties", sourceScheme = SourceScheme.HTTP,
-	httpHeaders = {"Authorize:<my-secret-key>", "Server-Id: 1234567890"})
+	httpHeaders = {"Authorize: my-secret-key--dd-ee-ff", "Client-Id: 0987654321_00"})
 interface LoadFromHttpWithHeaders
 {
 	@BoundProperty(name = "config.name")
