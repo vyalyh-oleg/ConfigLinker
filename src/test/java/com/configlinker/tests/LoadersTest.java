@@ -1,5 +1,6 @@
 package com.configlinker.tests;
 
+import com.configlinker.FactorySettingsBuilder;
 import com.configlinker.annotations.BoundObject;
 import com.configlinker.annotations.BoundProperty;
 import com.configlinker.enums.SourceScheme;
@@ -51,8 +52,8 @@ class LoadersTest extends AbstractBaseTest
 	void test_HttpLoader_WithFactoryHeaders() throws InterruptedException
 	{
 		// predefined headers
-		HashMap<String,String> headers = new HashMap<>();
-		headers.put("Authorize-Key", "my-secret-key--aa-bb-cc");
+		HashMap<String, String> headers = new HashMap<>();
+		headers.put("Authorize-Key", "my-secret-key--AA-bB-Cc");
 		headers.put("Server-Id", "1234567890");
 		
 		Map<String, String>[] request = new Map[1];
@@ -76,11 +77,14 @@ class LoadersTest extends AbstractBaseTest
 			SimpleHttpServer.start();
 			Thread.sleep(1000);
 			
-			LoadFromHttp loadFromHttp = getSingleConfigInstance(LoadFromHttp.class);
-			Assertions.assertEquals("value from classpath_config.properties", loadFromHttp.getConfigName());
+			FactorySettingsBuilder fsb = FactorySettingsBuilder.create().setHttpHeaders(headers);
+			LoadFromHttp loadFromHttp = getSingleConfigInstance(fsb, LoadFromHttp.class);
+			Assertions.assertEquals("value from http_config.properties", loadFromHttp.getConfigName());
 			
-			// TODO: check headers
-			//request
+			// check request headers
+			Thread.sleep(500);
+			Assertions.assertEquals("my-secret-key--AA-bB-Cc", request[0].get("Authorize-Key".toLowerCase()));
+			Assertions.assertEquals("1234567890", request[0].get("Server-Id".toLowerCase()));
 		}
 		finally
 		{
@@ -92,10 +96,9 @@ class LoadersTest extends AbstractBaseTest
 	void test_HttpLoader_WithFactoryHeaders_WithBoundObjectHeaders() throws InterruptedException
 	{
 		// predefined headers
-		HashMap<String,String> headers = new HashMap<>();
-		headers.put("Authorize-Key", "my-secret-key--dd-ee-ff");
+		HashMap<String, String> headers = new HashMap<>();
+		headers.put("authorize-key", "my-secret-key--DD-ee-FF");
 		headers.put("Server-Id", "1234567890_11");
-		headers.put("Client-Id", "0987654321_00");
 		
 		Map<String, String>[] request = new Map[1];
 		SimpleHttpServer.RequestCallbackListener callbackListener = new SimpleHttpServer.RequestCallbackListener()
@@ -115,15 +118,19 @@ class LoadersTest extends AbstractBaseTest
 		
 		try
 		{
-			SimpleHttpServer.prepare();
+			SimpleHttpServer.prepare(callbackListener);
 			SimpleHttpServer.start();
 			Thread.sleep(1000);
 			
-			LoadFromHttp loadFromHttp = getSingleConfigInstance(LoadFromHttp.class);
-			Assertions.assertEquals("value from classpath_config.properties", loadFromHttp.getConfigName());
+			FactorySettingsBuilder fsb = FactorySettingsBuilder.create().setHttpHeaders(headers);
+			LoadFromHttpUsingHeaders loadFromHttp = getSingleConfigInstance(fsb, LoadFromHttpUsingHeaders.class);
+			Assertions.assertEquals("value from http_config.properties", loadFromHttp.getConfigName());
 			
-			// TODO: check headers
-			//request
+			// check request headers
+			Thread.sleep(500);
+			Assertions.assertEquals("My-Secret-Key--zz-yy-xx", request[0].get("Authorize-Key".toLowerCase()));
+			Assertions.assertEquals("1234567890_11", request[0].get("Server-Id".toLowerCase()));
+			Assertions.assertEquals("0987654321_00", request[0].get("Client-Id".toLowerCase()));
 		}
 		finally
 		{
@@ -132,7 +139,8 @@ class LoadersTest extends AbstractBaseTest
 	}
 	
 	// TODO: implement test_ConfigLinkerLoader
-	@Test @Disabled("TODO: implement")
+	@Test
+	@Disabled("TODO: implement")
 	void test_ConfigLinkerLoader()
 	{
 		Assertions.fail("test_ConfigLinkerLoader not implemented.");
@@ -163,8 +171,8 @@ interface LoadFromHttp
 }
 
 @BoundObject(sourcePath = "http://" + SimpleHttpServer.hostName + ":" + SimpleHttpServer.port + DownloadFileHandler.PATH + "http_config.properties", sourceScheme = SourceScheme.HTTP,
-	httpHeaders = {"Authorize: my-secret-key--dd-ee-ff", "Client-Id: 0987654321_00"})
-interface LoadFromHttpWithHeaders
+	httpHeaders = {"Authorize-Key: My-Secret-Key--zz-yy-xx", "Client-Id: 0987654321_00"})
+interface LoadFromHttpUsingHeaders
 {
 	@BoundProperty(name = "config.name")
 	String getConfigName();

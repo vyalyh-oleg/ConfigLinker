@@ -8,7 +8,9 @@ import com.configlinker.IConfigChangeListener;
 import com.configlinker.annotations.BoundObject;
 import com.configlinker.annotations.BoundProperty;
 import com.configlinker.deserializers.DateType;
+import com.configlinker.enums.SourceScheme;
 import com.configlinker.enums.TrackPolicy;
+import com.configlinker.tests.httpserver.DownloadFileHandler;
 import com.configlinker.tests.httpserver.SimpleHttpServer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -207,10 +209,9 @@ class PropertyVariableSubstitutionTest extends AbstractBaseTest
 	void test_HttpLoader_WithFactoryHeadersAndBoundObjectHeaders_WithVar() throws InterruptedException
 	{
 		// predefined headers
-		HashMap<String,String> headers = new HashMap<>();
-		headers.put("Authorize-Key", "my-secret-key--dd-ee-ff");
-		headers.put("Server-Id", "1234567890_11");
-		headers.put("Client-Id", "0987654321_00");
+		HashMap<String, String> headers = new HashMap<>();
+		headers.put("${auth_header}", "${auth_key}");
+		headers.put("Server-Id", "${server_id}");
 		
 		Map<String, String>[] request = new Map[1];
 		SimpleHttpServer.RequestCallbackListener callbackListener = new SimpleHttpServer.RequestCallbackListener()
@@ -224,20 +225,32 @@ class PropertyVariableSubstitutionTest extends AbstractBaseTest
 			@Override
 			public void beforeResponseSend(Map<String, String> responseData)
 			{
+			
 			}
 		};
 		
 		try
 		{
-			SimpleHttpServer.prepare();
+			SimpleHttpServer.prepare(callbackListener);
 			SimpleHttpServer.start();
 			Thread.sleep(1000);
 			
-			LoadFromHttp loadFromHttp = getSingleConfigInstance(LoadFromHttp.class);
-			Assertions.assertEquals("value from classpath_config.properties", loadFromHttp.getConfigName());
+			FactorySettingsBuilder fsb = FactorySettingsBuilder.create()
+				.addParameter("auth_header", "authorize-key")
+				.addParameter("auth_key", "my-secret-key--DD-ee-FF")
+				.addParameter("auth_key_client", "My-Secret-Key--zz-yy-xx")
+				.addParameter("server_id", "1234567890_11")
+				.addParameter("client_id", "0987654321_00")
+				.setHttpHeaders(headers);
 			
-			// TODO: check headers
-			//request
+			LoadFromHttpUsingHeadersWithVars loadFromHttp = getSingleConfigInstance(fsb, LoadFromHttpUsingHeadersWithVars.class);
+			Assertions.assertEquals("value from http_config.properties", loadFromHttp.getConfigName());
+			
+			// check request headers
+			Thread.sleep(500);
+			Assertions.assertEquals("My-Secret-Key--zz-yy-xx", request[0].get("Authorize-Key".toLowerCase()));
+			Assertions.assertEquals("1234567890_11", request[0].get("Server-Id".toLowerCase()));
+			Assertions.assertEquals("0987654321_00", request[0].get("Client-Id".toLowerCase()));
 		}
 		finally
 		{
@@ -361,4 +374,12 @@ interface DynamicProp_VarInAllParts_TrackChanges
 	
 	@BoundProperty(name = "programming.paradigm.declarative")
 	List<String> declarativeParadigms();
+}
+
+@BoundObject(sourcePath = "http://" + SimpleHttpServer.hostName + ":" + SimpleHttpServer.port + DownloadFileHandler.PATH + "http_config.properties", sourceScheme = SourceScheme.HTTP,
+	httpHeaders = {"Authorize-Key:${auth_key_client}", "Client-Id:${client_id}"})
+interface LoadFromHttpUsingHeadersWithVars
+{
+	@BoundProperty(name = "config.name")
+	String getConfigName();
 }

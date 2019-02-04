@@ -129,56 +129,59 @@ final class AnnotationScanner
 		// get and validate http headers
 		Map<String, String> httpHeaders = null;
 		String[] customHttpHeaders = boundObjectAnnotation.httpHeaders();
-		if (!(customHttpHeaders.length == 1 && customHttpHeaders[0].isEmpty()))
+		boolean headersInAnnotation = !(customHttpHeaders.length == 1 && customHttpHeaders[0].isEmpty());
+		
+		if (headersInAnnotation && sourceScheme != SourceScheme.HTTP)
+			throw new AnnotationAnalyzeException(
+				"Setting custom http headers in '@BoundObject.httpHeaders()' is allowed only if 'BoundObject.SourceScheme == SourceScheme.HTTP'; interface  '"
+					+ configInterface.getName() + "'.")
+				.logAndReturn();
+		
+		if (sourceScheme == SourceScheme.HTTP)
 		{
-			if (sourceScheme == SourceScheme.HTTP)
+			httpHeaders = new HashMap<>();
+			for (Map.Entry<String, String> headerEntry : this.configBuilder.getHttpHeaders().entrySet())
 			{
-				httpHeaders = new HashMap<>(this.configBuilder.getHttpHeaders());
-				for (Map.Entry<String, String> headerEntry : this.configBuilder.getHttpHeaders().entrySet())
+				if (!headerEntry.getKey().trim().isEmpty())
 				{
-					if (!headerEntry.getKey().trim().isEmpty())
-					{
-						String headerName = validateAndMakeVariableSubstitution(headerEntry.getKey());
-						String headerValue = validateAndMakeVariableSubstitution(headerEntry.getValue());
-						httpHeaders.put(headerName.trim().toLowerCase(), headerValue);
-					}
-					else
-						throw new AnnotationAnalyzeException(
-							"Syntax error in headers that was put into 'FactorySettingsBuilder', header '" + headerEntry.getKey() + ":" + headerEntry.getValue()
-								+ "' has empty name; interface '" + configInterface.getName())
-							.logAndReturn();
+					String headerName = validateAndMakeVariableSubstitution(headerEntry.getKey());
+					String headerValue = validateAndMakeVariableSubstitution(headerEntry.getValue());
+					httpHeaders.put(headerName.trim().toLowerCase(), headerValue);
 				}
-				
-				String header;
-				int colonIndex;
-				for (String httpHeader : customHttpHeaders)
+				else
+					throw new AnnotationAnalyzeException(
+						"Syntax error in headers that was put into 'FactorySettingsBuilder', header '" + headerEntry.getKey() + ":" + headerEntry.getValue()
+							+ "' has empty name; interface '" + configInterface.getName())
+						.logAndReturn();
+			}
+		}
+		
+		if (headersInAnnotation)
+		{
+			String header;
+			int colonIndex;
+			for (String httpHeader : customHttpHeaders)
+			{
+				try
 				{
-					try
-					{
-						header = validateAndMakeVariableSubstitution(httpHeader);
-						colonIndex = header.indexOf(':');
-						if (colonIndex == -1 || header.substring(0, colonIndex).trim().isEmpty())
-						{
-							throw new AnnotationAnalyzeException(
-								"Syntax error in '@BoundObject.httpHeaders()', header '" + httpHeader + "'; interface '" + configInterface.getName()
-									+ "'; header name and value should be separated with colon ':' and the header name cannot be empty.")
-								.logAndReturn();
-						}
-						httpHeaders.put(header.substring(0, colonIndex).trim().toLowerCase(), header.substring(colonIndex + 1).trim());
-					}
-					catch (IllegalArgumentException e)
+					header = validateAndMakeVariableSubstitution(httpHeader);
+					colonIndex = header.indexOf(':');
+					if (colonIndex == -1 || header.substring(0, colonIndex).trim().isEmpty())
 					{
 						throw new AnnotationAnalyzeException(
-							"Syntax error in '@BoundObject.httpHeaders()': '" + httpHeader + "' value; interface '" + configInterface.getName() + "'.", e)
+							"Syntax error in '@BoundObject.httpHeaders()', header '" + httpHeader + "'; interface '" + configInterface.getName()
+								+ "'; header name and value should be separated with colon ':' and the header name cannot be empty.")
 							.logAndReturn();
 					}
+					httpHeaders.put(header.substring(0, colonIndex).trim().toLowerCase(), header.substring(colonIndex + 1).trim());
+				}
+				catch (IllegalArgumentException e)
+				{
+					throw new AnnotationAnalyzeException(
+						"Syntax error in '@BoundObject.httpHeaders()': '" + httpHeader + "' value; interface '" + configInterface.getName() + "'.", e)
+						.logAndReturn();
 				}
 			}
-			else
-				throw new AnnotationAnalyzeException(
-					"Setting custom http headers in '@BoundObject.httpHeaders()' is allowed only if 'BoundObject.SourceScheme == SourceScheme.HTTP'; interface  '"
-						+ configInterface.getName() + "'.")
-					.logAndReturn();
 		}
 		
 		// get charset of raw configuration text

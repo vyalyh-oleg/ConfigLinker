@@ -43,13 +43,17 @@ public class DownloadFileHandler implements HttpHandler
 		if (callback != null)
 		{
 			HashMap<String, String> requestData = new HashMap<>();
+			requestData.put(RequestCallbackListener.RequestProtocol, httpExchange.getProtocol());
+			requestData.put(RequestCallbackListener.RequestMethod, httpExchange.getRequestMethod());
 			requestData.put(RequestCallbackListener.RequestURIPath, fullPath);
+			requestData.put(RequestCallbackListener.LocalAddress, httpExchange.getLocalAddress().toString());
+			requestData.put(RequestCallbackListener.RemoteAddress, httpExchange.getRemoteAddress().toString());
 			requestData.put(RequestCallbackListener.FilePath, filePath.toString());
 			requestData.put(RequestCallbackListener.FileName, fileName);
 			
 			for (Map.Entry<String, java.util.List<String>> header : httpExchange.getRequestHeaders().entrySet())
 			{
-				requestData.put(header.getKey(), header.getValue().get(0));
+				requestData.put(header.getKey().toLowerCase(), header.getValue().get(0));
 			}
 			
 			callback.afterRequestReceived(requestData);

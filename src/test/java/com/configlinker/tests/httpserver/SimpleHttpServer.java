@@ -71,9 +71,13 @@ public class SimpleHttpServer
 	
 	public interface RequestCallbackListener
 	{
-		String RequestURIPath = "RequestURIPath";
-		String FilePath = "FilePath";
-		String FileName = "FileName";
+		String RequestProtocol = "Request-Protocol";
+		String RequestMethod = "Request-Method";
+		String RequestURIPath = "Request-URI-Path";
+		String LocalAddress = "Local-Address";
+		String RemoteAddress = "Remote-Address";
+		String FilePath = "File-Path";
+		String FileName = "File-Name";
 		
 		void afterRequestReceived(Map<String, String> requestData);
 		void beforeResponseSend(Map<String, String> responseData);
