@@ -116,6 +116,13 @@ javadoc {
 }
 */
 
+tasks.withType(JavaCompile) {
+	//enable compilation in a separate daemon process
+	//options.fork = true
+	options.compilerArgs += ["-parameters"]
+	println("Compiler arguments for $taskIdentity.name: " + options.allCompilerArgs)
+}
+
 task javadocJar(type: Jar) {
 	classifier = 'javadoc'
 	from javadoc
@@ -135,8 +142,8 @@ tasks.withType(JavaExec) {
 }
 */
 
-import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-import org.gradle.api.tasks.testing.logging.TestLogEvent
+//import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+//import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 test {
 	//debug=true

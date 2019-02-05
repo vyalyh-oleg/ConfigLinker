@@ -12,11 +12,13 @@ public final class ConfigSet
 {
 	private final Proxy configProxy;
 	private final List<Class<?>> configInterfaces;
+	private final Runnable stopTrackChanges;
 	
-	ConfigSet(Proxy configProxy)
+	ConfigSet(Proxy configProxy, Runnable stopTrackChanges)
 	{
 		this.configProxy = configProxy;
 		this.configInterfaces = Collections.unmodifiableList(Arrays.asList(this.configProxy.getClass().getInterfaces()));
+		this.stopTrackChanges = stopTrackChanges;
 	}
 	
 	public List<Class<?>> getAllConfigInterfaces()
@@ -29,5 +31,10 @@ public final class ConfigSet
 		if (configInterfaces.contains(configInterface))
 			return configInterface.cast(this.configProxy);
 		throw new ConfigSetException("This ConfigSet doesn't contain configuration for '" + configInterface.getName() + "'.");
+	}
+	
+	public void stopTrackChanges()
+	{
+		stopTrackChanges.run();
 	}
 }

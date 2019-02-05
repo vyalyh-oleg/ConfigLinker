@@ -25,14 +25,24 @@ public abstract class AbstractBaseTest
 		// SLF4JBridgeHandler.install();
 	}
 	
+	protected ConfigSet getConfigSet(Class<?>... configInterfaces)
+	{
+		return ConfigSetFactory.create(configInterfaces);
+	}
+	
+	protected ConfigSet getConfigSet(FactorySettingsBuilder factorySettingsBuilder, Class<?>... configInterfaces)
+	{
+		return ConfigSetFactory.create(factorySettingsBuilder, configInterfaces);
+	}
+	
 	protected ConfigSet getConfigSet(Set<Class<?>> configInterfaces)
 	{
 		return ConfigSetFactory.create(configInterfaces);
 	}
 	
-	protected ConfigSet getConfigSet(FactorySettingsBuilder configBuilder, Set<Class<?>> configInterfaces)
+	protected ConfigSet getConfigSet(FactorySettingsBuilder factorySettingsBuilder, Set<Class<?>> configInterfaces)
 	{
-		return ConfigSetFactory.create(configBuilder, configInterfaces);
+		return ConfigSetFactory.create(factorySettingsBuilder, configInterfaces);
 	}
 	
 	protected <T> T getSingleConfigInstance(Class<T> interfaceType)
@@ -40,8 +50,8 @@ public abstract class AbstractBaseTest
 		return ConfigSetFactory.create(interfaceType).getConfigObject(interfaceType);
 	}
 	
-	protected <T> T getSingleConfigInstance(FactorySettingsBuilder configBuilder, Class<T> interfaceType)
+	protected <T> T getSingleConfigInstance(FactorySettingsBuilder factorySettingsBuilder, Class<T> interfaceType)
 	{
-		return ConfigSetFactory.create(configBuilder, interfaceType).getConfigObject(interfaceType);
+		return ConfigSetFactory.create(factorySettingsBuilder, interfaceType).getConfigObject(interfaceType);
 	}
 }

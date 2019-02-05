@@ -36,6 +36,7 @@ public final class FactorySettingsBuilder
 	private Charset charset = StandardCharsets.UTF_8;
 	private Whitespaces whitespaces = Whitespaces.IGNORE;
 	private ErrorBehavior errorBehavior = ErrorBehavior.THROW_EXCEPTION;
+	private IConfigChangeListener globalChangeListener = null;
 	private boolean closed = false;
 	
 	public static FactorySettingsBuilder create()

@@ -41,21 +41,23 @@ abstract class AbstractLoader
 	protected void startTrackChanges() throws PropertyLoadException
 	{
 		throw new PropertyLoadException(
-			"Cannot perform 'startTrackChanges', because tracking changes didn't implemented for '" + this.getClass().getName() + "'.").logAndReturn();
+			"Cannot perform 'startTrackChanges', because tracking changes didn't implemented for '" + this.getClass().getName() + "'.")
+			.logAndReturn();
 	}
 	
 	protected void stopTrackChanges() throws PropertyLoadException
 	{
 		throw new PropertyLoadException(
-			"Cannot perform 'stopTrackChanges', because tracking changes didn't implemented for '" + this.getClass().getName() + "'.").logAndReturn();
+			"Cannot perform 'stopTrackChanges', because tracking changes didn't implemented for '" + this.getClass().getName() + "'.")
+			.logAndReturn();
 	}
 	
-	final protected Collection<ConfigDescription> getConfigDescriptions()
+	final Collection<ConfigDescription> getConfigDescriptions()
 	{
 		return this.configDescriptions.values();
 	}
 	
-	final protected void loadProperties() throws PropertyLoadException, PropertyValidateException, PropertyMatchException, PropertyMapException
+	final void loadProperties() throws PropertyLoadException, PropertyValidateException, PropertyMatchException, PropertyMapException
 	{
 		for (ConfigDescription configDescription : this.configDescriptions.values())
 		{
@@ -90,8 +92,9 @@ abstract class AbstractLoader
 				if (propertyDescription.getErrorBehavior() == ErrorBehavior.THROW_EXCEPTION)
 				{
 					throw new PropertyNotFoundException(
-						"Value for property '" + fullPropertyName + "' not found, config interface '" + configInterface.getName() +
-							"', method '" + entryPropertyDescription.getKey().getName() + "'.").logAndReturn();
+						"Value for property '" + fullPropertyName + "' not found, config interface '" + configInterface.getName() + "', method '"
+							+ entryPropertyDescription.getKey().getName() + "'.")
+						.logAndReturn();
 				}
 			}
 			else
@@ -110,7 +113,7 @@ abstract class AbstractLoader
 	 *
 	 * @param configDescriptions -
 	 */
-	final protected void refreshProperties(Set<ConfigDescription> configDescriptions)
+	final void refreshProperties(Set<ConfigDescription> configDescriptions)
 	{
 		ConfigDescription description = configDescriptions.iterator().next();
 		Properties oldProperties = rawProperties.get(description.getSourcePath());
@@ -124,8 +127,8 @@ abstract class AbstractLoader
 			Loggers.getMainLogger().error("Cannot load raw properties for config interface '{}'.", description.getConfInterface().getName());
 			for (ConfigDescription configDescription : configDescriptions)
 			{
-				ConfigChangedEvent configChangedEvent = new ConfigChangedEvent(configDescription.getConfInterface(), configDescription.getSourcePath(), null,
-					e);
+				ConfigChangedEvent configChangedEvent = new ConfigChangedEvent(configDescription.getConfInterface(), configDescription.getSourcePath(),
+					null, e);
 				configDescription.fireConfigChanged(configChangedEvent);
 			}
 			return;
@@ -145,7 +148,7 @@ abstract class AbstractLoader
 		
 		for (Map.Entry<Object, Object> newEntry : newProperties.entrySet())
 		{
-			if (!oldProperties.contains(newEntry.getKey()))
+			if (!oldProperties.containsKey(newEntry.getKey()))
 				changedValues.put((String) newEntry.getKey(), new ConfigChangedEvent.ValuesPair(null, (String) newEntry.getValue()));
 		}
 		
@@ -173,7 +176,7 @@ abstract class AbstractLoader
 			
 			ConfigChangedEvent configChangedEvent = new ConfigChangedEvent(configInterface, configDescription.getSourcePath(), changedValues, convertException);
 			configChangedEvents.put(configDescription, configChangedEvent);
-			singleReturnsMethodsCache.put(configDescription.getConfInterface(), singleReturns);
+			singleReturnsMethodsCache.put(configInterface, singleReturns);
 		}
 		
 		if (!error)
@@ -208,8 +211,9 @@ abstract class AbstractLoader
 					if (propertyDescription.getErrorBehavior() == ErrorBehavior.THROW_EXCEPTION)
 					{
 						throw new PropertyNotFoundException(
-							"Value for property '" + propertyDescription.getName() + "' not found, config interface '" + configInterface.getName() +
-								"', method '" + method.getName() + "'.").logAndReturn();
+							"Value for property '" + propertyDescription.getName() + "' not found, config interface '" + configInterface.getName()
+								+ "', method '" + method.getName() + "'.")
+							.logAndReturn();
 					}
 				}
 				else

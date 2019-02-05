@@ -547,13 +547,6 @@ class CollectionsTypesTest extends AbstractBaseTest
 	
 	@Test
 	@Disabled("TODO: implement")
-	void test_returnCopyOfArray()
-	{
-		// TODO: implement test_returnCopyOfArray
-	}
-	
-	@Test
-	@Disabled("TODO: implement")
 	void test_returnUnmodifiableList()
 	{
 		// TODO: implement test_returnUnmodifiableList
