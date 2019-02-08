@@ -4,6 +4,7 @@ package com.configlinker.tests;
 import com.configlinker.ConfigSet;
 import com.configlinker.ConfigSetFactory;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
@@ -23,6 +24,12 @@ class ConfigSetFactoryTest extends AbstractBaseTest
 	{
 		NonEmptyValue nonEmptyValue = this.getSingleConfigInstance(NonEmptyValue.class);
 		Assertions.assertSame(nonEmptyValue.non_empty(), nonEmptyValue.non_empty());
+	}
+	
+	@Test @Disabled("TODO: implement")
+	void test_factoryShouldFailIfAttemptsToReceiveAbsentInterface()
+	{
+		//TODO: implement test_factoryShouldFailIfAttemptsToReceiveAbsentInterface
 	}
 	
 	// If the return type is array, it will be always return the same array, so the array object cannot be used as unmodifiable (immutable representations of set of properties).

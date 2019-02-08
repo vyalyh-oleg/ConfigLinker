@@ -8,6 +8,8 @@ import com.configlinker.annotations.BoundProperty;
 import com.configlinker.enums.ErrorBehavior;
 import com.configlinker.enums.SourceScheme;
 import com.configlinker.enums.TrackPolicy;
+import com.configlinker.exceptions.ConfigLinkerRuntimeException;
+import com.configlinker.exceptions.PropertyNotFoundException;
 import com.configlinker.tests.httpserver.DownloadFileHandler;
 import com.configlinker.tests.httpserver.SimpleHttpServer;
 import org.junit.jupiter.api.Assertions;
@@ -160,7 +162,7 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 		}
 	}
 	
-	@Test //TODO: add listener for configChangedEvent.getException()
+	@Test
 	void test_trackFilePartialChangesWithThrowBehaviour() throws InterruptedException, IOException
 	{
 		Path trackFilePath = templatePropertyFilePath.getParent().resolve("track_changes.file.properties");
@@ -169,8 +171,8 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 		try
 		{
 			Files.copy(templatePropertyFilePath, trackFilePath, StandardCopyOption.REPLACE_EXISTING);
-			configSet = getConfigSet(TrackFileChanges.class);
-			TrackFileChanges trackFileChanges = configSet.getConfigObject(TrackFileChanges.class);
+			configSet = getConfigSet(TrackFileChangesThrowBehaviourWithChangeListener.class);
+			TrackFileChangesThrowBehaviourWithChangeListener trackFileChanges = configSet.getConfigObject(TrackFileChangesThrowBehaviourWithChangeListener.class);
 			
 			Assertions.assertEquals(originalName, trackFileChanges.name());
 			Assertions.assertEquals(originalSurname, trackFileChanges.surname());
@@ -178,6 +180,8 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 			Thread.sleep(10000);
 			Assertions.assertEquals(originalName, trackFileChanges.name());
 			Assertions.assertEquals(originalSurname, trackFileChanges.surname());
+			
+			Assertions.assertTrue(MyConfigChangeThrowBehaviourListener.wasCalled(), "MyConfigChangeThrowBehaviourListener wasn't called or didn't pass the assertions.");
 		}
 		finally
 		{
@@ -369,6 +373,7 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 			Thread.sleep(10000);
 			Assertions.assertEquals(newName, trackFileChangesWithChangeListener.name());
 			Assertions.assertEquals(newSurname, trackFileChangesWithChangeListener.surname());
+			
 			Assertions.assertTrue(MyConfigChangeListener.wasCalled(), "MyConfigChangeListener wasn't called or didn't pass the assertions.");
 		}
 		finally
@@ -405,6 +410,7 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 			Thread.sleep(10000);
 			Assertions.assertNull(trackFileChangesNBWithChangeListener.name());
 			Assertions.assertEquals(newSurname, trackFileChangesNBWithChangeListener.surname());
+			
 			Assertions.assertTrue(MyConfigChangeNullBehaviourListener.wasCalled(), "MyConfigChangeNullBehaviourListener wasn't called or didn't pass the assertions.");
 		}
 		finally
@@ -428,6 +434,47 @@ class BoundObjectTrackChangesTest extends AbstractBaseTest
 
 @BoundObject(sourcePath = "./configs/track_changes.file.properties", trackingPolicy = TrackPolicy.ENABLE)
 interface TrackFileChanges
+{
+	@BoundProperty(name = "change.name")
+	String name();
+	
+	@BoundProperty(name = "change.surname")
+	String surname();
+}
+
+class MyConfigChangeThrowBehaviourListener implements IConfigChangeListener
+{
+	private static boolean wasCalled = false;
+	
+	static boolean wasCalled()
+	{
+		return wasCalled;
+	}
+	
+	@Override
+	public void configChanged(ConfigChangedEvent configChangedEvent)
+	{
+		Assertions.assertEquals(TrackFileChangesThrowBehaviourWithChangeListener.class, configChangedEvent.getConfigInterface());
+		Assertions.assertEquals("./configs/track_changes.file.properties", configChangedEvent.getSourcePath());
+		
+		ConfigLinkerRuntimeException exception = configChangedEvent.getException();
+		Assertions.assertEquals(PropertyNotFoundException.class, exception.getClass());
+		Assertions.assertEquals("Value for property 'change.name' not found, config interface 'com.configlinker.tests.TrackFileChangesThrowBehaviourWithChangeListener', method 'name'.", exception.getMessage());
+		
+		Map<String, ConfigChangedEvent.ValuesPair> rawValues = configChangedEvent.getRawValues();
+		Assertions.assertEquals(2, rawValues.size());
+		
+		Assertions.assertEquals(BoundObjectTrackChangesTest.originalName, rawValues.get(BoundObjectTrackChangesTest.nameKey).getOldValue());
+		Assertions.assertNull(rawValues.get(BoundObjectTrackChangesTest.nameKey).getNewValue());
+		Assertions.assertEquals(BoundObjectTrackChangesTest.originalSurname, rawValues.get(BoundObjectTrackChangesTest.surnameKey).getOldValue());
+		Assertions.assertEquals(BoundObjectTrackChangesTest.newSurname, rawValues.get(BoundObjectTrackChangesTest.surnameKey).getNewValue());
+		
+		wasCalled = true;
+	}
+}
+
+@BoundObject(sourcePath = "./configs/track_changes.file.properties", trackingPolicy = TrackPolicy.ENABLE, changeListener = MyConfigChangeThrowBehaviourListener.class)
+interface TrackFileChangesThrowBehaviourWithChangeListener
 {
 	@BoundProperty(name = "change.name")
 	String name();
@@ -489,9 +536,10 @@ class MyConfigChangeListener implements IConfigChangeListener
 	@Override
 	public void configChanged(ConfigChangedEvent configChangedEvent)
 	{
-		Assertions.assertNull(configChangedEvent.getException());
+		Assertions.assertNull(configChangedEvent.getException(), "Exception should be null.");
 		Assertions.assertEquals(TrackFileChangesWithChangeListener.class, configChangedEvent.getConfigInterface());
 		Assertions.assertEquals("./configs/track_changes_listener.file.properties", configChangedEvent.getSourcePath());
+		
 		Map<String, ConfigChangedEvent.ValuesPair> rawValues = configChangedEvent.getRawValues();
 		Assertions.assertEquals(2, rawValues.size());
 		
@@ -526,9 +574,10 @@ class MyConfigChangeNullBehaviourListener implements IConfigChangeListener
 	@Override
 	public void configChanged(ConfigChangedEvent configChangedEvent)
 	{
-		Assertions.assertNull(configChangedEvent.getException());
+		Assertions.assertNull(configChangedEvent.getException(), "Exception should be null.");
 		Assertions.assertEquals(TrackFileChangesNullBehaviourWithChangeListener.class, configChangedEvent.getConfigInterface());
 		Assertions.assertEquals("./configs/track_changes_nullbehaviour_listener.file.properties", configChangedEvent.getSourcePath());
+		
 		Map<String, ConfigChangedEvent.ValuesPair> rawValues = configChangedEvent.getRawValues();
 		Assertions.assertEquals(2, rawValues.size());
 		
