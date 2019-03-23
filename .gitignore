@@ -18,5 +18,3 @@ out/
 *.jar
 *.zip
 *.tar.gz
-.idea/inspectionProfiles/
-src/main/resources/
