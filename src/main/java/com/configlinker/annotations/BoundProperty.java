@@ -34,7 +34,7 @@ public @interface BoundProperty {
 	 * The method might look like this:
 	 * <pre>	getServerLimitFor(String group, String border);</pre>
 	 * Where the {@code 'group'} can be "memory", "disk", "cpu", and {@code 'border'} -- "max", "min", "default".
-	 * <p></p>
+	 * <p>
 	 * <p><b>IMPORTANT:</b>
 	 * <br>To use dynamic variables your interfaces must be compiled with {@code "javac -parameters"} argument.
 	 * @return -
