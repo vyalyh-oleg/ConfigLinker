@@ -164,3 +164,10 @@ interface NonEmptyValue
 	@BoundProperty(name = "workgroup.non_empty")
 	String non_empty();
 }
+
+@BoundObject(sourcePath = "configs/bound_property_functionality.properties")
+interface AnotherNonEmptyValue
+{
+	@BoundProperty(name = "workgroup.non_empty")
+	String non_empty();
+}

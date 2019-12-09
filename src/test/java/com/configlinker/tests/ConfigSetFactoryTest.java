@@ -3,8 +3,8 @@ package com.configlinker.tests;
 
 import com.configlinker.ConfigSet;
 import com.configlinker.ConfigSetFactory;
+import com.configlinker.exceptions.ConfigSetException;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
@@ -26,10 +26,19 @@ class ConfigSetFactoryTest extends AbstractBaseTest
 		Assertions.assertSame(nonEmptyValue.non_empty(), nonEmptyValue.non_empty());
 	}
 	
-	@Test @Disabled("TODO: implement")
+	@Test
 	void test_factoryShouldFailIfAttemptsToReceiveAbsentInterface()
 	{
-		//TODO: implement test_factoryShouldFailIfAttemptsToReceiveAbsentInterface
+		ConfigSet configSet = ConfigSetFactory.create(NonEmptyValue.class);
+		try
+		{
+			AnotherNonEmptyValue configuration = configSet.getConfigObject(AnotherNonEmptyValue.class);
+			Assertions.fail("AnotherNonEmptyValue configuration shouldn't have been found.");
+		}
+		catch (ConfigSetException e)
+		{
+			Assertions.assertEquals("This ConfigSet doesn't contain configuration for 'com.configlinker.tests.AnotherNonEmptyValue'.", e.getMessage());
+		}
 	}
 	
 	// If the return type is array, it will be always return the same array, so the array object cannot be used as unmodifiable (immutable representations of set of properties).
