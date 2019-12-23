@@ -358,10 +358,15 @@ final class AnnotationScanner
 		AnnotationAnalyzeException, PropertyMapException
 	{
 		BoundProperty boundPropertyAnnotation = propertyMethod.getDeclaredAnnotation(BoundProperty.class);
+		
 		if (boundPropertyAnnotation == null)
 			return null;
 		
-		final String fullMethodName = propertyMethod.getDeclaringClass().getName() + "." + propertyMethod.getName();
+		final String methodName = propertyMethod.getName();
+		final String fullMethodName = propertyMethod.getDeclaringClass().getName() + "." + methodName;
+		
+		if (propertyMethod.isDefault())
+			throw new AnnotationAnalyzeException("Method '" + fullMethodName + "', annotated with @BoundProperty, can not be default.").logAndReturn();
 		
 		if (Modifier.isStatic(propertyMethod.getModifiers()))
 			throw new AnnotationAnalyzeException("Method '" + fullMethodName + "', annotated with @BoundProperty, can not be static.").logAndReturn();

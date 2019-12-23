@@ -424,7 +424,7 @@ class BoundPropertyTest extends AbstractBaseTest
 		});
 		
 		Assertions.assertEquals(
-			"Value for property 'workgroup.null' not found, config interface 'com.configlinker.tests.ErrorBehaviorOverrideInPropertyAndObject', method 'nullValueThrowException'.",
+			"Value for property 'workgroup.null' not found, config interface 'com.configlinker.tests.ErrorBehaviorOverrideInPropertyAndObject#nullValueThrowException'.",
 			exception.getMessage());
 	}
 	
@@ -437,7 +437,7 @@ class BoundPropertyTest extends AbstractBaseTest
 		});
 		
 		Assertions.assertEquals(
-			"Value for property 'workgroup.empty' not found, config interface 'com.configlinker.tests.ErrorBehaviorOverrideInPropertyAndObject2', method 'emptyValueThrowException'.",
+			"Value for property 'workgroup.empty' not found, config interface 'com.configlinker.tests.ErrorBehaviorOverrideInPropertyAndObject2#emptyValueThrowException'.",
 			exception.getMessage());
 	}
 	
@@ -449,7 +449,7 @@ class BoundPropertyTest extends AbstractBaseTest
 		});
 		
 		Assertions.assertEquals(
-			"Value for property 'workgroup.null' not found, config interface 'com.configlinker.tests.ErrorBehaviorForNullDefault', method 'nullValueDefaultErrorBehavior'.",
+			"Value for property 'workgroup.null' not found, config interface 'com.configlinker.tests.ErrorBehaviorForNullDefault#nullValueDefaultErrorBehavior'.",
 			exception.getMessage());
 		
 		
@@ -459,7 +459,7 @@ class BoundPropertyTest extends AbstractBaseTest
 		});
 		
 		Assertions.assertEquals(
-			"Value for property 'workgroup.null' not found, config interface 'com.configlinker.tests.ErrorBehaviorForNullDefault', method 'nullValueDefaultErrorBehavior'.",
+			"Value for property 'workgroup.null' not found, config interface 'com.configlinker.tests.ErrorBehaviorForNullDefault#nullValueDefaultErrorBehavior'.",
 			exception2.getMessage());
 	}
 	
@@ -479,7 +479,7 @@ class BoundPropertyTest extends AbstractBaseTest
 		});
 		
 		Assertions.assertEquals(
-			"Value for property 'workgroup.empty' not found, config interface 'com.configlinker.tests.ErrorBehaviorForEmptyDefault', method 'emptyValueDefaultErrorBehavior'.",
+			"Value for property 'workgroup.empty' not found, config interface 'com.configlinker.tests.ErrorBehaviorForEmptyDefault#emptyValueDefaultErrorBehavior'.",
 			exception.getMessage());
 		
 		
@@ -489,7 +489,7 @@ class BoundPropertyTest extends AbstractBaseTest
 		});
 		
 		Assertions.assertEquals(
-			"Value for property 'workgroup.empty' not found, config interface 'com.configlinker.tests.ErrorBehaviorForEmptyDefault', method 'emptyValueDefaultErrorBehavior'.",
+			"Value for property 'workgroup.empty' not found, config interface 'com.configlinker.tests.ErrorBehaviorForEmptyDefault#emptyValueDefaultErrorBehavior'.",
 			exception2.getMessage());
 	}
 	
@@ -511,7 +511,7 @@ class BoundPropertyTest extends AbstractBaseTest
 		});
 		
 		Assertions.assertEquals(
-			"Value for property 'workgroup.null' not found, config interface 'com.configlinker.tests.ErrorBehaviorOverrideInPropertyAndObject3', method 'nullValueThrowException'.",
+			"Value for property 'workgroup.null' not found, config interface 'com.configlinker.tests.ErrorBehaviorOverrideInPropertyAndObject3#nullValueThrowException'.",
 			exception.getMessage());
 	}
 	
@@ -525,7 +525,7 @@ class BoundPropertyTest extends AbstractBaseTest
 		});
 		
 		Assertions.assertEquals(
-			"Value for property 'workgroup.empty' not found, config interface 'com.configlinker.tests.ErrorBehaviorOverrideInPropertyAndObject4', method 'emptyValueThrowException'.",
+			"Value for property 'workgroup.empty' not found, config interface 'com.configlinker.tests.ErrorBehaviorOverrideInPropertyAndObject4#emptyValueThrowException'.",
 			exception.getMessage());
 	}
 	

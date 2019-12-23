@@ -459,7 +459,7 @@ class MyConfigChangeThrowBehaviourListener implements IConfigChangeListener
 		
 		ConfigLinkerRuntimeException exception = configChangedEvent.getException();
 		Assertions.assertEquals(PropertyNotFoundException.class, exception.getClass());
-		Assertions.assertEquals("Value for property 'change.name' not found, config interface 'com.configlinker.tests.TrackFileChangesThrowBehaviourWithChangeListener', method 'name'.", exception.getMessage());
+		Assertions.assertEquals("Value for property 'change.name' not found, config interface 'com.configlinker.tests.TrackFileChangesThrowBehaviourWithChangeListener#name'.", exception.getMessage());
 		
 		Map<String, ConfigChangedEvent.ValuesPair> rawValues = configChangedEvent.getRawValues();
 		Assertions.assertEquals(2, rawValues.size());

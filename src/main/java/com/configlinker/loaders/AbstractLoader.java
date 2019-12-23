@@ -92,7 +92,7 @@ abstract class AbstractLoader
 				if (propertyDescription.getErrorBehavior() == ErrorBehavior.THROW_EXCEPTION)
 				{
 					throw new PropertyNotFoundException(
-						"Value for property '" + fullPropertyName + "' not found, config interface '" + configInterface.getName() + "', method '"
+						"Value for property '" + fullPropertyName + "' not found, config interface '" + configInterface.getName() + "#"
 							+ entryPropertyDescription.getKey().getName() + "'.")
 						.logAndReturn();
 				}
@@ -212,7 +212,7 @@ abstract class AbstractLoader
 					{
 						throw new PropertyNotFoundException(
 							"Value for property '" + propertyDescription.getName() + "' not found, config interface '" + configInterface.getName()
-								+ "', method '" + method.getName() + "'.")
+								+ "#" + method.getName() + "'.")
 							.logAndReturn();
 					}
 				}
