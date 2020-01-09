@@ -70,7 +70,11 @@ public @interface BoundProperty {
 	 */
 	String delimKeyValue() default ":";
 	
-	
+	/**
+	 * <p>Whether or not to ignore leading and trailing getWhitespaces for configuration names and values.
+	 * <p>See: {@link Whitespaces}
+	 * @return -
+	 */
 	Whitespaces whitespaces() default Whitespaces.INHERIT;
 	
 	/**
@@ -90,7 +94,7 @@ public @interface BoundProperty {
 	 * <p>If you want to use <b>custom return type as generic type</b> for {@code List}, {@code Set} or {@code Map} (only for value), you must just properly specify it's generic type in the angle brackets and implement deserialization logic.
 	 * <br>
 	 * <br>
-	 * <p> Only if the deserialization method not reside in your custom type, place here it class ({@code customType = YourDeserializer.class}).
+	 * <p> <b>Only if the deserialization method resides not in your custom type</b>, place here it class ({@code customType = YourDeserializer.class}).
 	 * <br>
 	 * <br>
 	 * <p> For the last two cases you must implement at least one of the deserialization methods, described in {@link DeserializationMethod}.

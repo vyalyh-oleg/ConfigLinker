@@ -3,7 +3,7 @@ package com.configlinker.enums;
 import com.configlinker.FactorySettingsBuilder;
 
 /**
- * <p>Whether or not to ignore leading and trailing getWhitespaces for configuration values.<br>
+ * <p>Whether or not to ignore leading and trailing getWhitespaces for configuration names and values.<br>
  * This behaviour concerns single parameter values, every value in lists, every key and value in maps.<br>
  * <p>Default: {@link Whitespaces#INHERIT}. Also see: {@link FactorySettingsBuilder#setWhitespaces(Whitespaces)}
  * <p>Examples:

@@ -49,8 +49,8 @@ public @interface BoundObject {
 
 	/**
 	 * <p>This value is used to retrieve {@code Charset} object invoking {@link java.nio.charset.Charset#forName(String)}, and then it will be used to load configuration in raw text format.
-	 * <p>Default value inherited from {@link FactorySettingsBuilder#setCharset(Charset)} and equal {@code StandardCharsets.UTF_8}.
-	 * <p>If you set any value here, it will be used instead default value.
+	 * <p>The default value is inherited from {@link FactorySettingsBuilder#setCharset(Charset)} and equal {@code StandardCharsets.UTF_8}.
+	 * <p>If you set any value here, it will be used instead of default value.
 	 * @return -
 	 */
 	String charsetName() default "";

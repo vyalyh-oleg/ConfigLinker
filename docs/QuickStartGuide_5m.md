@@ -132,7 +132,7 @@ ConfigSetFactory.create(Set<Class<?>> configInterfaces);
 ConfigSetFactory.create(FactorySettingsBuilder builder, Set<Class<?>> configInterfaces);
 ```
 **`configInterfaces`**  
-Iterfaces annotated with `@BoundObject` and which methods (at least one) annotated with `@BoundProperty`. A set of interfaces should be a Set (so the duplicates are just ignored).
+Interfaces annotated with `@BoundObject` and which methods (at least one) annotated with `@BoundProperty`. A set of interfaces should be a Set (so the duplicates are just ignored).
 <br/>
 
 **`FactorySettingsBuilder`** (will be discussed in more detail in next lessons)  
