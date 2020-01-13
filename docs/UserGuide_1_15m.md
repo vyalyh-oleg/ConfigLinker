@@ -1,6 +1,7 @@
-### Quick Start Guide (+15 minutes)
-*If you haven't read the previous QSG, please read it firstly. It will take you about 5 minutes. This part is continuation. Otherwise some explanations could be not understandable.*
+## User Guide 1
+*If you haven't read the previous QSG, please read it firstly. It will take you about 5 minutes. This part is continuation. Otherwise some explanations may be not understandable.*
 
+Here will be described advanced usages of annotations <b>`@BoundObject`</b> and <b>`@BoundProperty`.</b>
 
 @BoundObject (1)
 - charsetName
@@ -16,24 +17,7 @@
 - validator
 - whitespaces
 
-arguments in methods
-
----
-
-@BoundObject (2)
-- sourceScheme (HTTP)
-- trackingPolicy
-- trackingInterval
-- changeListener
-- errorBehavior
-
-@BoundProperty (2)
-- customType
-- deserializationMethod
-- errorBehavior
-
-
-FactorySettingsBuilder and inheritance
+How to use arguments in methods
 
 ---
 

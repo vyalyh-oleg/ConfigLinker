@@ -121,7 +121,6 @@ public class ConfigLinkerExample
 
 
 ### Explanation of code
-
 &rarr; Class **`ConfigSetFactory`**  
 Is initial point in your code when you want to work with the library. It contains static methods which create and return `ConfigSet`.  
 
@@ -139,7 +138,8 @@ Interfaces annotated with `@BoundObject` and which methods (at least one) annota
 Builder, where you can preset parameters for `ConfigSetFactory`. It can be common properties for `@BoundObject` and `@BoundProperty` annotations, properties which tuning the behaviours on errors and so on.
 <br/>
 
-&rarr; Class **`ConfigSet`** is the class which object you will use throughout you code for retrieving groups of configuration parameters. In other words <u>it contains a set of config groups</u>. In our case such a group of configuration parameters <u>is just an interface which is *bound* to a properties file</u>.
+&rarr; Class **`ConfigSet`**  
+It is the class which object you will use throughout you code for retrieving groups of configuration parameters. In other words <u>it contains a set of config groups</u>. In our case such a group of configuration parameters <u>is just an interface which is *bound* to a properties file</u>.
 <br/>
 
 &rarr; Annotation **`@BoundObject`**  
