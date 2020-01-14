@@ -36,8 +36,8 @@ server.zone1.types = web, file
 
 **`---------- File: UserCredentials.java ----------`**
 ```java
-import com.configlinker.annotations.BoundObject;
-import com.configlinker.annotations.BoundProperty;
+import net.crispcode.configlinker.annotations.BoundObject;
+import net.crispcode.configlinker.annotations.BoundProperty;
 
 @BoundObject(sourcePath = "credentials.properties")
 public interface UserCredentials
@@ -76,8 +76,8 @@ public enum UserType
 
 **`---------- File: Server.java ----------`**
 ```java
-import com.configlinker.annotations.BoundObject;
-import com.configlinker.annotations.BoundProperty;
+import net.crispcode.configlinker.annotations.BoundObject;
+import net.crispcode.configlinker.annotations.BoundProperty;
 
 @BoundObject(sourcePath = "server.properties")
 public interface Server

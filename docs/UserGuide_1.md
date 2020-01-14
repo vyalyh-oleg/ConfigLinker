@@ -21,7 +21,22 @@ How to use arguments in methods
 
 ---
 
-it doesn't know how your object should be treated
+
+**`---------- File: credentials.properties ----------`**
+```properties
+user.authentication.name = Aragorn
+user.authentication.password = aratorn
+
+user.authorization.role = king, sword_master
+user.authorization.type = WARRIOR
+user.authorization.rank = 3
+user.authorization.accessClassAndLevel = D:5, R:2
+```
+
+**`---------- File: credentials.properties ----------`**
+
+
+It doesn't know how your object should be treated.
 
 
 
