@@ -2,8 +2,8 @@
 *If you didn't read the Quck Start Guide, please read it firstly. It will take you about 5 minutes. This part is continuation.  
 Otherwise some explanations may be not understandable.*
 
-<br/>
 Here will be described advanced usages of annotations <b>`@BoundObject`</b> and <b>`@BoundProperty`</b>.
+<br/>
 
 **`@BoundObject`**
 
@@ -92,6 +92,8 @@ user.authentication.email = aragorn@gondor.middleearth
 user.maxhealth = 1000
 ```
 
+Here the first three parameters use prefix and the fourth parameter has absolute name.
+
 **`code:`**
 ```java
 @BoundObject(sourcePath = "credentials.properties",
@@ -112,10 +114,11 @@ public interface UserCredentials
 }
 
 ```
-Here the first three parameters use prefix and the fourth parameter has absolute name.
 <br/>
 
-Prefix can also contain **global variables** for substituting some its parts.  
+**global variables** for substitution
+
+Prefix can also contain **${variables}** for substituting some its parts.  
 The name of variable can consist of letters, numbers and underscores.  
 Variables should be set with `FactorySettingsBuilder.addParameter(String, String)`.  
 
