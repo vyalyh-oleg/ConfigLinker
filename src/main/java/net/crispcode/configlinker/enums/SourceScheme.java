@@ -15,17 +15,19 @@ public enum SourceScheme
 	INHERIT,
 	/**
 	 * <p>
-	 * Use when you set relative {@link BoundObject#sourcePath()} as file valid system path to load file that resides in classpath of running VM.
+	 * Use if the property file resides in the classpath of running VM.<br/>
+	 * The {@link BoundObject#sourcePath()} should be relative.
 	 */
 	CLASSPATH,
 	/**
 	 * <p>
-	 * Use when you set absolute or relative {@link BoundObject#sourcePath()} as valid file system path to load file from one of mounted file systems.
+	 * Use if the property file should be loaded from one of mounted file systems.<br/>
+	 * The {@link BoundObject#sourcePath()} should be absolute or relative.
 	 */
 	FILE,
 	/**
 	 * <p>
-	 * Use when you set {@link BoundObject#sourcePath()} as valid URL to load file from HTTP/S server.
+	 * Use if the {@link BoundObject#sourcePath()} was set as valid URL to load file from HTTP/S server.
 	 */
 	HTTP,
 	/**

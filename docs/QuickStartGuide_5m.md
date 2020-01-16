@@ -8,6 +8,9 @@ It allows flexible mapping on particular Java types, standard collections (List,
 The library can do other things, but let's take it in order, we only have 5 minutes now.
 <br/>
 
+**Note:** *Every public API part (class, method, parameter, constant, enum) is documented in javadoc, so you could use context help in your favorite IDE.*
+<br/>
+
 
 ### Code example (just copy-paste)
 Below the simplest example is placed, which will help you to make the first steps in understanding how it works.  
@@ -134,7 +137,7 @@ ConfigSetFactory.create(FactorySettingsBuilder builder, Set<Class<?>> configInte
 Interfaces annotated with `@BoundObject` and which methods (at least one) annotated with `@BoundProperty`. A set of interfaces should be a Set (so the duplicates are just ignored).
 <br/>
 
-**`FactorySettingsBuilder`** (will be discussed in more detail in next lessons)  
+**`FactorySettingsBuilder`** (will be discussed in more detail in User Guide part 2)  
 Builder, where you can preset parameters for `ConfigSetFactory`. It can be common properties for `@BoundObject` and `@BoundProperty` annotations, properties which tuning the behaviours on errors and so on.
 <br/>
 
@@ -145,7 +148,7 @@ It is the class which object you will use throughout you code for retrieving gro
 &rarr; Annotation **`@BoundObject`**  
 You should add this annotation to each interface that is a representation of configuration parameters from `properties` file.  
 Multiple interfaces may be bound to the same `properties` file (f.e. if they logically separate its content).  
-The *required parameter* is a `sourcePath`. It is full/relative path to the resource with properties (file / http link). If you put only the file name, it will be considered as residing in workdir (so `filename` equal to `./filename` which is equal to `<current_workdir>/filename`)
+The *required parameter* is a `sourcePath`. It is full/relative path to the resource with properties (file / http link). If you put only the file name, it will be considered as residing in workdir (so the value `filename` equal to `./filename` which is equal to `<current_workdir>/filename`)
 <br/>
 
 &rarr; Annotation **`@BoundProperty`**  

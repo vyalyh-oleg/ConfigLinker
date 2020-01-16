@@ -19,7 +19,7 @@ public @interface BoundObject {
 
 	/**
 	 * <p>
-	 * Describe the type of the source that used to retrieve property values for this annotated object.
+	 * Describe the type of the source that is used to retrieve property values for this annotated object.
 	 * @return -
 	 */
 	SourceScheme sourceScheme() default SourceScheme.INHERIT;
@@ -56,7 +56,7 @@ public @interface BoundObject {
 	String charsetName() default "";
 
 	/**
-	 * <p>The common names part of parameters group that is used to bind with methods of this annotated interface.<br>
+	 * <p>The common names' part of parameters group that is used to bind with methods of this annotated interface.<br>
 	 * If it is not specified you can use only full parameter names in {@link BoundProperty#name()}.<br>
 	 * If it has any value then both variants (full and prefix-aware) can be used.</p>
 	 *

@@ -15,4 +15,5 @@
 - errorBehavior
 
 
-FactorySettingsBuilder and inheritance
+FactorySettingsBuilder and inheritance of parameters.
+
