@@ -17,15 +17,15 @@ import net.crispcode.configlinker.FactorySettingsBuilder;
  *     if not ignore: values is "green" and " blue "
  *
  * 'color = one: green, two :blue ,three : red '
- *     if ignore: key/values is "one":"green", "two":"blue", "three":"red"
- *     if not ignore: key/values is "one":" green", " two ":"blue ", "three ":" red "
+ *     if ignore: keys/values are "one":"green", "two":"blue", "three":"red"
+ *     if not ignore: keys/values are "one":" green", " two ":"blue ", "three ":" red "
  * </pre>
  */
 public enum Whitespaces
 {
 	/**
 	 * The behavior depends on the superior value.<br>
-	 * {@code @BoundProperty --> @BoundObject --> ConfigSetFactory}
+	 * {@code @BoundProperty --> ConfigSetFactory}
 	 */
 	INHERIT,
 	/**

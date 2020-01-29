@@ -19,7 +19,7 @@ Require 5 minutes for copy-paste, compile, run and understanding.
 **Note:** *Put the properties files in the working directory (search path by default).*
 <br/>
 
-**`---------- File: credentials.properties ----------`**
+*`---------- File: credentials.properties ----------`*
 ```properties
 user.authentication.name = Aragorn
 user.authentication.password = aratorn
@@ -31,13 +31,13 @@ user.authorization.accessClass = D
 user.authorization.accessLevel = 5
 ```
 
-**`---------- File: credentials.properties ----------`**
+*`---------- File: server.properties ----------`*
 ```properties
 server.zone1.types = web, file
 
 ```
 
-**`---------- File: UserCredentials.java ----------`**
+*`---------- File: UserCredentials.java ----------`*
 ```java
 import net.crispcode.configlinker.annotations.BoundObject;
 import net.crispcode.configlinker.annotations.BoundProperty;
@@ -69,7 +69,7 @@ public interface UserCredentials
 }
 ```
 
-**`---------- File: UserType.java ----------`**
+*`---------- File: UserType.java ----------`*
 ```java
 public enum UserType
 {
@@ -77,7 +77,7 @@ public enum UserType
 }
 ```
 
-**`---------- File: Server.java ----------`**
+*`---------- File: Server.java ----------`*
 ```java
 import net.crispcode.configlinker.annotations.BoundObject;
 import net.crispcode.configlinker.annotations.BoundProperty;
@@ -85,12 +85,12 @@ import net.crispcode.configlinker.annotations.BoundProperty;
 @BoundObject(sourcePath = "server.properties")
 public interface Server
 {
-	@BoundProperty(name = "server.zone1.type")
+	@BoundProperty(name = "server.zone1.types")
 	String[] types();
 }
 ```
 
-**`---------- File: ConfigLinkerExample.java ----------`**
+*`---------- File: ConfigLinkerExample.java ----------`*
 ```java
 public class ConfigLinkerExample
 {
