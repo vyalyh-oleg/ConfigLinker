@@ -14,6 +14,7 @@ Here will be described advanced usages of annotations <b>`@BoundObject`</b> and 
 
 **`@BoundProperty`**
 
+- name
 - delimList
 - delimKeyValue
 - regex
@@ -21,9 +22,9 @@ Here will be described advanced usages of annotations <b>`@BoundObject`</b> and 
 - whitespaces
 <br/>
 
-It will also be told:
+It will also be told about:
 
-- Substitution Variables in configuration parameters
+- variables substitution in configuration parameters;
 - how to use complex types like `Array`, `List`, `Set`, `Map`;
 - how to use arguments in property retrieving methods (for parameterized query of parameter's value);
 <br/>
@@ -74,14 +75,14 @@ Describe the type of the source that is used to retrieve property values for ann
 
 ### @BoundObject - propertyNamePrefix
 
-The common names' part of parameters group that is used to bind with methods of this annotated interface.  
-If it is not specified you can use only full parameter names in `BoundProperty.name()`.  
-If it has any value then both variants (full and prefix-aware) can be used.  
+The *common part* of a group of parameter names in property file. This part is used for construction the full name, which is used for binding methods in annotated interface.  
 
-For example, if the prefix  is set to `"mycompany"`, then the `@BoundProperty.name()` can be as `".serverName"` (start with dot is obligatory).  
-This means, the final parameter name, which will be searched in property file, is `"mycompany.serverName"`.  
+If `propertyNamePrefix` is not specified you can use only full parameter names in `BoundProperty.name()`.  
+If it has any value then both variants (full and prefix-aware) names can be used.  
 
-Without dot at the beginning `@BoundProperty.name()` is considered as full parameter name and the prefix is not taken into account.
+For example, if the prefix  is set to `"mycompany"`, then the `@BoundProperty.name()` can look as `".serverName"` (starting with the dot is obligatory). This means, the final parameter name, which will be searched in property file, is `"mycompany.serverName"`.  
+
+Without the dot at the beginning the `@BoundProperty.name()` is considered as full name and the `propertyNamePrefix` is not taken into account.
 <br/>
 
 <u>Example:</u>
@@ -120,7 +121,7 @@ public interface UserCredentials
 <br/>
 
 
-### Substitution Variables in configuration parameters
+### Variables substitution in configuration parameters
 
 It is possible to use **global variables** like **`${variables}`** for substitution in:
 
@@ -153,29 +154,134 @@ It allows using arguments in methods to make the configuration methods more flex
 
 **Note:** *This feature require that some `javac` compiler parameters are enabled (for proper reflection of interfaces during runtime).*
 
-
 ```
 -parameters     Generate metadata for reflection on method parameters
--g              Generate all debugging info
 ```
 
+This functionality is tightly related to the parameter `@BoundProperty.name`.
+
+So, let's tell about the `name`.
+
+It should contain string representation of property name that is used in configuration.  
+
+It can be either global or relative (whe `propertyNamePrefix` is used).  
+
+You can use variables like `${variables}` for substituting some parts of the name.  
+
+Name can also contain **dynamic variables** which can be used in runtime for method arguments.  
+For using this ability you must declare the method that accepts desired number of `String` or `Enum` arguments.  
+
+<u>Example:</u>  
+Let's imagine we have quite big limit configurations for all our servers
+```properties
+# for limits configuration
+
+server.DataCenter-1.master.configuration.memory.limit.min = 
+server.DataCenter-1.master.configuration.memory.limit.max = 
+server.DataCenter-1.master.configuration.memory.limit.default = 
+
+server.DataCenter-1.slave.configuration.memory.limit.min = 
+server.DataCenter-1.slave.configuration.memory.limit.max = 
+server.DataCenter-1.slave.configuration.memory.limit.default = 
 
 
+server.DataCenter-1.master.configuration.disk.limit.min = 
+server.DataCenter-1.master.configuration.disk.limit.max = 
+server.DataCenter-1.master.configuration.disk.limit.default = 
+
+server.DataCenter-1.slave.configuration.disk.limit.min = 
+server.DataCenter-1.slave.configuration.disk.limit.max = 
+server.DataCenter-1.slave.configuration.disk.limit.default = 
+
+
+server.DataCenter-1.master.configuration.cpu.limit.min = 
+server.DataCenter-1.master.configuration.cpu.limit.max = 
+server.DataCenter-1.master.configuration.cpu.limit.default = 
+
+server.DataCenter-1.slave.configuration.cpu.limit.min = 
+server.DataCenter-1.slave.configuration.cpu.limit.max = 
+server.DataCenter-1.slave.configuration.cpu.limit.default = 
+
+
+# for notification parameters
+server.DataCenter-1.master.notification.frequency = 
+server.DataCenter-1.master.notification.emails = 
+
+server.DataCenter-1.slave.notification.frequency = 
+server.DataCenter-1.slave.notification.emails = 
+
+
+# and now imagine that there are other servers in another data center exist
+# thus we'll require the second, third, etc. bocks of configurations like
+
+#server.DataCenter-2...
+#server.DataCenter-3...
+
+# and so on
+```
+Solution:
+```java
+import com.configlinker.annotations.BoundObject;
+import com.configlinker.annotations.BoundProperty;
+
+import java.util.List;
+
+@BoundObject(sourcePath = "server.properties", propertyNamePrefix = "server.${dataCenter}.@{type}")
+public interface Server
+{
+	@BoundProperty(name = ".configuration.@{group}.limit.@{border}")
+	int limitFor(ServerType type, ServerResource group, LimitType border);
+	
+	@BoundProperty(name = ".notification.frequency")
+	int notificationFrequency(ServerType type);
+	
+	@BoundProperty(name = ".notification.emails")
+	List<String> notificationEmails(ServerType type);
+}
+
+enum ServerType { master, slave; }
+
+enum ServerResource { memory, disk, cpu; }
+
+enum LimitType { min, max; }
+```
+Usage:
+```java
+public class ConfigLinkerExample
+{
+	public static void main(String[] args)
+	{
+		FactorySettingsBuilder settingsBuilder = FactorySettingsBuilder.create()
+				.addParameter("dataCenter", "DataCenter-1")
+				.addParameter("anotherVar", "value");
+		ConfigSet configs = ConfigSetFactory.create(settingsBuilder, Server.class);
+
+		// retrieving the actual configuration parameters		
+		Server serverCfg = configs.getConfigObject(Server.class);
+
+		int masterMemoryMin = serverCfg.limitFor(ServerType.master, ServerResource.memory, LimitType.min);
+		System.out.println("masterMemoryMin: " + masterMemoryMin);
+		
+		List<String> notificationEmails = serverCfg.notificationEmails(ServerType.slave);
+		int notificationFrequency = serverCfg.notificationFrequency(ServerType.slave);
+	}
+}
+```
 <br/>
 
 
 ### Complex types: `Array[]`, `List<>`, `Set<>`, `Map<>`
 ### @BoundProperty - delimList / delimKeyValue
 
-These parts combined to the one.
+These parts are combined into the one.
 <br/>
 
 **`delimList`**  
-Delimiter for parameter value, which is treated as `List<>` or key-value pairs in `Map<>`. Default value is comma - `','`.  
+Delimiter for parameter raw value, which is treated as enumeration values for `List<>` or key-value pairs in `Map<>`. Default delimiter is comma - `','`.  
 <u>Example:</u> `param.name.in.file = one,two,three`
 
 **`delimKeyValue`**  
-Delimiter between key and value for `Map<>`. Default value is colon - `':'`.  
+Delimiter between key and value in one pair for `Map<>`. Default delimiter is colon - `':'`.  
 <u>Example:</u> `param.name.in.file = color:red,number:two,target:method`
 
 <br/>
@@ -236,6 +342,7 @@ public interface UserCredentials
 	@BoundProperty(name = "user.authorization.salt", delimList = "/")
 	short[] generationSaltAsArray();
 	
+    // and it is permitted to use the same parameter for different mappings
 	@BoundProperty(name = "user.authorization.salt", delimList = "/")
 	List<Short> generationSaltAsList();
 }
@@ -312,14 +419,18 @@ For simple types single value is checked, and for collection types (arryas, list
 By defaults regex check does not used.  
 
 If validation fails the `PropertyMatchException` will be thrown.  
-Its message and the hierarchy of 'cause' contains additional information about error.
+Its message and the hierarchy of 'cause' contain additional information about error.
 
-The checking process perfroms on the call of `ConfigSetFactory.create()` method.  
+The checking process performs on the call of `ConfigSetFactory.create()` method.  
 *The only exception* is when your configuration methods contain parameters, therefore its values could be checked only during runtime, when the actual arguments will be passed to the method.
 <br/>
 
 <u>Example:</u>
+```properties
+workgroup.emails = vitaliy.mayko@physics.ua, zinovij.nazarchuk@physics.ua, mark.gabovich@physics.ua
 ```
+
+```java
 @BoundObject(sourcePath = "configs/mailing.properties")
 interface MailingConfig
 {
@@ -339,14 +450,18 @@ By default validators are not used.
 If you need additional checks just implement `IPropertyValidator` interface and point class here.
 
 If validation fails the `PropertyValidateException` will be thrown.  
-Its message and the hierarchy of 'cause' contains additional information about error.
+Its message and the hierarchy of 'cause' contain additional information about error.
 
-The checking process perfroms on the call of `ConfigSetFactory.create()` method.  
+The checking process performs on the call of `ConfigSetFactory.create()` method.  
 *The only exception* is when your configuration methods contain parameters, therefore its values could be checked only during runtime, when the actual arguments will be passed to the method.
 <br/>
 
 <u>Example:</u>
+```properties
+workgroup.emails = vitaliy.mayko@physics.ua, zinovij.nazarchuk@physics.ua, mark.gabovich@physics.ua
 ```
+
+```java
 class EmailDomainValidator implements IPropertyValidator<String>
 {
 	@Override
@@ -363,7 +478,7 @@ class EmailMapDomainValidator implements IPropertyValidator<Object[]>
 	public void validate(Object[] value) throws PropertyValidateException
 	{
 		// value[0] -- key, and is always String
-		// value[1] -- value, could be any object depending from return type in interface method
+		// value[1] -- value, could be any object depending from the return type in interface method
 		
 		if (!((String) value[1]).endsWith("@physics.ua"))
 			throw new PropertyValidateException("'" + value[1] + "' for key '" + value[0] + "' not in 'physics.ua' domain.");
@@ -384,4 +499,5 @@ interface CustomValidator
 
 
 ### Compatibility with java >=9
+Should be compatible if you permit the access for this library to the module where your configuration interfaces reside.
 <br/>

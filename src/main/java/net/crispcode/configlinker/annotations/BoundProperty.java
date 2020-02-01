@@ -16,8 +16,8 @@ import java.lang.annotation.Target;
 @Retention(value = RetentionPolicy.RUNTIME)
 public @interface BoundProperty {
 	/**
-	 * <p>Should contain string representation of property name that used in configuration.</p>
-	 * <p>If you set {@code @BoundObject.propertyNamePrefix} it will be added before this value, and <b>in that case the name of the value should begin with a dot</b>. If it begins from any other acceptable symbols except dot, the value considered as full name and be used without {@code propertyNamePrefix}.</p>
+	 * <p>Should contain string representation of property name that is used in configuration.</p>
+	 * <p>If you set {@code @BoundObject.propertyNamePrefix} the prefix will be added before the {@code name}, and <b>in that case the name of the value should begin with a dot</b>. If it begins from any other acceptable symbols except dot, the value considered as full name and be used without {@code propertyNamePrefix}.</p>
 	 * <p>You can use variables for substituting some parts of the name.
 	 * <br>The name of variable can consist of letters, numbers and underscores.
 	 * <br>Variables should be set in {@link FactorySettingsBuilder#addParameter(String, String)}.
