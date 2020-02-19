@@ -1,8 +1,8 @@
 ## User Guide part 1
-*If you didn't read the Quck Start Guide, please read it firstly. It will take you about 5 minutes. This part is continuation.  
+*If you didn't read the **Quick Start Guide**, please read it firstly. It will take you about 5 minutes. This part is continuation.  
 Otherwise some explanations may be not understandable.*
 
-Here will be described advanced usages of annotations <b>`@BoundObject`</b> and <b>`@BoundProperty`</b>.
+Here the advanced usages of annotations <b>`@BoundObject`</b> and <b>`@BoundProperty`</b> will be described.
 <br/>
 
 **`@BoundObject`**

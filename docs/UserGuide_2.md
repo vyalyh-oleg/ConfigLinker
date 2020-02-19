@@ -1,21 +1,26 @@
 ## User Guide 2
 
+*This is a continuation of **User Guide 1**.*
 
+The following aspects will be considered:
+<br/>
 
-@BoundObject (2)
+**`@BoundObject`**
 - sourceScheme (HTTP)
 - trackingPolicy
 - trackingInterval
 - changeListener
 - errorBehavior
 
-@BoundProperty (2)
+**`@BoundProperty`**
 - customType
 - deserializationMethod
 - errorBehavior
 
 
-FactorySettingsBuilder and inheritance of parameters.
+It will also be told about:
+- FactorySettingsBuilder
+- inheritance of parameters
 
 
 
