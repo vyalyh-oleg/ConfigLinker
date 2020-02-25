@@ -19,7 +19,7 @@ public @interface BoundObject {
 
 	/**
 	 * <p>
-	 * Describe the type of the source that is used to retrieve property values for this annotated object.
+	 * Describes the type of the source that is used to retrieve property values for this annotated object.
 	 * @return -
 	 */
 	SourceScheme sourceScheme() default SourceScheme.INHERIT;
@@ -29,7 +29,7 @@ public @interface BoundObject {
 	 * <p>Variables can be used for substituting some parts of this path.
 	 * <br>The name of variable can consist of letters, numbers and underscores.
 	 * <br>Variables should be set in {@link FactorySettingsBuilder#addParameter(String, String)}.
-	 * <p>Path could be relative to the current working directory or to the root of classpath (depends on {@link SourceScheme}).
+	 * <p>Path could be relative to the current working directory or to the root of classpath, or it can be an URL (depends on {@link SourceScheme}).
 	 * <p>Example path:
 	 * <pre>"<b>${substitution1}</b>/path_part1/<b>${substitution2}</b>/path_part2/endPart"</pre>
 	 * @return -

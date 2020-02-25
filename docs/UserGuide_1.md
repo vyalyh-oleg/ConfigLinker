@@ -149,10 +149,10 @@ results in property name like
 
 ### Arguments in configuration methods
 
-It allows using arguments in methods to make the configuration methods more flexible.
+It is allowed to use arguments in methods to make the configuration retrieving more flexible.
 <br/>
 
-**Note:** *This feature require that some `javac` compiler parameters are enabled (for proper reflection of interfaces during runtime).*
+**Note:** *This feature requires that some `javac` compiler parameters are enabled (for proper reflection of interfaces during runtime).*
 
 ```
 -parameters     Generate metadata for reflection on method parameters
@@ -164,7 +164,7 @@ So, let's tell about the `name`.
 
 It should contain string representation of property name that is used in configuration.  
 
-It can be either global or relative (whe `propertyNamePrefix` is used).  
+It can be either global or relative (where `propertyNamePrefix` is used).  
 
 You can use variables like `${variables}` for substituting some parts of the name.  
 
@@ -270,10 +270,9 @@ public class ConfigLinkerExample
 <br/>
 
 
-### Complex types: `Array[]`, `List<>`, `Set<>`, `Map<>`
-### @BoundProperty - delimList / delimKeyValue
+### Complex types: `Array[]`, `List<>`, `Set<>`, `Map<>` and @BoundProperty ( delimList / delimKeyValue )
 
-These parts are combined into the one.
+These parts will be more convenient to consider together.
 <br/>
 
 **`delimList`**  
@@ -283,11 +282,10 @@ Delimiter for parameter raw value, which is treated as enumeration values for `L
 **`delimKeyValue`**  
 Delimiter between key and value in one pair for `Map<>`. Default delimiter is colon - `':'`.  
 <u>Example:</u> `param.name.in.file = color:red,number:two,target:method`
-
 <br/>
+
 Lets modify the example from the previous *QuickStartGuide*.  
 Please, see **description in comments**.  
-<br/>
 
 *`---------- File: credentials.properties ----------`*
 ```properties
@@ -342,7 +340,7 @@ public interface UserCredentials
 	@BoundProperty(name = "user.authorization.salt", delimList = "/")
 	short[] generationSaltAsArray();
 	
-    // and it is permitted to use the same parameter for different mappings
+	// and it is permitted to use the same parameter for different mappings
 	@BoundProperty(name = "user.authorization.salt", delimList = "/")
 	List<Short> generationSaltAsList();
 }
