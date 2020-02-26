@@ -12,7 +12,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 
-@Target(value = ElementType.METHOD)
+/**
+ * Every method declaration in interface that expected to return the particular value from the `properties` file should have such an annotation.
+ */
+@Target(value  = ElementType.METHOD)
 @Retention(value = RetentionPolicy.RUNTIME)
 public @interface BoundProperty {
 	/**
@@ -82,8 +85,8 @@ public @interface BoundProperty {
 	Whitespaces whitespaces() default Whitespaces.INHERIT;
 	
 	/**
-	 * <p>Default value is {@code Object.class}, which is mean automatic detection (see next paragraph).</p>
-	 * <p><b>Standard supported return types</b> (you shouldn't change current parameter for them because it will be ignored):</p>
+	 * <p>Default value is {@code Object.class}, which means automatic detection for standard supported return types.</p>
+	 * <p><b>So you no need to change anything if you use them:</b></p>
 	 * <ul>
 	 * <li>all primitives and arrays of primitives;</li>
 	 * <li>all wrappers of primitives and arrays of them;</li>
@@ -95,21 +98,24 @@ public @interface BoundProperty {
 	 * </ul>
 	 * <br>
 	 * <p>If you want to use <b>custom return type (or array of custom types)</b>, you must just implement deserialization logic for your type, and no need any changes in the current parameter.
-	 * <p>If you want to use <b>custom return type as generic type</b> for {@code List}, {@code Set} or {@code Map} (only for value), you must just properly specify it's generic type in the angle brackets and implement deserialization logic.
+	 * <p>If you want to use <b>custom return type as generic type</b> for {@code List<CustomType>}, {@code Set<CustomType>} or {@code Map<String,CustomType>}, you must just properly specify it's generic type in the angle brackets and implement deserialization logic.
+	 * <br>
+	 * <p><b>Deserialization logic</b> should be encapsulated in one of the methods, described in {@link DeserializationMethod} enum. Then set your choice in {@link BoundProperty#deserializationMethod}.
 	 * <br>
 	 * <br>
-	 * <p> <b>Only if the deserialization method resides not in your custom type</b>, place here it class ({@code customType = YourDeserializer.class}).
-	 * <br>
-	 * <br>
-	 * <p> For the last two cases you must implement at least one of the deserialization methods, described in {@link DeserializationMethod}.
+	 * <p> <b>Only if the deserialization method resides <u>not in your custom type</u></b>, but in other place (other class), set here it class:
+	 * <p> {@code customType = YourDeserializer.class}.
 	 * @return -
 	 */
 	Class<?> customType() default Object.class;
 
 	/**
-	 * <p>If you want to use custom return type, you must just implement deserialization logic for it (see {@link #customType()}) and point this choice here.
-	 * <p>Default value is {@link DeserializationMethod#CONSTRUCTOR_STRING}
-	 * <p>If return type for you configuration method is List, Set or Map, then only {@link DeserializationMethod#CONSTRUCTOR_STRING}, {@link DeserializationMethod#VALUEOF_STRING}, {@link DeserializationMethod#DESERIALIZER_STRING} allowed as deserialization method for it's values.
+	 * <p>If you want to use custom return type, you must just implement deserialization logic for it (see {@link #customType()}) and point the type of deserialization method here.
+	 * <p>Default value is {@link DeserializationMethod#AUTO}
+	 * <p>By default, the appropriate deserialization method will be tried to found out automatically.
+	 * <p>If your class implements multiple deserialization variants, you must choose appropriate value manually.
+	 *
+	 * <p>If the return type for you configuration method is List, Set or Map (thus your custom type is a generic parameter), then only {@link DeserializationMethod#CONSTRUCTOR_STRING}, {@link DeserializationMethod#VALUEOF_STRING}, {@link DeserializationMethod#DESERIALIZER_STRING} allowed as deserialization method for custom type.
 	 * @return -
 	 */
 	DeserializationMethod deserializationMethod() default DeserializationMethod.AUTO;

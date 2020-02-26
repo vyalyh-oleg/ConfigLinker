@@ -13,6 +13,9 @@ import java.lang.annotation.Target;
 import java.nio.charset.Charset;
 
 
+/**
+ * You should add this annotation to each interface that is a representation of configuration parameters from `properties` file.
+ */
 @Target(value = ElementType.TYPE)
 @Retention(value = RetentionPolicy.RUNTIME)
 public @interface BoundObject {
@@ -100,23 +103,23 @@ public @interface BoundObject {
 	TrackPolicy trackingPolicy() default TrackPolicy.INHERIT;
 
 	/**
-	 * <p>Used only if here or in {@link FactorySettingsBuilder#setTrackPolicy(TrackPolicy)} specified {@link TrackPolicy#ENABLE}, and the {@link SourceScheme#HTTP}.
-	 * <p>Otherwise this parameter ignored.
-	 * <p>Default value is '0' which mean inherited behaviour (will be used value from {@code FactorySettingsBuilder} (equal '60' seconds).
+	 * <p>Used only if in this annotation or in {@link FactorySettingsBuilder#setTrackPolicy(TrackPolicy)} specified {@link TrackPolicy#ENABLE}, and the {@link SourceScheme#HTTP}.
+	 * <p>Otherwise this parameter is ignored.
+	 * <p>Default value is '0' which means inherited behaviour (will be used value from {@code FactorySettingsBuilder} (equal '60' seconds).
 	 * <p>MIN value = 15 seconds, MAX value = 86400 seconds (1 day = 24 hours * 3600 seconds).
 	 * @return -
 	 */
 	int trackingInterval() default 0;
 
 	/**
-	 *
+	 * Points to the class which implements the interface {@link IConfigChangeListener}.
 	 * @return -
 	 */
 	Class<? extends IConfigChangeListener> changeListener() default IConfigChangeListener.class;
 
 	/**
 	 * <p>
-	 * What to do if the property value does not exist in underlying persistent store.
+	 * What to do if the property value does not exist in underlying persistent store or cannot be converted to object representation for any reasons.
 	 * Default value is {@link ErrorBehavior#INHERIT} and specified in {@link FactorySettingsBuilder#setErrorBehavior(ErrorBehavior)}
 	 * @return -
 	 */

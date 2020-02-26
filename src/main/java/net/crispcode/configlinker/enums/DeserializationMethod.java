@@ -33,22 +33,22 @@ public enum DeserializationMethod
 	AUTO,
 	/**
 	 * <p>Chose this variant if you implement special constructor for your class:
-	 * <p>{@code 'public/private <CustomReturnType>(String raw)'}
+	 * <p>{@code 'public/private CustomReturnType(String raw)'}
 	 */
 	CONSTRUCTOR_STRING,
 	/**
 	 * <p>Chose this variant if you implement special constructor for your class:
-	 * <p>{@code 'public/private <CustomReturnType>(Map<String,String> raw)'}
+	 * <p>{@code 'public/private CustomReturnType(Map<String,String> raw)'}
 	 */
 	CONSTRUCTOR_MAP,
 	/**
 	 * <p>Chose this variant if you implement in your custom type static instance generator method:
-	 * <p>{@code 'public/private static <CustomReturnType> valueOf(String raw)'}
+	 * <p>{@code 'public/private static CustomReturnType valueOf(String raw)'}
 	 */
 	VALUEOF_STRING,
 	/**
 	 * <p>Chose this variant if you implement in your custom type static instance generator method:
-	 * <p>{@code 'public/private static <CustomReturnType> valueOf(Map<String,String> raw)'}
+	 * <p>{@code 'public/private static CustomReturnType valueOf(Map<String,String> raw)'}
 	 */
 	VALUEOF_MAP,
 	/**

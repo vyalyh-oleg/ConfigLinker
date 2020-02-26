@@ -16,7 +16,7 @@ import java.util.Map;
 
 
 /**
- * <p>Builder, where you can preset parameters for {@link ConfigSetFactory}. It can be common properties for {@link BoundObject} and {@link net.crispcode.configlinker.annotations.BoundProperty} annotations, properties which tuning the behaviours on errors and so on.</p>
+ * <p>Builder, where you can preset parameters for {@link ConfigSetFactory}. These can be common properties for {@link BoundObject} and {@link net.crispcode.configlinker.annotations.BoundProperty} annotations, properties which tuning the behaviours on errors and so on.</p>
  * <br>
  * <p>Default configuration factory values:
  * <ul>

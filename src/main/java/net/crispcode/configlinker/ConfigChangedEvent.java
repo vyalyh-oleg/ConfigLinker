@@ -6,6 +6,10 @@ import java.util.Collections;
 import java.util.Map;
 
 
+/**
+ * Event which is passed as an argument in {@link IConfigChangeListener#configChanged(ConfigChangedEvent)}.
+ * It contains information about changes were made in the configuration sources.
+ */
 final public class ConfigChangedEvent
 {
 	private final Class<?> configInterface;

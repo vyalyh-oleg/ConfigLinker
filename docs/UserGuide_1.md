@@ -27,8 +27,47 @@ It will also be told about:
 - variables substitution in configuration parameters;
 - how to use complex types like `Array`, `List`, `Set`, `Map`;
 - how to use arguments in property retrieving methods (for parameterized query of parameter's value);
+
 <br/>
 
+
+
+### **Public API classes:**
+
+Short description of all classes that you'll use.
+<br/>
+
+**`@BoundObject`**  
+You should add this annotation to each interface that is a representation of configuration parameters from `properties` file.
+
+**`@BoundProperty`**  
+Every method declaration in interface that expected to return the particular value from the `properties` file should have such an annotation.
+<br/>
+
+**`ConfigSetFactory`**  
+Is initial point in your code when you want to work with the library. It contains static methods which create and return `ConfigSet` instanes.
+
+`FactorySettingsBuilder`  
+Builder, where you can preset settings for `ConfigSetFactory`. These can be common parameters for  `BoundObject` and `BoundProperty` annotations.
+
+**`ConfigSet`**  
+Is the class which object you will use throughout you code for retrieving groups of configuration parameters. In other words <u>it contains a set of config groups</u>. In our case such a group of configuration parameters <u>is just an interface which is <b>bound</b> to a properties file (or other source).</u>
+<br/>
+
+**`IConfigChangeListener`**  
+Implement this interface and point your class in annotation `BoundObject#changeListener()` for receiving notifications on configuration updates.
+
+**`ConfigChangedEvent`**  
+Event which is passed as an argument in `IConfigChangeListener.configChanged`.
+<br/>
+
+**`IPropertyValidator`**  
+For creation custom validators for returned value. Validates configuration value in their object form.
+
+**`IDeserializer`**  
+If you want to use custom return type, you must just implement deserialization logic for it and point here deserializer class.
+
+<br/>
 
 
 ### @BoundObject - charsetName
@@ -47,6 +86,7 @@ public interface UserCredentials
   // ...
 }
 ```
+<br/>
 
 
 ### @BoundObject - sourceScheme (CLASSPATH, FILE, HTTP)
@@ -70,6 +110,7 @@ Describe the type of the source that is used to retrieve property values for ann
 
 - `SourceScheme.CONFIG_LINKER_SERVER`  
   It is not implemented yet.
+  
 <br/>
 
 
@@ -143,7 +184,8 @@ then
 `FactorySettingsBuilder.addParameter("type", "production")`  
 
 results in property name like  
-`"servers.production.srv1.configuration"`  
+`"servers.production.srv1.configuration"`
+
 <br/>
 
 
@@ -381,6 +423,7 @@ public class ConfigLinkerExample
 }
 
 ```
+<br/>
 
 
 ### @BoundProperty - whitespaces
@@ -406,7 +449,8 @@ if not ignore: values is `"green"` and `" blue "`
 (3)  
 `'color = one: green, two :blue ,three : red '`  
 if ignore: keys/values are `"one":"green"`, `"two":"blue"`, `"three":"red"`  
-if not ignore: keys/values are `"one":" green"`, `" two ":"blue "`, `"three ":" red "`  
+if not ignore: keys/values are `"one":" green"`, `" two ":"blue "`, `"three ":" red "`
+
 <br/>
 
 
@@ -443,7 +487,7 @@ interface MailingConfig
 
 ### @BoundProperty - validator
 
-Custom validator for returned value. Validate configuration value in their object form.  
+Custom validator for returned value. Validates configuration value in their object form.  
 By default validators are not used.  
 If you need additional checks just implement `IPropertyValidator` interface and point class here.
 
@@ -470,13 +514,15 @@ class EmailDomainValidator implements IPropertyValidator<String>
 	}
 }
 
+
+// if the property is a Map
 class EmailMapDomainValidator implements IPropertyValidator<Object[]>
 {
 	@Override
 	public void validate(Object[] value) throws PropertyValidateException
 	{
 		// value[0] -- key, and is always String
-		// value[1] -- value, could be any object depending from the return type in interface method
+		// value[1] -- value, could be any object, depending from the return type in interface method
 		
 		if (!((String) value[1]).endsWith("@physics.ua"))
 			throw new PropertyValidateException("'" + value[1] + "' for key '" + value[0] + "' not in 'physics.ua' domain.");
