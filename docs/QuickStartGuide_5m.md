@@ -1,8 +1,15 @@
-## Quick Start Guide (5 minutes)
+# Quick Start Guide (5 minutes)
+
+Other articles:
+
+- [ReadMe](../README.md)
+- [User Guide part 1](UserGuide_1.md)
+- [User Guide part 2](UserGuide_2.md)
 <br/>
 
+
 ### Short Intro
-**ConfigLinker** is a library designed to make it easier and more intuitive for developers to work with configuration files.  
+**ConfigLinker** is a library designed to make it easier and more intuitive for developers to work with configuration `property` files.  
 It allows flexible mapping on particular Java types, standard collections (List, Set, Map), Enums, custom classes and all its combinations. It also has a lot of possibilities for making the parameters retrieving more flexible, f.e. allowing to use arguments. It can watch for parameter changes.
 
 The library can do other things, but let's take it in order, we only have 5 minutes now.

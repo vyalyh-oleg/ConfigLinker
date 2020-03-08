@@ -46,7 +46,7 @@ public enum DateType
 		{
 			try
 			{
-				return new SimpleDateFormat(dateType.pattern).parse(rawValue);
+				return new SimpleDateFormat(this.dateType.pattern).parse(rawValue);
 			}
 			catch (ParseException e)
 			{

@@ -277,7 +277,7 @@ public final class FactorySettingsBuilder
 	}
 	
 	
-	void close()
+	void closeBuilder()
 	{
 		this.closed = true;
 		this.parameters = Collections.unmodifiableMap(this.parameters);

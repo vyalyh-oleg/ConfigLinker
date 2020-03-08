@@ -1,38 +1,49 @@
-## User Guide part 1
+# User Guide part 1
+
+Other articles:
+
+- [ReadMe](../README.md)
+- [Quick Start Guide (5 minutes)](QuickStartGuide_5m.md)
+- [User Guide part 2](UserGuide_2.md)
+<br/>
+
 *If you didn't read the **Quick Start Guide**, please read it firstly. It will take you about 5 minutes. This part is continuation.  
 Otherwise some explanations may be not understandable.*
-
-Here the advanced usages of annotations <b>`@BoundObject`</b> and <b>`@BoundProperty`</b> will be described.
 <br/>
+
+[Public API classes short description.](#public-api-classes)
+
+[Automatically supported types.](#automatically-supported-return-types)
+
+Here the advanced usages of annotations <b>`@BoundObject`</b> and <b>`@BoundProperty`</b> will be also described.
 
 **`@BoundObject`**
 
-- charsetName
-- sourceScheme
-- propertyNamePrefix
+- [charsetName](#boundobject---charsetname)
+- [sourceScheme](#boundobject---sourcescheme-classpath-file-http)
+- [propertyNamePrefix](#boundobjectpropertynameprefix-boundpropertyname)
 <br/>
 
 **`@BoundProperty`**
 
-- name
-- delimList
-- delimKeyValue
-- regex
-- validator
-- whitespaces
+- [name](#boundobjectpropertynameprefix-boundpropertyname)
+- [delimList](#complex-types-array-list-set-map-and-boundproperty--delimlist--delimkeyvalue-)
+- [delimKeyValue](#complex-types-array-list-set-map-and-boundproperty--delimlist--delimkeyvalue-)
+- [regex](#boundproperty---regex)
+- [validator](#boundproperty---validator)
+- [whitespaces](#boundproperty---whitespaces)
 <br/>
 
 It will also be told about:
 
-- variables substitution in configuration parameters;
-- how to use complex types like `Array`, `List`, `Set`, `Map`;
-- how to use arguments in property retrieving methods (for parameterized query of parameter's value);
-
+- [variables substitution in configuration parameters;]
+- [how to use complex types like `Array`, `List`, `Set`, `Map`;]
+- [how to use arguments in property retrieving methods (for parameterized query of parameter's value);]
+- [Compatibility with java >=9]
 <br/>
 
 
-
-### **Public API classes:**
+### Public API classes
 
 Short description of all classes that you'll use.
 <br/>
@@ -67,6 +78,36 @@ For creation custom validators for returned value. Validates configuration value
 **`IDeserializer`**  
 If you want to use custom return type, you must just implement deserialization logic for it and point here deserializer class.
 
+<br/>
+
+
+### Automatically supported return types
+
+So you no need additional configuration in annotations if you use them:
+
+Basic types:
+
+- all primitives;
+- all wrappers of primitives;
+- `String`;
+- `Enum`;
+
+Arrays and Collections:
+
+- arrays of primitives;
+- arrays of wrappers (of primitives);
+- `String[]`;
+- `Enum[]`
+- `List<String>`;
+- `Set<String>`;
+- `Map<String,String>`;
+
+Extended types:
+
+- `URL`
+- `URI`
+- `UUID`
+- `InetAddress`
 <br/>
 
 
@@ -114,9 +155,9 @@ Describe the type of the source that is used to retrieve property values for ann
 <br/>
 
 
-### @BoundObject - propertyNamePrefix
+### @BoundObject.propertyNamePrefix, @BoundProperty.name
 
-The *common part* of a group of parameter names in property file. This part is used for construction the full name, which is used for binding methods in annotated interface.  
+`propertyNamePrefix` is the *common part* of a group of parameter names in property file. This part is used for construction the full name, which is used for binding methods in annotated interface.  
 
 If `propertyNamePrefix` is not specified you can use only full parameter names in `BoundProperty.name()`.  
 If it has any value then both variants (full and prefix-aware) names can be used.  

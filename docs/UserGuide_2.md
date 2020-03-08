@@ -1,4 +1,11 @@
-## User Guide 2
+# User Guide 2
+
+Other articles:
+
+- [ReadMe](../README.md)
+- [Quick Start Guide (5 minutes)](QuickStartGuide_5m.md)
+- [User Guide part 1](UserGuide_1.md)
+<br/>
 
 *This is a continuation of **User Guide 1**.*
 
@@ -7,25 +14,25 @@ The following aspects will be considered:
 
 **`@BoundObject`**
 
-- sourceScheme (HTTP)
-- httpHeaders
-- trackingPolicy
-- trackingInterval
-- changeListener
-- errorBehavior
+- [sourceScheme (HTTP)](#boundobject---sourcescheme-http--httpheaders)
+- [httpHeaders](#boundobject---sourcescheme-http--httpheaders)
+- [trackingPolicy](#boundobject---trackingpolicy)
+- [trackingInterval](#boundobject---trackinginterval)
+- [changeListener](#boundobject---changelistener)
+- [errorBehavior](#boundobject---errorbehavior)
 
 **`@BoundProperty`**
 
-- customType
-- deserializationMethod
-- errorBehavior
+- [customType](#boundproperty---customtype--deserializationmethod)
+- [deserializationMethod](#boundproperty---customtype--deserializationmethod)
+- [errorBehavior](#boundobject---errorbehavior)
 
 
 It will also be told about:
 
-- `FactorySettingsBuilder`
-- inheritance of properties in `FactorySettings`, `@BoundObject`, `@BoundProperty`
-- logging
+- [Predefined deserializers](#predefined-deserializers)
+- [`FactorySettingsBuilder` and inheritance of properties in `FactorySettings`, `@BoundObject`, `@BoundProperty`](#factorysettingsbuilder-and-inheritance-of-parameters)
+- [logging in the library](#logging-in-the-library)
 
 <br/>
 
@@ -54,6 +61,10 @@ These values are merged with the values set with `FactorySettingsBuilder.addHttp
                              "Other-Header: value",
                              "Cookie: favorite=1; permission=admin"}
             )
+interface Auth
+{ 
+  // methods for retrieving configuration values
+}
 ```
 <br/>
 
@@ -145,40 +156,39 @@ has the same meaning but for specific configuration value (not for entire interf
 
 **`Class<?> customType()`**
 
-Default value is `Object.class`, which mean automatic detection for standard supported return types.
-So you no need to change anything if you use them:
-
-- all primitives and arrays of primitives;
-- all wrappers of primitives and arrays of them;
-- `String` and `String[]`;
-- `Enum` and `Enum[]`;
-- `List<String>`;
-- `Set<String>`;
-- `Map<String,String>`;
+Default value is `Object.class`, which mean automatic detection for [standard automatically supported return types](UserGuide_1.md#automatically-supported-return-types).
 <br/>
 
 (1) If you want to use **custom return type (or array of custom types)**, you must just implement deserialization logic for your type, and no need any changes in the current parameter.
 
-(2) If you want to use **custom return type as generic type** for `List<CustomType>`, `Set<CustomType>` or `Map<String,CustomType>`, you must just properly specify it's generic type in the angle brackets and implement deserialization logic.
+(2) If you want to use **custom return type as generic type** for `List<CustomType>`, `Set<CustomType>` or `Map<String,CustomType>`, you must just properly specify it's generic type in the angle brackets and implement deserialization logic in your `CustomType`.
 
-Deserialization logic should be encapsulated in one of the methods, described in `DeserializationMethod` enum. And set choice in `@BoundProperty.deserializationMethod`.
-<br>
+**Deserialization logic** should be implemented in one of the methods, described in `DeserializationMethod` enum. The approach should be set in `@BoundProperty.deserializationMethod`.
 
 
-Only if the deserialization method resides not in your custom type, but in other place (other class), set here it class:  
+**Note:** *Only if the deserialization method resides not in your custom type, but in other place (other class implements interface `IDeserializer<>`), set here it class type.*  
 ```java
+class CompanyDeserializer implements IDeserializer<Company>
+{
+	@Override
+   	public Company deserialize(Map<String, String> stringValues)
+   	{
+   		// deserialization logic
+   	}
+}
+
 @BoundObject(sourcePath = "configs/some.properties")
 interface TypeDateErrorMilliseconds
 {
-	@BoundProperty(name = "type.Date.milliseconds", customType = DateType.Milliseconds.class)
-	Date getDateTimeFromMilliseconds();
+	@BoundProperty(name = "type.Date.milliseconds", customType = CompanyDeserializer.class)
+	Company getCompany();
 }
 ```
-
+<br/>
 
 **`deserializationMethod`**
 
-If you want to use custom return type, you must just implement deserialization logic for it and point the type of `DeserializationMethod` method here.
+If you want to use custom return type, you must just implement deserialization logic for it and point the type of `DeserializationMethod` here.
 
 Default value is `DeserializationMethod.AUTO`, so by default, the appropriate deserialization method will be tried to found out automatically.  
 If your class implements multiple deserialization variants, you must choose appropriate value manually.  
@@ -187,7 +197,7 @@ If the return type for you configuration method is `List<CustomType>`, `Set<Cust
 <br/>
 
 
-`DeserializationMethod`
+**`DeserializationMethod`** enum
 
 - `CONSTRUCTOR_STRING`  
   implement constructor `'public/private CustomReturnType(String raw)`;
@@ -205,16 +215,232 @@ If the return type for you configuration method is `List<CustomType>`, `Set<Cust
 <br/>
 
 
+<u>Example:</u>
+
+The below class implements various deserialization methods. They are gathered in one class just for illustration.
+
+```java
+class Company implements IDeserializer<Company>
+{
+	String name;
+	String[] emails;
+	String[] phoneNumbers;
+	String ceo;
+	short dateFoundation;
+	double authorizedCapital;
+	DeserializationMethod deserializationMethod;
+	
+	public Company()
+	{
+	}
+	
+    // DeserializationMethod.VALUEOF_STRING
+	public static Company valueOf(String rawStringData)
+	{
+		Company newCompany = new Company();
+		parseFromString(newCompany, rawStringData);
+		newCompany.deserializationMethod = DeserializationMethod.VALUEOF_STRING;
+		return newCompany;
+	}
+	
+	// DeserializationMethod.VALUEOF_MAP
+	public static Company valueOf(Map<String, String> rawStringMap)
+	{
+		Company newCompany = new Company();
+		parseFromMap(newCompany, rawStringMap);
+		newCompany.deserializationMethod = DeserializationMethod.VALUEOF_MAP;
+		return newCompany;
+	}
+	
+	private static void parseFromString(Company company, String rawStringData)
+	{
+		String[] parts = rawStringData.split("//");
+		company.name = parts[0].trim();
+		company.emails = Arrays.stream(parts[1].split(";")).map(String::trim).toArray(String[]::new);
+		company.phoneNumbers = Arrays.stream(parts[2].split(";")).map(String::trim).toArray(String[]::new);
+		company.ceo = parts[3].trim();
+		company.dateFoundation = Short.parseShort(parts[4].trim());
+		company.authorizedCapital = Double.parseDouble(parts[5].trim());
+	}
+	
+	private static void parseFromMap(Company company, Map<String, String> rawKeyValues)
+	{
+		company.name = rawKeyValues.get("name");
+		company.emails = Arrays.stream(rawKeyValues.get("emails").split(";")).map(String::trim).toArray(String[]::new);
+		company.phoneNumbers = Arrays.stream(rawKeyValues.get("phoneNumbers").split(";")).map(String::trim).toArray(String[]::new);
+		company.ceo = rawKeyValues.get("ceo");
+		company.dateFoundation = Short.parseShort(rawKeyValues.get("dateFoundation"));
+		company.authorizedCapital = Double.parseDouble(rawKeyValues.get("authorizedCapital"));
+	}
+	
+    // DeserializationMethod.CONSTRUCTOR_STRING
+	public Company(String rawData)
+	{
+		parseFromString(this, rawData);
+		this.deserializationMethod = DeserializationMethod.CONSTRUCTOR_STRING;
+	}
+	
+    // DeserializationMethod.CONSTRUCTOR_MAP
+	public Company(Map<String, String> rawStringMap)
+	{
+		parseFromMap(this, rawStringMap);
+		this.deserializationMethod = DeserializationMethod.CONSTRUCTOR_MAP;
+	}
+	
+    // DeserializationMethod.DESERIALIZER_STRING
+	@Override
+	public Company deserialize(String rawValue)
+	{
+		Company newCompany = new Company();
+		parseFromString(newCompany, rawValue);
+		newCompany.deserializationMethod = DeserializationMethod.DESERIALIZER_STRING;
+		return newCompany;
+	}
+	
+    // DeserializationMethod.DESERIALIZER_STRING
+	@Override
+	public Company deserialize(Map<String, String> stringValues)
+	{
+		Company newCompany = new Company();
+		parseFromMap(newCompany, stringValues);
+		newCompany.deserializationMethod = DeserializationMethod.DESERIALIZER_MAP;
+		return newCompany;
+	}
+	
+	@Override
+	public boolean equals(Object o)
+	{
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Company company = (Company) o;
+		return dateFoundation == company.dateFoundation &&
+		  Double.compare(company.authorizedCapital, authorizedCapital) == 0 &&
+		  Objects.equals(name, company.name) &&
+		  Arrays.equals(emails, company.emails) &&
+		  Arrays.equals(phoneNumbers, company.phoneNumbers) &&
+		  Objects.equals(ceo, company.ceo);
+	}
+	
+	@Override
+	public int hashCode()
+	{
+		int result = Objects.hash(name, ceo, dateFoundation, authorizedCapital);
+		result = 31 * result + Arrays.hashCode(emails);
+		result = 31 * result + Arrays.hashCode(phoneNumbers);
+		return result;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "Company{" +
+		  "name='" + name + '\'' +
+		  ", emailsList=" + Arrays.toString(emails) +
+		  ", phoneNumbers=" + Arrays.toString(phoneNumbers) +
+		  ", ceo='" + ceo + '\'' +
+		  ", dateFoundation=" + dateFoundation +
+		  ", authorizedСapital=" + authorizedCapital +
+		  '}';
+	}
+}
+```
+<br/>
+
+
 ### Predefined deserializers
 
-net.crispcode.configlinker.deserializers.DateType
+The library contains default deserializers for the `Date` type:
+
+`net.crispcode.configlinker.deserializers.DateType` enum.
+
+- DateType.Milliseconds.class  
+  Milliseconds from epoch.
+  
+- DateType.Seconds.class  
+  Milliseconds from epoch
+  
+- DateType.Year.class  
+  A year in literally form.  
+  Example: `2001`, or `18`, or `184`, or `1542`.
+  
+- DateType.DateOnly.class  
+  Date as "yyyy-MM-dd".  
+  Example: `'2001-07-04'`.
+  
+- DateType.TimeOnly.class  
+  Time as "HH:mm:ss".
+  Example: `'08:56:32'`.
+  
+- DateType.DateTime.class  
+  Date and time as "yyyy-MM-dd'T'HH:mm:ss".  
+  Example: `'2001-07-04T12:08:56'`.
+  
+- DateType.DateTimeZone.class  
+  Date, time and zone as "yyyy-MM-dd'T'HH:mm:ssZ".  
+  Example: `'2001-07-04T12:08:56-0700'` (here zone is -7 hours).
+  
+- DateType.TimestampRFC_3339.class  
+  Timestamp as "yyyy-MM-dd'T'HH:mm:ss.SSSXXX".  
+  Example: `'1996-12-19T16:39:57.523-08:00'`.
+
+- DateType.TimestampRFC_822_1123.class  
+  Timestamp as "EEE, dd MMM yyyy HH:mm:ss zz".  
+  Example: `'Sun, 06 Nov 1994 08:49:37 GMT'`.
+
+- DateType.TimestampRFC_850_1036.class  
+  Timestamp as "EEEEE, dd-MMM-yy HH:mm:ss zz".  
+  Example: `'Sunday, 06-Nov-94 08:49:37 GMT'`.
 
 
+```java
+@BoundObject(sourcePath = "configs/some.properties")
+interface TypeDateErrorMilliseconds
+{
+	@BoundProperty(name = "type.Date.milliseconds", customType = DateType.Milliseconds.class)
+	Date getDateTimeFromMilliseconds();
+}
+```
 <br/>
+
 
 ### FactorySettingsBuilder and inheritance of parameters
+Some parameters used in `@BoundObject` and `@BoundProperty` could be set globally by the `FactorySettingsBuilder`.
+
+In such a case desired parameters in `@BoundObject` should be set in its default state unless you want to override them with your own value.
+
+By default all these values are taken globally:
+
+`@BoundObject`  
+- sourceScheme() default SourceScheme.INHERIT
+- charsetName() default ""
+- trackingPolicy() default TrackPolicy.INHERIT;
+- trackingInterval() default 0;
+- errorBehavior() default ErrorBehavior.INHERIT;
+
+`@BoundProperty`  
+- whitespaces() default Whitespaces.INHERIT;
+- errorBehavior() default ErrorBehavior.INHERIT;
 
 
+In `FactorySettingsBuilder` you can use below methods:
+- setSourceScheme
+- setCharset
+- setTrackPolicy
+- setTrackingInterval
+- setErrorBehavior
+- setWhitespaces
 
+
+The headers (for sourceScheme==HTTP) are merged if you set them both in `@BoundObject.httpHeaders` and `FactorySettingsBuilder.setHttpHeaders`.
 <br/>
 
+
+### Logging in the library
+
+The library use `slf4j` api.
+
+All library logging messages fall into this logger: `'net.crispcode.ConfigLinker'`.
+
+Thus you can override the behaviour/level/appender for it in your logger.xml file.
+
+<br/>

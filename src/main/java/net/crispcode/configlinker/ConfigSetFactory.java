@@ -71,7 +71,7 @@ public final class ConfigSetFactory
 	 */
 	public static ConfigSet create(FactorySettingsBuilder builder, Set<Class<?>> configInterfaces) throws PropertyMapException, AnnotationAnalyzeException
 	{
-		builder.close();
+		builder.closeBuilder();
 		configInterfaces = Collections.unmodifiableSet(new HashSet<>(configInterfaces));
 		AnnotationScanner annotationScanner = new AnnotationScanner(builder);
 		HashMap<Class<?>, ConfigDescription> mapConfigDescriptions = annotationScanner.scan(configInterfaces);

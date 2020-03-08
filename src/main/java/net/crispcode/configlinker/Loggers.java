@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 
 public final class Loggers
 {
-	static final String mainLoggerName = "ConfigLinker";
+	static final String mainLoggerName = "net.crispcode.ConfigLinker";
 	
 	private static Logger MAIN_LOGGER = LoggerFactory.getLogger(Loggers.mainLoggerName);
 	
