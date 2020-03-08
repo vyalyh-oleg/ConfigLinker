@@ -36,10 +36,10 @@ Here the advanced usages of annotations <b>`@BoundObject`</b> and <b>`@BoundProp
 
 It will also be told about:
 
-- [variables substitution in configuration parameters;]
-- [how to use complex types like `Array`, `List`, `Set`, `Map`;]
-- [how to use arguments in property retrieving methods (for parameterized query of parameter's value);]
-- [Compatibility with java >=9]
+- [variables substitution in configuration parameters;](#variables-substitution-in-configuration-parameters)
+- [how to use complex types like `Array`, `List`, `Set`, `Map`;](#complex-types-array-list-set-map-and-boundproperty--delimlist--delimkeyvalue-)
+- [how to use arguments in property retrieving methods (for parameterized query of parameter's value);](#arguments-in-configuration-methods)
+- [Compatibility with java >=9](#compatibility-with-java-9)
 <br/>
 
 
