@@ -124,7 +124,7 @@ class ExtendedTypesTest extends AbstractBaseTest
 		Assertions.assertEquals("Cannot create object for return type in method 'java.util.UUID::fromString'.", exception.getMessage());
 		Throwable baseCause = exception.getCause().getCause();
 		Assertions.assertEquals(NumberFormatException.class, baseCause.getClass());
-		Assertions.assertEquals("For input string: \"4du5\"", baseCause.getMessage());
+		Assertions.assertEquals("Error at index 2 in: \"4du5\"", baseCause.getMessage());
 	}
 	
 	

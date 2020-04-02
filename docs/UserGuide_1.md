@@ -108,6 +108,8 @@ Extended types:
 - `URI`
 - `UUID`
 - `InetAddress`
+
+See also: [Predefined deserializers](UserGuide_2.md#predefined-deserializers) for `Date` type.
 <br/>
 
 

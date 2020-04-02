@@ -344,6 +344,7 @@ class Company implements IDeserializer<Company>
 	}
 }
 ```
+See also: [Predefined deserializers](#predefined-deserializers) for `Date` type.
 <br/>
 
 
