@@ -1,9 +1,10 @@
 **Vyalyh Oleg Olegovich**  
 `<vyalyh.oleg@gmail.com>`  
-`<crispcode.net@gmail.com>`
+`<crispcode.net@gmail.com>`  
+`<oleg@crispcode.net>`
 
-Creator and maintainer of the library "ConfigLinker".
+Creator and maintainer of the library **`"ConfigLinker"`**.
 
 ---
 
-*Please, if case of using my library in your project, add the mention about it in your project's LICENCE NOTICE file.*
+*Please, in case of using my library in your project, add the mention about it in your project's LICENCE NOTICE file.*

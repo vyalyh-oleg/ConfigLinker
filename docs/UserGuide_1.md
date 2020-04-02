@@ -19,25 +19,25 @@ Here the advanced usages of annotations <b>`@BoundObject`</b> and <b>`@BoundProp
 
 **`@BoundObject`**
 
-- [charsetName](#boundobject---charsetname)
-- [sourceScheme](#boundobject---sourcescheme-classpath-file-http)
+- [charsetName](#boundobjectcharsetname)
+- [sourceScheme](#boundobjectsourcescheme-classpath-file-http)
 - [propertyNamePrefix](#boundobjectpropertynameprefix-boundpropertyname)
 <br/>
 
 **`@BoundProperty`**
 
 - [name](#boundobjectpropertynameprefix-boundpropertyname)
-- [delimList](#complex-types-array-list-set-map-and-boundproperty--delimlist--delimkeyvalue-)
-- [delimKeyValue](#complex-types-array-list-set-map-and-boundproperty--delimlist--delimkeyvalue-)
-- [regex](#boundproperty---regex)
-- [validator](#boundproperty---validator)
-- [whitespaces](#boundproperty---whitespaces)
+- [delimList](#complex-types-array-list-set-map-and-boundpropertydelimlistdelimkeyvalue)
+- [delimKeyValue](#complex-types-array-list-set-map-and-boundpropertydelimlistdelimkeyvalue)
+- [regex](#boundpropertyregex)
+- [validator](#boundpropertyvalidator)
+- [whitespaces](#boundpropertywhitespaces)
 <br/>
 
 It will also be told about:
 
 - [variables substitution in configuration parameters;](#variables-substitution-in-configuration-parameters)
-- [how to use complex types like `Array`, `List`, `Set`, `Map`;](#complex-types-array-list-set-map-and-boundproperty--delimlist--delimkeyvalue-)
+- [how to use complex types like `Array`, `List`, `Set`, `Map`;](#complex-types-array-list-set-map-and-boundpropertydelimlistdelimkeyvalue)
 - [how to use arguments in property retrieving methods (for parameterized query of parameter's value);](#arguments-in-configuration-methods)
 - [Compatibility with java >=9](#compatibility-with-java-9)
 <br/>
@@ -111,7 +111,7 @@ Extended types:
 <br/>
 
 
-### @BoundObject - charsetName
+### @BoundObject.charsetName
 
 It says what charset to use during loading raw text.  
 The default value in annotation is empty string, meaning that particular value will be taken from `FactorySettingsBuilder` (described in *User Guide part 2*), and it is `StandardCharsets.UTF_8`.  
@@ -130,7 +130,7 @@ public interface UserCredentials
 <br/>
 
 
-### @BoundObject - sourceScheme (CLASSPATH, FILE, HTTP)
+### @BoundObject.sourceScheme (CLASSPATH, FILE, HTTP)
 
 Describe the type of the source that is used to retrieve property values for annotated object.
 
@@ -353,7 +353,7 @@ public class ConfigLinkerExample
 <br/>
 
 
-### Complex types: `Array[]`, `List<>`, `Set<>`, `Map<>` and @BoundProperty ( delimList / delimKeyValue )
+### Complex types `Array[]`, `List<>`, `Set<>`, `Map<>` and @BoundProperty.delimList/delimKeyValue
 
 These parts will be more convenient to consider together.
 <br/>
@@ -467,7 +467,7 @@ public class ConfigLinkerExample
 <br/>
 
 
-### @BoundProperty - whitespaces
+### @BoundProperty.whitespaces
 
 Indicates whether or not to ignore leading and trailing getWhitespaces for configuration names and values.  
 This behaviour concerns single parameter values, every value in lists declarations, every key and value in maps declarations.
@@ -495,7 +495,7 @@ if not ignore: keys/values are `"one":" green"`, `" two ":"blue "`, `"three ":" 
 <br/>
 
 
-### @BoundProperty - regex
+### @BoundProperty.regex
 
 Regex pattern for checking raw text values which were read from property files.  
 For simple types single value is checked, and for collection types (arryas, list, map, enum) **every element value** (as string) is checked.  
@@ -526,7 +526,7 @@ interface MailingConfig
 <br/>
 
 
-### @BoundProperty - validator
+### @BoundProperty.validator
 
 Custom validator for returned value. Validates configuration value in their object form.  
 By default validators are not used.  

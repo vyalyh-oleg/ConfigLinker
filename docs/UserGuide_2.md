@@ -14,18 +14,18 @@ The following aspects will be considered:
 
 **`@BoundObject`**
 
-- [sourceScheme (HTTP)](#boundobject---sourcescheme-http--httpheaders)
-- [httpHeaders](#boundobject---sourcescheme-http--httpheaders)
-- [trackingPolicy](#boundobject---trackingpolicy)
-- [trackingInterval](#boundobject---trackinginterval)
-- [changeListener](#boundobject---changelistener)
-- [errorBehavior](#boundobject---errorbehavior)
+- [sourceScheme (HTTP)](#boundobjectsourcescheme-http-boundobjecthttpheaders)
+- [httpHeaders](#boundobjectsourcescheme-http-boundobjecthttpheaders)
+- [trackingPolicy](#boundobjecttrackingpolicy)
+- [trackingInterval](#boundobjecttrackinginterval)
+- [changeListener](#boundobjectchangelistener)
+- [errorBehavior](#boundobjecterrorbehavior)
 
 **`@BoundProperty`**
 
-- [customType](#boundproperty---customtype--deserializationmethod)
-- [deserializationMethod](#boundproperty---customtype--deserializationmethod)
-- [errorBehavior](#boundobject---errorbehavior)
+- [customType](#boundpropertycustomtype-boundpropertydeserializationmethod)
+- [deserializationMethod](#boundpropertycustomtype-boundpropertydeserializationmethod)
+- [errorBehavior](#boundobjecterrorbehavior)
 
 
 It will also be told about:
@@ -37,7 +37,7 @@ It will also be told about:
 <br/>
 
 
-### @BoundObject - sourceScheme (HTTP) / httpHeaders
+### @BoundObject.sourceScheme (HTTP), @BoundObject.httpHeaders
 
 Describes the type of the source that is used to retrieve property values for this annotated object.  
 Other source types are described in *User Guide 1*, and here we'll discuss **`SourceScheme.HTTP`**.
@@ -69,7 +69,7 @@ interface Auth
 <br/>
 
 
-### @BoundObject - trackingPolicy
+### @BoundObject.trackingPolicy
 
 Policy for refresh configuration parameters.
 
@@ -96,7 +96,7 @@ The behavior depends on `SourceScheme`:
 <br/>
 
 
-### @BoundObject - trackingInterval
+### @BoundObject.trackingInterval
 
 This parameter is taken into account only for `SourceScheme.HTTP` and only when `TrackPolicy.ENABLE`.  
 Otherwise this parameter is ignored.
@@ -109,7 +109,7 @@ Default value is '0' which means inherited behaviour (will be used value from `F
 <br/>
 
 
-### @BoundObject - changeListener
+### @BoundObject.changeListener
 
 It is intended for receiving notifications on configuration updates (so TrackPolicy should be ENABLE).
 
@@ -128,7 +128,7 @@ Available event infromation:
 <br/>
 
 
-### @BoundObject - errorBehavior
+### @BoundObject.errorBehavior
 
 It says what to do if the property value does not exist in underlying persistent store or cannot be converted to object representation for any reasons.
 
@@ -152,7 +152,7 @@ has the same meaning but for specific configuration value (not for entire interf
 <br/>
 
 
-### @BoundProperty - customType / deserializationMethod
+### @BoundProperty.customType, @BoundProperty.deserializationMethod
 
 **`Class<?> customType()`**
 
