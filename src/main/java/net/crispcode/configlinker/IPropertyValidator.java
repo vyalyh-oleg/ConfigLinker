@@ -23,7 +23,7 @@ import net.crispcode.configlinker.exceptions.PropertyValidateException;
 
 /**
  * For creation custom validators for returned value. Validates configuration value in their object form.
- * @param <T>
+ * @param <T> type for which this validator will perform the checks.
  */
 public interface IPropertyValidator<T>
 {

@@ -33,13 +33,13 @@ public enum SourceScheme
 	INHERIT,
 	/**
 	 * <p>
-	 * Use if the property file resides in the classpath of running VM.<br/>
+	 * Use if the property file resides in the classpath of running VM.<br>
 	 * The {@link BoundObject#sourcePath()} should be relative.
 	 */
 	CLASSPATH,
 	/**
 	 * <p>
-	 * Use if the property file should be loaded from one of mounted file systems.<br/>
+	 * Use if the property file should be loaded from one of mounted file systems.<br>
 	 * The {@link BoundObject#sourcePath()} should be absolute or relative.
 	 */
 	FILE,

@@ -43,8 +43,8 @@ public final class ConfigSetFactory
 	/**
 	 * @param configInterfaces Interfaces annotated with {@link net.crispcode.configlinker.annotations.BoundObject} and which methods (at least one) annotated with {@link net.crispcode.configlinker.annotations.BoundProperty}. A set of interfaces should be a Set (so the duplicates are just ignored).
 	 * @return {@link ConfigSet}
-	 * @throws AnnotationAnalyzeException
-	 * @throws PropertyMapException
+	 * @throws AnnotationAnalyzeException -
+	 * @throws PropertyMapException -
 	 */
 	public static ConfigSet create(Class<?>... configInterfaces) throws AnnotationAnalyzeException, PropertyMapException
 	{
@@ -55,8 +55,8 @@ public final class ConfigSetFactory
 	 * @param builder {@link FactorySettingsBuilder}
 	 * @param configInterfaces Interfaces annotated with {@link net.crispcode.configlinker.annotations.BoundObject} and which methods (at least one) annotated with {@link net.crispcode.configlinker.annotations.BoundProperty}. A set of interfaces should be a Set (so the duplicates are just ignored).
 	 * @return {@link ConfigSet}
-	 * @throws AnnotationAnalyzeException
-	 * @throws PropertyMapException
+	 * @throws AnnotationAnalyzeException -
+	 * @throws PropertyMapException -
 	 */
 	public static ConfigSet create(FactorySettingsBuilder builder, Class<?>... configInterfaces) throws AnnotationAnalyzeException, PropertyMapException
 	{
@@ -72,8 +72,8 @@ public final class ConfigSetFactory
 	/**
 	 * @param configInterfaces Interfaces annotated with {@link net.crispcode.configlinker.annotations.BoundObject} and which methods (at least one) annotated with {@link net.crispcode.configlinker.annotations.BoundProperty}.
 	 * @return {@link ConfigSet}
-	 * @throws AnnotationAnalyzeException
-	 * @throws PropertyMapException
+	 * @throws AnnotationAnalyzeException -
+	 * @throws PropertyMapException -
 	 */
 	public static ConfigSet create(Set<Class<?>> configInterfaces) throws AnnotationAnalyzeException, PropertyMapException
 	{
@@ -84,8 +84,8 @@ public final class ConfigSetFactory
 	 * @param builder {@link FactorySettingsBuilder}
 	 * @param configInterfaces Interfaces annotated with {@link net.crispcode.configlinker.annotations.BoundObject} and which methods (at least one) annotated with {@link net.crispcode.configlinker.annotations.BoundProperty}.
 	 * @return {@link ConfigSet}
-	 * @throws PropertyMapException
-	 * @throws AnnotationAnalyzeException
+	 * @throws PropertyMapException -
+	 * @throws AnnotationAnalyzeException -
 	 */
 	public static ConfigSet create(FactorySettingsBuilder builder, Set<Class<?>> configInterfaces) throws PropertyMapException, AnnotationAnalyzeException
 	{

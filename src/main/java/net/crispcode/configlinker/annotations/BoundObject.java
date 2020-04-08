@@ -80,18 +80,18 @@ public @interface BoundObject {
 	 * <p>The <b>common part</b> of a group of parameter names in property file. This part is used for construction the full name, which is used for binding methods in annotated interface.<br>
 	 * If it is not specified you can use only full parameter names in {@link BoundProperty#name()}.<br>
 	 * If it has any value then both variants (full and prefix-aware) can be used.</p>
-	 * <br/>
+	 * <br>
 	 * <p><u>Example:</u><br>
 	 * If the prefix  is set to {@code "mycompany"}, then the {@code @BoundProperty.name()} can be as {@code ".serverName"} (start with dot is obligatory). This means, the final parameter name, which will be searched in property file, is {@code "mycompany.serverName"}.<br>
 	 * Without the dot at the beginning, the {@code @BoundProperty.name()} is considered as full parameter name and the prefix is not taken into account.
-	 * <p><br/>
+	 * <p><br>
 	 * You can also use variables or method parameters for substituting some parts of the prefix, can be declared as {@code ${globalVariable}}.
 	 * <br>The name of variable can consist of letters, numbers and underscores.
 	 * <br>Variables should be set with {@link FactorySettingsBuilder#addParameter(String, String)}.
 	 * <br>Method parameters should be declared as {@code @{methodParameter}}
 	 * <p>
-	 * <br/>
-	 * <u>Example:</u><br/>
+	 * <br>
+	 * <u>Example:</u><br>
 	 * The names of parameters in file are:
 	 * <pre>
 	 * "servers.<b>kyiv</b>.<b>test</b>.configuration.ip"

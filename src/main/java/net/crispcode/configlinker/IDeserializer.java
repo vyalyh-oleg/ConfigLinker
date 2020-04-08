@@ -22,7 +22,7 @@ import java.util.Map;
 
 /**
  *
- * @param <T>
+ * @param <T> is your custom type, that the deserializer will return
  */
 public interface IDeserializer<T>
 {

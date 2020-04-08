@@ -55,6 +55,7 @@ public @interface BoundProperty {
 	 * <pre>	getServerLimitFor(String group, String border);</pre>
 	 * Where the {@code 'group'} can be "memory", "disk", "cpu", and {@code 'border'} -- "max", "min", "default".
 	 * <p>
+	 * <br>
 	 * <p><b>IMPORTANT:</b>
 	 * <br>To use dynamic variables your interfaces must be compiled with {@code "javac -parameters"} argument.
 	 * @return -
@@ -62,15 +63,15 @@ public @interface BoundProperty {
 	String name();
 
 	/**
-	 * <p>Regex pattern for checking raw text value, read from configuration.<br/>
-	 * For simple types single value is checked, and for collection types (arrays, list, map, enum) every element value (as string) is checked.<br/>
+	 * <p>Regex pattern for checking raw text value, read from configuration.<br>
+	 * For simple types single value is checked, and for collection types (arrays, list, map, enum) every element value (as string) is checked.<br>
 	 * By defaults regex check does not used.
-	 * <p><br/>
+	 * <p><br>
 	 * If validation fails the {@code PropertyMatchException} will be thrown.
 	 * Its message and the hierarchy of 'cause' contains additional information about error.
-	 * <p><br/>
+	 * <p><br>
 	 * The checking process performs on the call of {@code ConfigSetFactory.create()} method.
-	 * <bThe only exception</b> is when your configuration methods contain parameters, therefore its values could be checked only during runtime, when the actual arguments will be passed to the method.
+	 * <b>The only exception</b> is when your configuration methods contain parameters, therefore its values could be checked only during runtime, when the actual arguments will be passed to the method.
 	 * @return -
 	 */
 	String regex() default "";
@@ -142,12 +143,12 @@ public @interface BoundProperty {
 	 * <p>Custom validator for returned value. Validate configuration value in their object form.
 	 * <p>By default validators are not used.
 	 * <p>If you need additional checks just implement {@link IPropertyValidator} interface and point class here.
-	 * <p><br/>
+	 * <p><br>
 	 * If validation fails the {@code PropertyValidateException} will be thrown.
 	 * Its message and the hierarchy of 'cause' contains additional information about error.
-	 * <p><br/>
+	 * <p><br>
 	 * The checking process performs on the call of {@code ConfigSetFactory.create()} method.
-	 * <bThe only exception</b> is when your configuration methods contain parameters, therefore its values could be checked only during runtime, when the actual arguments will be passed to the method.
+	 * <b>The only exception</b> is when your configuration methods contain parameters, therefore its values could be checked only during runtime, when the actual arguments will be passed to the method.
 	 * @return -
 	 */
 	Class<? extends IPropertyValidator> validator() default IPropertyValidator.class;

@@ -53,7 +53,7 @@ public final class ConfigSet
 	 * @param configInterface Interface annotated with {@link net.crispcode.configlinker.annotations.BoundObject} and which methods (at least one) annotated with {@link net.crispcode.configlinker.annotations.BoundProperty} and which was previously passed as an argument to one of the {@link ConfigSetFactory} methods.
 	 * @param <T> particular type of the {@code configInterface}, it is retrieved automatically from the interface {@code Class} object.
 	 * @return A proxy object which implement interface {@link T}, and which will be used for getting specific configuration values from bound property file.
-	 * @throws ConfigSetException
+	 * @throws ConfigSetException -
 	 */
 	public <T> T getConfigObject(Class<T> configInterface) throws ConfigSetException
 	{
