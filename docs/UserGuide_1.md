@@ -109,6 +109,22 @@ Extended types:
 - `UUID`
 - `InetAddress`
 
+```properties
+# example of extended types
+
+type.URL = http://mysite.com:8080/path/to;matrix_1=foo;matrix_2=bar/resource.jsf?one=1&two=2#firstpart
+type.URI.1 = file:///home/john/Documents/charts.pdf
+type.URI.2 = mailto:John.Doe@example.com
+type.URI.3 = ldap://[2001:db8::7]/c=GB?objectClass?one
+type.URI.4 = urn:oasis:names:specification:docbook:dtd:xml:4.1.2
+type.UUID = 1711e708-a486-4dc5-8dbe-f275b601064f
+type.InetAddress.IPv4 = 192.168.12.10
+type.InetAddress.IPv6.1 = ::123
+type.InetAddress.IPv6.2 = ::ffff
+type.InetAddress.IPv6.3 = fe80::fc02:bcff:fea3:919b
+type.InetAddress.HostName = mysite.com
+```
+
 See also: [Predefined deserializers](UserGuide_2.md#predefined-deserializers) for `Date` type.
 <br/>
 

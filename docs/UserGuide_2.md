@@ -358,7 +358,7 @@ The library contains default deserializers for the `Date` type:
   Milliseconds from epoch.
   
 - DateType.Seconds.class  
-  Milliseconds from epoch
+  Seconds from epoch
   
 - DateType.Year.class  
   A year in literally form.  
@@ -378,7 +378,7 @@ The library contains default deserializers for the `Date` type:
   
 - DateType.DateTimeZone.class  
   Date, time and zone as "yyyy-MM-dd'T'HH:mm:ssZ".  
-  Example: `'2001-07-04T12:08:56-0700'` (here zone is -7 hours).
+  Example: `'2001-07-04T12:08:56-0700'` (here zone is '-7' hours).
   
 - DateType.TimestampRFC_3339.class  
   Timestamp as "yyyy-MM-dd'T'HH:mm:ss.SSSXXX".  
