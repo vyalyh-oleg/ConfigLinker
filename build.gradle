@@ -90,11 +90,11 @@ project.sourceCompatibility = JavaVersion.VERSION_1_8
 project.targetCompatibility = JavaVersion.VERSION_1_8
 
 /*
-javadoc {
-	options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
-	options.author = true
-	options.header = project.name
-	options.addStringOption('Xdoclint:none', '-quiet')
+sourceSets {
+	build {
+		java.srcDir file('src/main/java')
+
+	}
 }
 */
 
@@ -105,6 +105,7 @@ jar {
 				'Implementation-Vendor' : project.developerName,
 				'Implementation-Vendor-Address': project.developerAddress,
 				'Implementation-Vendor-Email': project.developerEmail,
+				'Repository-Address': project.scmRepositoryAddress,
 				'Automatic-Module-Name': project.automaticModuleName
 	}
 }
@@ -115,6 +116,18 @@ tasks.withType(JavaCompile) {
 	options.compilerArgs += ["-parameters"]
 	println("Compiler arguments for $taskIdentity.name: " + options.allCompilerArgs)
 }
+
+/*
+javadoc {
+	source = sourceSets.main.allJava
+	classpath = configurations.compile
+
+	options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
+	options.author = true
+	options.header = project.name
+	options.addStringOption('Xdoclint:none', '-quiet')
+}
+*/
 
 task javadocJar(type: Jar) {
 	archiveClassifier = 'javadoc'
@@ -145,8 +158,8 @@ configure(install.repositories.mavenInstaller) {
 
 		scm {
 			url project.scmRepositoryAddress
-			connection project.scmRepositoryAddress
-			developerConnection project.scmRepositoryAddress
+			connection project.scmRepositoryConnection
+			developerConnection project.scmRepositoryConnection
 		}
 
 		licenses {
