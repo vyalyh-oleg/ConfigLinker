@@ -1,5 +1,7 @@
 **ConfigLinker** is a library designed to make it easier and more intuitive for developers to work with configuration `property` files. 
 
+## Table of Contents
+
 ### [Releases Notes](RELEASE_NOTES.md)
 
 ### [Quick Start Guide (5 minutes)](docs/QuickStartGuide_5m.md)
