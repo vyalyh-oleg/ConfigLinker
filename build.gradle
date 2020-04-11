@@ -26,7 +26,9 @@ plugins {
 
 //apply plugin: 'java'
 apply plugin: 'java-library'
+apply plugin: 'signing'
 apply plugin: 'maven'
+apply plugin: 'maven-publish'
 //apply plugin: 'application'
 
 apply plugin: 'com.adarshr.test-logger'
@@ -56,7 +58,6 @@ dependencies {
     // This dependency is found on compile classpath of this component and consumers.
 
 	implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
-	implementation group: 'org.slf4j', name: 'jul-to-slf4j', version: '1.7.25'
 
 	// This dependency is exported to consumers, that is to say found on their compile classpath.
 	//    api
@@ -79,12 +80,11 @@ dependencies {
 
 
 // Project configuration:
-group = project.properties["package.group"]
-archivesBaseName = project.properties["package.artifact"]
-version = project.properties["package.version"] + "-" + project.properties["project.status"]
+project.group = project.properties["package.group"]
+project.archivesBaseName = project.properties["package.artifact"]
+project.version = project.properties["package.version"] + "-" + project.properties["project.status"]
 //version = version + "-b" + new Date().format('yyMMdd.HHmmss') + "-SNAPSHOT"
-
-description = "*ConfigLinker* is a library designed to make it easier and more intuitive for developers to work with configuration `property` files."
+project.description = "*ConfigLinker* is a library designed to make it easier and more intuitive for developers to work with configuration `property` files."
 
 project.sourceCompatibility = JavaVersion.VERSION_1_8
 project.targetCompatibility = JavaVersion.VERSION_1_8
@@ -98,9 +98,19 @@ sourceSets {
 }
 */
 
+tasks.withType(JavaCompile) {
+	//enable compilation in a separate daemon process
+	//options.fork = true
+	options.compilerArgs += ["-parameters"]
+	println("Compiler arguments for $taskIdentity.name: " + options.allCompilerArgs)
+}
+
+
 jar {
+	archiveBaseName = project.archivesBaseName
+
 	manifest {
-		attributes 'Implementation-Name': project.archivesBaseName,
+		attributes 'Implementation-Name': project.name,
 				'Implementation-Version': project.version,
 				'Implementation-Vendor' : project.developerName,
 				'Implementation-Vendor-Address': project.developerAddress,
@@ -110,22 +120,19 @@ jar {
 	}
 }
 
-tasks.withType(JavaCompile) {
-	//enable compilation in a separate daemon process
-	//options.fork = true
-	options.compilerArgs += ["-parameters"]
-	println("Compiler arguments for $taskIdentity.name: " + options.allCompilerArgs)
-}
-
 /*
 javadoc {
 	source = sourceSets.main.allJava
-	classpath = configurations.compile
+	//classpath = configurations.compile
 
 	options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
 	options.author = true
 	options.header = project.name
-	options.addStringOption('Xdoclint:none', '-quiet')
+	//options.addStringOption('Xdoclint:none', '-quiet')
+
+	if(JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
 }
 */
 
@@ -146,39 +153,94 @@ artifacts {
 }
 */
 
-// add all the info required by Maven Central to the pom
-configure(install.repositories.mavenInstaller) {
-	pom.project {
-		packaging 'jar'
+java {
+	withJavadocJar()
+	withSourcesJar()
+}
 
-		inceptionYear project.inceptionYear
-		name project.archivesBaseName
-		description project.description
-		url project.developerAddress
+Properties props = new Properties()
+props.load(new FileInputStream("security.properties"))
 
-		scm {
-			url project.scmRepositoryAddress
-			connection project.scmRepositoryConnection
-			developerConnection project.scmRepositoryConnection
-		}
+// 'project.ext' | 'allprojects'
+project.ext {
+	ext."signing.secretKeyRingFile" = props.get("signing.secretKeyRingFile")
+	ext."signing.keyId" = props.get("signing.keyId")
+	ext."signing.password" = props.get("signing.password")
+}
 
-		licenses {
-			license {
-				name 'The Apache License, Version 2.0'
-				url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+/*
+signing {
+	//sign publishing.publications.mavenJava
+	sign jar
+	sign javadocJar
+	sign sourcesJar
+}
+*/
+
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			artifactId = project.name
+			/*
+			afterEvaluate {
+				artifactId = jar.archiveBaseName
 			}
-		}
+			*/
+			from components.java
 
-		developers {
-			developer {
-				id project.developerName
-				name project.developerName
-				email project.developerEmail
+			/*
+			versionMapping {
+				usage('java-api') {
+					fromResolutionOf('runtimeClasspath')
+				}
+				usage('java-runtime') {
+					fromResolutionResult()
+				}
 			}
+			*/
+
+			/*
+            def ossrhUsername=props.getProperty( "ossrh.userName" )
+            def ossrhPassword=props.getProperty( "ossrh.userPassword" )
+			*/
+
+			pom {
+				packaging 'jar'
+
+				name = project.archivesBaseName
+				description = project.description
+				url = project.developerAddress
+				inceptionYear = project.inceptionYear
+				//properties = [  ]
+
+				licenses {
+					license {
+						name = 'The Apache License, Version 2.0'
+						url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+					}
+				}
+				developers {
+					developer {
+						id = project.developerName
+						name = project.developerName
+						email = project.developerEmail
+					}
+				}
+				scm {
+					connection = project.scmRepositoryConnection
+					developerConnection = project.scmRepositoryConnection
+					url = project.scmRepositoryAddress
+				}
+			}
+
+			//before { MavenPublication publication -> signing.sign(publication) }
 		}
 	}
 }
 
+signing {
+	sign publishing.publications.mavenJava
+}
 
 /*
 tasks.withType(JavaExec) {
