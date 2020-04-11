@@ -58,7 +58,7 @@ project.ext {
 dependencies {
     // This dependency is found on compile classpath of this component and consumers.
 
-	implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+	compileOnly group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
 
 	// This dependency is exported to consumers, that is to say found on their compile classpath.
 	//    api
@@ -149,6 +149,11 @@ task sourcesJar(type: Jar) {
 	from sourceSets.main.allSource
 }
 
+java {
+	withJavadocJar()
+	withSourcesJar()
+}
+
 /* Publishing config */
 /*
 artifacts {
@@ -156,10 +161,14 @@ artifacts {
 }
 */
 
-java {
-	withJavadocJar()
-	withSourcesJar()
+/*
+signing {
+	sign configurations.archives
+	sign jar
+	sign javadocJar
+	sign sourcesJar
 }
+*/
 
 Properties props = new Properties()
 props.load(new FileInputStream("security.properties"))
@@ -170,15 +179,6 @@ project.ext {
 	ext."signing.keyId" = props.get("signing.keyId")
 	ext."signing.password" = props.get("signing.password")
 }
-
-/*
-signing {
-	//sign publishing.publications.mavenJava
-	sign jar
-	sign javadocJar
-	sign sourcesJar
-}
-*/
 
 publishing {
 	publications {
@@ -200,11 +200,6 @@ publishing {
 					fromResolutionResult()
 				}
 			}
-			*/
-
-			/*
-            def ossrhUsername=props.getProperty("ossrh.userName")
-            def ossrhPassword=props.getProperty("ossrh.userPassword")
 			*/
 
 			pom {
@@ -236,14 +231,106 @@ publishing {
 					url = project.scmRepositoryAddress
 				}
 			}
-
-			//before { MavenPublication publication -> signing.sign(publication) }
 		}
+	}
+
+	repositories {
+		def ossrhUsername=props.getProperty("ossrh.userName")
+		def ossrhPassword=props.getProperty("ossrh.userPassword")
+
+		maven {
+			name = "sonatype"
+			url = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+			credentials {
+				username ossrhUsername
+				password ossrhPassword
+			}
+		}
+
+		maven {
+			name = "sonatypeSnapshot"
+			url = "https://oss.sonatype.org/content/repositories/snapshots/"
+			credentials {
+				username ossrhUsername
+				password ossrhPassword
+			}
+		}
+
+/*
+		maven {
+			credentials {
+				username creds.username
+				password creds.password
+			}
+
+			url "http://maven.custom.com/repository/"
+		}
+*/
 	}
 }
 
 signing {
 	sign publishing.publications.mavenJava
+}
+
+uploadArchives {
+	//publishToMavenLocal
+
+	repositories {
+		mavenDeployer {
+			def ossrhUsername=props.getProperty("ossrh.userName")
+			def ossrhPassword=props.getProperty("ossrh.userPassword")
+
+			beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+			// Repository URL for release deployment, no download access!
+			repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+				authentication(userName: ossrhUsername, password: ossrhPassword)
+			}
+
+			// Repository URL for snapshot deployment and download access
+			snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+				authentication(userName: ossrhUsername, password: ossrhPassword)
+			}
+
+			// Repository URL for release download access, this repository is synced to the Central Repository,
+			// direct deployment to this repository is NOT possible
+			// https://oss.sonatype.org/content/repositories/releases/
+
+			// Repository group that contains snapshots and releases
+			// https://oss.sonatype.org/content/groups/public/
+
+			pom.project {
+				packaging 'jar'
+
+				name = project.archivesBaseName
+				description = project.description
+				url = project.developerAddress
+				inceptionYear = project.inceptionYear
+				//properties = [  ]
+
+				licenses {
+					license {
+						name = 'The Apache License, Version 2.0'
+						url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+					}
+				}
+				developers {
+					developer {
+						id = project.developerId
+						name = project.developerName
+						email = project.developerEmail
+						organizationUrl = project.developerAddress
+					}
+				}
+				scm {
+					connection = project.scmRepositoryConnection
+					developerConnection = project.scmRepositoryConnection
+					url = project.scmRepositoryAddress
+				}
+			}
+		}
+	}
 }
 
 /*
