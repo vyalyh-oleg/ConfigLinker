@@ -18,5 +18,3 @@ out/
 .idea/libraries/*.xml
 .idea/modules.xml
 .idea/modules/*.iml
-
-security.properties
