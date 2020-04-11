@@ -2,6 +2,12 @@ build/
 out/
 .gradle/
 
+*.class
+*.log
+*.jar
+*.zip
+*.tar.gz
+
 .idea/workspace.xml
 .idea/usage.statistics.xml
 .idea/tasks.xml
@@ -13,8 +19,4 @@ out/
 .idea/modules.xml
 .idea/modules/*.iml
 
-*.class
-*.log
-*.jar
-*.zip
-*.tar.gz
+security.properties
