@@ -1,0 +1,26 @@
+build/
+out/
+.gradle/
+
+*.class
+*.log
+*.jar
+*.zip
+*.tar.gz
+
+.idea/workspace.xml
+.idea/usage.statistics.xml
+.idea/tasks.xml
+.idea/misc.xml
+
+# because of using gradle/maven
+.idea/gradle.xml
+.idea/libraries/*.xml
+.idea/modules.xml
+.idea/modules/*.iml
+
+.idea/
+src/test/
+test_workdir/
+ConfigLinker.iml
+security.properties
