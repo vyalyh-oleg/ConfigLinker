@@ -227,6 +227,7 @@ publishing {
 						id = project.developerId
 						name = project.developerName
 						email = project.developerEmail
+						organizationUrl = project.developerAddress
 					}
 				}
 				scm {
