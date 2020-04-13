@@ -239,7 +239,8 @@ publishing {
 		def ossrhPassword=props.getProperty("ossrh.userPassword")
 
 		maven {
-			name = "sonatype"
+			// Repository URL for release deployment, no download access!
+			name = "sonatypeStaging"
 			url = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
 			credentials {
 				username ossrhUsername
@@ -248,6 +249,7 @@ publishing {
 		}
 
 		maven {
+			// Repository URL for snapshot deployment and download access
 			name = "sonatypeSnapshot"
 			url = "https://oss.sonatype.org/content/repositories/snapshots/"
 			credentials {
@@ -255,6 +257,14 @@ publishing {
 				password ossrhPassword
 			}
 		}
+
+
+		// Repository URL for release download access, this repository is synced to the Central Repository,
+		// direct deployment to this repository is NOT possible
+		// https://oss.sonatype.org/content/repositories/releases/
+
+		// Repository group that contains snapshots and releases
+		// https://oss.sonatype.org/content/groups/public/
 
 /*
 		maven {
@@ -271,66 +281,6 @@ publishing {
 
 signing {
 	sign publishing.publications.mavenJava
-}
-
-uploadArchives {
-	//publishToMavenLocal
-
-	repositories {
-		mavenDeployer {
-			def ossrhUsername=props.getProperty("ossrh.userName")
-			def ossrhPassword=props.getProperty("ossrh.userPassword")
-
-			beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-			// Repository URL for release deployment, no download access!
-			repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-				authentication(userName: ossrhUsername, password: ossrhPassword)
-			}
-
-			// Repository URL for snapshot deployment and download access
-			snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-				authentication(userName: ossrhUsername, password: ossrhPassword)
-			}
-
-			// Repository URL for release download access, this repository is synced to the Central Repository,
-			// direct deployment to this repository is NOT possible
-			// https://oss.sonatype.org/content/repositories/releases/
-
-			// Repository group that contains snapshots and releases
-			// https://oss.sonatype.org/content/groups/public/
-
-			pom.project {
-				packaging 'jar'
-
-				name = project.archivesBaseName
-				description = project.description
-				url = project.developerAddress
-				inceptionYear = project.inceptionYear
-				//properties = [  ]
-
-				licenses {
-					license {
-						name = 'The Apache License, Version 2.0'
-						url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-					}
-				}
-				developers {
-					developer {
-						id = project.developerId
-						name = project.developerName
-						email = project.developerEmail
-						organizationUrl = project.developerAddress
-					}
-				}
-				scm {
-					connection = project.scmRepositoryConnection
-					developerConnection = project.scmRepositoryConnection
-					url = project.scmRepositoryAddress
-				}
-			}
-		}
-	}
 }
 
 /*
