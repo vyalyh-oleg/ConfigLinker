@@ -40,12 +40,15 @@ repositories {
 }
 
 project.ext {
+	url = project.properties["project.url"]
+	inceptionYear = project.properties["project.inceptionYear"]
+
 	developerAddress = project.properties["developer.address"]
 	developerId = project.properties["developer.id"]
 	developerName = project.properties["developer.name"]
 	developerEmail = project.properties["developer.email"]
-	automaticModuleName = project.properties["project.automaticModuleName"]
-	inceptionYear = project.properties["inceptionYear"]
+
+	automaticModuleName = project.properties["package.automaticModuleName"]
 
 	scmRepositoryAddress = project.properties["scm.repository.address"]
 	scmRepositoryConnection = project.properties["scm.repository.connection"]
@@ -87,7 +90,7 @@ project.version = project.properties["package.version"]
 project.status = project.properties["project.status"]
 project.version = (project.status != null) ? project.version + "-" + project.status : project.version
 //version = version + "-b" + new Date().format('yyMMdd.HHmmss') + "-SNAPSHOT"
-project.description = "*ConfigLinker* is a library designed to make it easier and more intuitive for developers to work with configuration `property` files."
+project.description = "*ConfigLinker* is a library designed to make it easier and more intuitive for developers to work with configuration 'property' files."
 
 project.sourceCompatibility = JavaVersion.VERSION_1_8
 project.targetCompatibility = JavaVersion.VERSION_1_8
@@ -207,7 +210,7 @@ publishing {
 
 				name = project.archivesBaseName
 				description = project.description
-				url = project.developerAddress
+				url = project.url
 				inceptionYear = project.inceptionYear
 				//properties = [  ]
 
@@ -229,6 +232,10 @@ publishing {
 					connection = project.scmRepositoryConnection
 					developerConnection = project.scmRepositoryConnection
 					url = project.scmRepositoryAddress
+				}
+				issueManagement {
+					system = 'GitHub'
+					url = 'https://github.com/vyalyh-oleg/ConfigLinker/issues'
 				}
 			}
 		}
