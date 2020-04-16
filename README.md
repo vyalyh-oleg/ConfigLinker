@@ -2,8 +2,6 @@
 
 ## Table of Contents
 
----
-
 ### [Releases Notes](RELEASE_NOTES.md)
 
 ### [Quick Start Guide (5 minutes)](docs/QuickStartGuide_5m.md)
@@ -15,3 +13,4 @@
 ### [Licence](APACHE-LICENSE-2.0.md)
 
 ### [Licence Notice](NOTICE.md)
+
