@@ -7,4 +7,4 @@ Creator and maintainer of the library **`"ConfigLinker"`**.
 
 ---
 
-*Please, in case of using my library in your project, add the mention about it in your project's LICENCE NOTICE file.*
+*Please, if possible, be so kind in case of using my library in your project, add the mention about it in your project's LICENCE NOTICE file.*

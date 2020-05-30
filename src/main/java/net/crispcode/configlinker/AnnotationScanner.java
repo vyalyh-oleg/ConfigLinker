@@ -121,6 +121,10 @@ final class AnnotationScanner
 		}
 		
 		
+		// validate variables in @BoundObject#defaultSourcePath
+		String defaultSourcePath = boundObjectAnnotation.defaultSourcePath().isEmpty() ? null : boundObjectAnnotation.defaultSourcePath();
+		
+		
 		// validate variables in @BoundObject#propertyNamePrefix
 		String rawPropertyNamePrefix = boundObjectAnnotation.propertyNamePrefix();
 		String propertyNamePrefix;
@@ -263,6 +267,12 @@ final class AnnotationScanner
 		if (errorBehavior == ErrorBehavior.INHERIT)
 			errorBehavior = configBuilder.getErrorBehavior();
 		
+		if ((errorBehavior == ErrorBehavior.TRY_DEFAULTS_OR_NULL || errorBehavior == ErrorBehavior.TRY_DEFAULTS_OR_EXCEPTION) && defaultSourcePath == null)
+			throw new AnnotationAnalyzeException(
+				"You cannot use ErrorBehavior.TRY_DEFAULTS_OR_NULL or ErrorBehavior.TRY_DEFAULTS_OR_EXCEPTION without @BoundObject.defaultSourcePath(), config interface '" + configInterface
+					.getName() + "'.")
+				.logAndReturn();
+		
 		
 		// get ignoreWhiteSpaces
 		boolean ignoreWhiteSpaces = configBuilder.getWhitespaces() == Whitespaces.IGNORE;
@@ -271,6 +281,7 @@ final class AnnotationScanner
 		// create ConfigDescription
 		ConfigDescription configDescription = new ConfigDescription(configInterface);
 		configDescription.setSourcePath(sourcePath);
+		configDescription.setDefaultSourcePath(defaultSourcePath);
 		configDescription.setPropertyNamePrefix(propertyNamePrefix);
 		configDescription.setSourceScheme(sourceScheme);
 		configDescription.setHttpHeaders(httpHeaders);

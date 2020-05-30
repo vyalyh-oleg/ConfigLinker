@@ -32,6 +32,11 @@ final class ConfigLinkerLoader extends AbstractLoader
 	ConfigLinkerLoader(HashMap<Class<?>, ConfigDescription> configDescriptions) throws PropertyLoadException
 	{
 		super(configDescriptions);
+		
+		// invoke only in final loader subclass (subclass of 'AbstractLoader')
+		this.prepareLoader();
+		this.loadProperties();
+		this.startTrackChanges();
 	}
 	
 	@Override
