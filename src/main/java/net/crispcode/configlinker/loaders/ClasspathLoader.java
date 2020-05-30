@@ -52,7 +52,7 @@ final class ClasspathLoader extends PropertyFileLoader
 		URL resource = ClasspathLoader.class.getClassLoader().getResource(relativeFilePath.toString());
 		if (resource == null)
 			throw new PropertyLoadException(
-				"Configuration file '" + relativeFilePath + "' not exists; see annotation parameter @BoundObject.sourcePath() on interface '"
+				"Configuration file '" + relativeFilePath + "' doesn't exist; see annotation parameter @BoundObject.sourcePath() on interface '"
 					+ configDescription.getConfInterface().getName() + "'.")
 				.logAndReturn();
 		
@@ -63,9 +63,8 @@ final class ClasspathLoader extends PropertyFileLoader
 		}
 		catch (URISyntaxException e)
 		{
-			throw new PropertyLoadException("'" + this.getClass()
-				.getSimpleName() + "' couldn't get resource from classpath and convert it to ordinary 'Path' object. Actual resource URL:'" + resource
-				.toString() + "'.")
+			throw new PropertyLoadException(
+				"Couldn't convert sourcePath URL to 'Path' object. Actual resource URL:'" + resource + "'; interface '" + configDescription.getConfInterface().getName() + "'.")
 				.logAndReturn();
 		}
 		

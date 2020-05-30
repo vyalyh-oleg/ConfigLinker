@@ -56,7 +56,7 @@ class PropertyFileLoader extends AbstractLoader
 	{
 		super(configDescriptions);
 		
-		// invoke only in final loader instance (subclass of 'AbstractLoader')
+		// invoke only in final loader subclass (subclass of 'AbstractLoader')
 		this.prepareLoader();
 		this.loadProperties();
 		this.startTrackChanges();
@@ -102,7 +102,6 @@ class PropertyFileLoader extends AbstractLoader
 		{
 			Properties newProperties = new Properties();
 			newProperties.load(propFileReader);
-			propFileReader.close();
 			return newProperties;
 		}
 		catch (IOException e)
