@@ -34,6 +34,7 @@ public final class ConfigDescription
 	private SourceScheme sourceScheme;
 	private Map<String, String> httpHeaders;
 	private String sourcePath;
+	private String defaultSourcePath;
 	private Charset charset;
 	private boolean ignoreWhitespaces;
 	private String propertyNamePrefix;
@@ -67,6 +68,11 @@ public final class ConfigDescription
 	public String getSourcePath()
 	{
 		return sourcePath;
+	}
+	
+	public String getDefaultSourcePath()
+	{
+		return defaultSourcePath;
 	}
 	
 	public Charset getCharset()
@@ -131,6 +137,11 @@ public final class ConfigDescription
 		this.sourcePath = sourcePath;
 	}
 	
+	void setDefaultSourcePath(String defaultSourcePath)
+	{
+		this.defaultSourcePath = defaultSourcePath;
+	}
+	
 	void setCharset(Charset charset)
 	{
 		this.charset = charset;
@@ -188,10 +199,16 @@ public final class ConfigDescription
 		
 		public PropertyDescription(String name, String[] dynamicVariableNames, IPropertyMapper propertyMapper, ErrorBehavior errorBehavior)
 		{
+			ConfigDescription configDescription = ConfigDescription.this;
 			this.name = name;
 			this.dynamicVariableNames = dynamicVariableNames;
 			this.errorBehavior = errorBehavior;
 			this.mapper = propertyMapper;
+		}
+		
+		public ConfigDescription getConfigDescription()
+		{
+			return ConfigDescription.this;
 		}
 		
 		/**

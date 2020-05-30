@@ -311,7 +311,14 @@ test {
 	//systemProperty 'java.util.logging.manager', 'org.apache.logging.log4j.jul.LogManager'
 
 	workingDir "./test_workdir"
-	
+
+	processTestResources {
+		from("src/test/java") {
+			include "**/*.properties"
+			//into "${buildDir}/resources/test/"
+		}
+	}
+
 	useJUnitPlatform{
 		// includeTags 'fast', 'smoke & feature-a'
 		// excludeTags 'slow', 'ci'

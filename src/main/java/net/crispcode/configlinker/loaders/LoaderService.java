@@ -72,8 +72,10 @@ final public class LoaderService
 		return new LoaderService(loaders);
 	}
 	
-	public Object getProperty(ConfigDescription configDescription, ConfigDescription.PropertyDescription propertyDescription, Method method, Object[] proxyArgs)
+	public Object getProperty(ConfigDescription.PropertyDescription propertyDescription, Method method, Object[] proxyArgs)
 	{
+		final ConfigDescription configDescription = propertyDescription.getConfigDescription();
+		
 		HashMap<String, String> methodArguments = null;
 		if (propertyDescription.getDynamicVariableNames() != null)
 			if (propertyDescription.getDynamicVariableNames().length != proxyArgs.length)
@@ -88,6 +90,6 @@ final public class LoaderService
 				}
 			}
 		
-		return loaders.get(configDescription.getSourceScheme()).getProperty(configDescription, propertyDescription, method, methodArguments);
+		return loaders.get(configDescription.getSourceScheme()).getProperty(propertyDescription, method, methodArguments);
 	}
 }

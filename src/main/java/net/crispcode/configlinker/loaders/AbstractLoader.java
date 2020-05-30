@@ -31,7 +31,15 @@ import net.crispcode.configlinker.exceptions.PropertyMatchException;
 import net.crispcode.configlinker.exceptions.PropertyNotFoundException;
 import net.crispcode.configlinker.exceptions.PropertyValidateException;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -44,17 +52,84 @@ abstract class AbstractLoader
 {
 	private final Map<Class<?>, ConfigDescription> configDescriptions;
 	private final HashMap<String, Properties> rawProperties = new HashMap<>();
+	private final HashMap<String, HashMap<String, String>> rawDefaultProperties = new HashMap<>();
 	private final HashMap<Class<?>, HashMap<Integer, Object>> singleReturnsMethodsCache = new HashMap<>();
 	private final HashMap<Class<?>, HashMap<Integer, Object>> multiReturnsMethodsCache = new HashMap<>();
 	
 	AbstractLoader(HashMap<Class<?>, ConfigDescription> configDescriptions) throws PropertyLoadException
 	{
 		this.configDescriptions = Collections.unmodifiableMap(configDescriptions);
+		this.loadDefaults();
 	}
 	
 	abstract protected void prepareLoader() throws PropertyLoadException;
 	
 	abstract protected Properties loadRawProperties(ConfigDescription configDescription) throws PropertyLoadException;
+	
+	private void loadDefaults()
+	{
+		for (ConfigDescription configDescription : this.configDescriptions.values())
+		{
+			HashMap<String, String> propsMap;
+			URL defaultsURL;
+			
+			if (configDescription.getDefaultSourcePath() != null)
+			{
+				defaultsURL = configDescription.getConfInterface().getResource(configDescription.getDefaultSourcePath());
+				
+				if (defaultsURL == null)
+				{
+					throw new PropertyLoadException(
+						"Configuration file for defaultSourcePath '" + configDescription.getDefaultSourcePath()
+							+ "' doesn't exist; see annotation parameter @BoundObject.defaultSourcePath() on interface '"
+							+ configDescription.getConfInterface().getName() + "'.")
+						.logAndReturn();
+				}
+				
+				if (this.rawDefaultProperties.containsKey(defaultsURL.toString()))
+					continue;
+				
+				propsMap = getDefaultProperties(defaultsURL, configDescription.getConfInterface().getName(), configDescription.getCharset());
+				this.rawDefaultProperties.put(defaultsURL.toString(), propsMap);
+			}
+		}
+	}
+	
+	private HashMap<String, String> getDefaultProperties(URL defaultsURL, String configDescriptionInterfaceName, Charset charset)
+	{
+		Path fullFilePath;
+		try
+		{
+			fullFilePath = Paths.get(defaultsURL.toURI());
+		}
+		catch (URISyntaxException e)
+		{
+			throw new PropertyLoadException(
+				"Couldn't convert defaults URL to 'Path' object. Actual resource URL:'" + defaultsURL + "'; interface '" + configDescriptionInterfaceName + "'.")
+				.logAndReturn();
+		}
+		
+		Properties newProperties;
+		try (BufferedReader propFileReader = Files.newBufferedReader(fullFilePath, charset))
+		{
+			newProperties = new Properties();
+			newProperties.load(propFileReader);
+		}
+		catch (IOException e)
+		{
+			throw new PropertyLoadException(
+				"Error during loading default properties from file '" + fullFilePath + "' with charset '" + charset.toString() +
+					"', config interface: '" + configDescriptionInterfaceName + "'.", e)
+				.logAndReturn();
+		}
+		
+		HashMap<String, String> propsMap = newProperties.entrySet().stream().collect(
+			HashMap::new,
+			(map, propEntry) -> map.put((String) propEntry.getKey(), (String) propEntry.getValue()),
+			HashMap::putAll);
+		
+		return propsMap;
+	}
 	
 	protected void startTrackChanges() throws PropertyLoadException
 	{
@@ -94,6 +169,13 @@ abstract class AbstractLoader
 		Class<?> configInterface = configDescription.getConfInterface();
 		HashMap<Integer, Object> singleReturns = new HashMap<>();
 		
+		HashMap<String, String> defaults = null;
+		if (configDescription.getDefaultSourcePath() != null)
+		{
+			URL defaultsURL = configDescription.getConfInterface().getResource(configDescription.getDefaultSourcePath());
+			defaults = this.rawDefaultProperties.get(defaultsURL.toString());
+		}
+		
 		for (Map.Entry<Method, ConfigDescription.PropertyDescription> entryPropertyDescription : configDescription.getBoundPropertyMethods().entrySet())
 		{
 			ConfigDescription.PropertyDescription propertyDescription = entryPropertyDescription.getValue();
@@ -101,26 +183,37 @@ abstract class AbstractLoader
 			if (propertyDescription.getDynamicVariableNames() != null)
 				continue;
 			
+			ErrorBehavior errorBehavior = propertyDescription.getErrorBehavior();
+			Method propertyMethod = entryPropertyDescription.getKey();
 			String fullPropertyName = propertyDescription.getName();
 			String rawValue = newProperties.getProperty(fullPropertyName);
 			
 			Object objValue = null;
 			if (rawValue == null || rawValue.isEmpty())
 			{
-				if (propertyDescription.getErrorBehavior() == ErrorBehavior.THROW_EXCEPTION)
+				if (errorBehavior == ErrorBehavior.THROW_EXCEPTION)
 				{
 					throw new PropertyNotFoundException(
 						"Value for property '" + fullPropertyName + "' not found, config interface '" + configInterface.getName() + "#"
-							+ entryPropertyDescription.getKey().getName() + "'.")
+							+ propertyMethod.getName() + "'.")
 						.logAndReturn();
 				}
-			}
-			else
-			{
-				objValue = propertyDescription.getMapper().mapFromString(rawValue);
+				
+				if (errorBehavior == ErrorBehavior.TRY_DEFAULTS_OR_EXCEPTION || errorBehavior == ErrorBehavior.TRY_DEFAULTS_OR_NULL)
+				{
+					rawValue = defaults.get(fullPropertyName);
+					if ((rawValue == null || rawValue.isEmpty()) && errorBehavior == ErrorBehavior.TRY_DEFAULTS_OR_EXCEPTION)
+						throw new PropertyNotFoundException(
+							"Default value for property '" + fullPropertyName + "' not found, config interface '" + configInterface.getName() + "#"
+								+ propertyMethod.getName() + "'.")
+							.logAndReturn();
+				}
 			}
 			
-			singleReturns.put(computeKeyHash(fullPropertyName, entryPropertyDescription.getKey()), objValue);
+			if (rawValue != null && !rawValue.isEmpty())
+				objValue = propertyDescription.getMapper().mapFromString(rawValue);
+			
+			singleReturns.put(computeKeyHash(fullPropertyName, propertyMethod), objValue);
 		}
 		
 		return singleReturns;
@@ -207,10 +300,10 @@ abstract class AbstractLoader
 		configDescriptions.forEach(confDescr -> confDescr.fireConfigChanged(configChangedEvents.get(confDescr)));
 	}
 	
-	final Object getProperty(ConfigDescription configDescription, ConfigDescription.PropertyDescription propertyDescription, Method method,
-		HashMap<String, String> methodArguments)
+	final Object getProperty(ConfigDescription.PropertyDescription propertyDescription, Method method, HashMap<String, String> methodArguments)
 		throws ConfigProxyException, PropertyValidateException, PropertyMatchException, PropertyLoadException
 	{
+		final ConfigDescription configDescription = propertyDescription.getConfigDescription();
 		Class<?> configInterface = configDescription.getConfInterface();
 		
 		if (propertyDescription.getDynamicVariableNames() == null)

@@ -48,7 +48,7 @@ final class ConfigInvocationHandlerImpl implements InvocationHandler
 			ConfigDescription.PropertyDescription propertyDescription = configDescription.getBoundPropertyMethods().get(method);
 			
 			if (propertyDescription != null)
-				return loaderService.getProperty(configDescription, propertyDescription, method, args);
+				return loaderService.getProperty(propertyDescription, method, args);
 		}
 		
 		if (method.getName().equals("toString"))

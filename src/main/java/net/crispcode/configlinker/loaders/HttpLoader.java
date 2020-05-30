@@ -49,7 +49,7 @@ final class HttpLoader extends AbstractLoader
 	{
 		super(configDescriptions);
 		
-		// invoke only in final loader instance (subclass of 'AbstractLoader')
+		// invoke only in final loader subclass (subclass of 'AbstractLoader')
 		this.prepareLoader();
 		this.loadProperties();
 		this.startTrackChanges();
