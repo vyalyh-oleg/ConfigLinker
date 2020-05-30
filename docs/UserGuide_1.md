@@ -19,8 +19,10 @@ Here the advanced usages of annotations <b>`@BoundObject`</b> and <b>`@BoundProp
 
 **`@BoundObject`**
 
-- [charsetName](#boundobjectcharsetname)
 - [sourceScheme](#boundobjectsourcescheme-classpath-file-http)
+- [sourcePath](#boundobjectsourcepath)
+- [defaultSourcePath](#boundobjectdefaultsourcepath)
+- [charsetName](#boundobjectcharsetname)
 - [propertyNamePrefix](#boundobjectpropertynameprefix-boundpropertyname)
 <br/>
 
@@ -109,8 +111,10 @@ Extended types:
 - `UUID`
 - `InetAddress`
 
+See also: [Predefined deserializers](UserGuide_2.md#predefined-deserializers) for `Date` type.
+
 ```properties
-# example of extended types
+# example of parameters with extended types usage
 
 type.URL = http://mysite.com:8080/path/to;matrix_1=foo;matrix_2=bar/resource.jsf?one=1&two=2#firstpart
 type.URI.1 = file:///home/john/Documents/charts.pdf
@@ -123,27 +127,6 @@ type.InetAddress.IPv6.1 = ::123
 type.InetAddress.IPv6.2 = ::ffff
 type.InetAddress.IPv6.3 = fe80::fc02:bcff:fea3:919b
 type.InetAddress.HostName = mysite.com
-```
-
-See also: [Predefined deserializers](UserGuide_2.md#predefined-deserializers) for `Date` type.
-<br/>
-
-
-### @BoundObject.charsetName
-
-It says what charset to use during loading raw text.  
-The default value in annotation is empty string, meaning that particular value will be taken from `FactorySettingsBuilder` (described in *User Guide part 2*), and it is `StandardCharsets.UTF_8`.  
-The charset object is retrieving by the call `Charset.forName(String)`, so make sure that the support of it presents in your environment.
-<br/>
-
-<u>Example:</u>
-
-```java
-@BoundObject(sourcePath = "credentials.properties", charsetName = "UTF-16")
-public interface UserCredentials
-{
-  // ...
-}
 ```
 <br/>
 
@@ -169,20 +152,73 @@ Describe the type of the source that is used to retrieve property values for ann
 
 - `SourceScheme.CONFIG_LINKER_SERVER`  
   It is not implemented yet.
-  
+<br/>
+
+
+### @BoundObject.sourcePath
+
+It is *required parameter*. It describes full/relative path to the resource with properties (file / http link). If you put only the file name, it will be considered as residing in the working directory of your program (so the value `filename` will be equal to `./filename` which is equal to `<current_workdir>/filename`)
+```java
+@BoundObject(sourcePath = "credentials.properties", sourceScheme = SourceScheme.FILE)
+public interface UserCredentials
+{
+  // ...
+}
+```
+<br/>
+
+
+### @BoundObject.defaultSourcePath
+In case if you got used to default values, and do not want to put the entire set of parameters in outer configuration file, you may create special `property` files which are consist of default parameters.  
+Such files should be placed near the config interface, so they'll become the part of code (part of jar file) after compilation and assembling.
+
+It is a good design to separate the code from the data, even for default props.
+
+<u>Example:</u>
+```java
+@BoundObject(sourcePath = "configs/server.properties", defaultSourcePath = "server.default.properties",
+    errorBehavior = ErrorBehavior.TRY_DEFAULTS_OR_EXCEPTION)
+interface ErrorBehavior_WithDefaultsAndException_ReturnDefaults
+{
+  // ...
+}
+```
+Here you may see another special `@BoundObject.errorBehavior` parameter.  
+In case of usage `defaultSourcePath` it should be set as `ErrorBehavior.TRY_DEFAULTS_OR_EXCEPTION` or `ErrorBehavior.TRY_DEFAULTS_OR_NULL`.  
+For more details see: [@BoundObject.errorBehavior](UserGuide_2.md#boundobjecterrorbehavior)
+<br/>
+
+
+### @BoundObject.charsetName
+
+It says what charset to use during loading raw text.  
+The default value in annotation is empty string, meaning that particular value will be taken from `FactorySettingsBuilder` (described in *User Guide part 2*), and it is `StandardCharsets.UTF_8`.  
+The charset object is retrieving by the call `Charset.forName(String)`, so make sure that the support of it presents in your environment.
+<br/>
+
+<u>Example:</u>
+
+```java
+@BoundObject(sourcePath = "credentials.properties", charsetName = "UTF-16")
+public interface UserCredentials
+{
+  // ...
+}
+```
 <br/>
 
 
 ### @BoundObject.propertyNamePrefix, @BoundProperty.name
 
-`propertyNamePrefix` is the *common part* of a group of parameter names in property file. This part is used for construction the full name, which is used for binding methods in annotated interface.  
+`propertyNamePrefix` is the *common part* of a group of parameter names in property file. This part is used for construction the full name, which is used for binding methods in annotated interface to the specific key in `property` file.
 
-If `propertyNamePrefix` is not specified you can use only full parameter names in `BoundProperty.name()`.  
-If it has any value then both variants (full and prefix-aware) names can be used.  
+`@BoundProperty.name` is the required parameter. It is the key name for one record from property file.
+If `@BoundObject.propertyNamePrefix` is not specified you can use only full names in `BoundProperty.name`.  
+If `propertyNamePrefix` has any value then both variants (full and prefix-aware) of names can be used.  
 
-For example, if the prefix  is set to `"mycompany"`, then the `@BoundProperty.name()` can look as `".serverName"` (starting with the dot is obligatory). This means, the final parameter name, which will be searched in property file, is `"mycompany.serverName"`.  
+For example, if the prefix  is set to `"mycompany"`, then the `@BoundProperty.name` can look as `".serverName"` (starting with the dot is obligatory). This means, the final parameter name, which will be searched in property file is `"mycompany.serverName"`.  
 
-Without the dot at the beginning the `@BoundProperty.name()` is considered as full name and the `propertyNamePrefix` is not taken into account.
+Without the dot at the beginning the `@BoundProperty.name` is considered as full name and the `propertyNamePrefix` is not taken into account.
 <br/>
 
 <u>Example:</u>

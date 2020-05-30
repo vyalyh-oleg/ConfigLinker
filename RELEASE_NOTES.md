@@ -22,3 +22,8 @@ First initial release.
 - Added Quick Start Guide;
 - Added User Manual;
 - Added predefined deserializers for `Date` type;
+
+
+## version 1.4
+(May, 2020)
+- Added ability to use sets of default properties.
