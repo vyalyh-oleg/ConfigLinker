@@ -56,7 +56,13 @@ public @interface BoundObject {
 	 * @return -
 	 */
 	String sourcePath();
-
+	
+	/**
+	 * In case when the desired property key couldn't be found in {@link #sourcePath()}, the path from here will be used as a spare to get defaults from.
+	 * @return -
+	 */
+	String defaultSourcePath() default "";
+	
 	/**
 	 * <p>Headers that are used to make http(s) requests to get configuration parameters (if the {@link BoundObject#sourceScheme} is {@link SourceScheme#HTTP}). These values are merged with the values which you can set with {@link FactorySettingsBuilder}.
 	 * <p>Variables can be used for substituting some parts of the header.
