@@ -144,6 +144,10 @@ This is useful only in two cases:
 `ErrorBehavior.THROW_EXCEPTION` -- throws PropertyNotFoundException when the value for configuration property wasn't found. Or other exceptions, deriviated from ConfigLinkerRuntimeException. It is default behaviour when INHERIT.
 
 `ErrorBehavior.RETURN_NULL` -- returns 'null' as property value on any error.
+
+`TRY_DEFAULTS_OR_EXCEPTION` --  tries to get the value from the source under [`@BoundObject.defaultSourcePath`](UserGuide_1.md#boundobjectdefaultsourcepath). If it doesn't exist, returns null.
+
+`TRY_DEFAULTS_OR_NULL` -- tries to get the value from the source under [`@BoundObject.defaultSourcePath`](UserGuide_1.md#boundobjectdefaultsourcepath). If it doesn't exist, throws exception `PropertyNotFoundException`.
 <br/>
 
 **`@BoundProperty.errorBehavior`**  
