@@ -25,6 +25,7 @@ import net.crispcode.configlinker.exceptions.PropertyMapException;
 import net.crispcode.configlinker.parsers.ParserFactory;
 import net.crispcode.configlinker.parsers.PropertyParser;
 
+import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
 import java.lang.reflect.InvocationTargetException;
@@ -34,6 +35,8 @@ import java.lang.reflect.Type;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -304,10 +307,10 @@ public final class MapperFactory
 		try
 		{
 			if (customTypeOrDeserializer == String.class)
-				executable = String.class.getDeclaredMethod("valueOf", Object.class);
+				executable = String.class.getMethod("valueOf", Object.class);
 			
 			if (executable == null && customTypeOrDeserializer == Character.class)
-				executable = CharacterMapper.class.getDeclaredMethod("valueOf", String.class);
+				executable = SpecialMappers.class.getDeclaredMethod("characterMapper", String.class);
 			
 			if (executable == null && ParserFactory.isPrimitiveWrapper(customTypeOrDeserializer) || customTypeOrDeserializer.isEnum())
 				executable = customTypeOrDeserializer.getDeclaredMethod("valueOf", String.class);
@@ -319,11 +322,17 @@ public final class MapperFactory
 				executable = URI.class.getConstructor(String.class);
 			
 			if (executable == null && InetAddress.class.isAssignableFrom(customTypeOrDeserializer))
-				executable = InetAddress.class.getDeclaredMethod("getByName", String.class);
+				executable = InetAddress.class.getMethod("getByName", String.class);
 			
 			if (executable == null && customTypeOrDeserializer == UUID.class)
 				executable = UUID.class.getMethod("fromString", String.class);
 			
+			if (executable == null && customTypeOrDeserializer == Path.class)
+				executable = SpecialMappers.class.getDeclaredMethod("pathMapper", String.class);
+			
+			if (executable == null && customTypeOrDeserializer == File.class)
+				executable = File.class.getConstructor(String.class);
+				
 			//if (customType == YourType.class)
 			// implement for other types
 		}

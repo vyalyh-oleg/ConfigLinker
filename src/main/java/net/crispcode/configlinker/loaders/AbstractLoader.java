@@ -33,13 +33,10 @@ import net.crispcode.configlinker.exceptions.PropertyValidateException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Method;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -97,20 +94,8 @@ abstract class AbstractLoader
 	
 	private HashMap<String, String> getDefaultProperties(URL defaultsURL, String configDescriptionInterfaceName, Charset charset)
 	{
-		Path fullFilePath;
-		try
-		{
-			fullFilePath = Paths.get(defaultsURL.toURI());
-		}
-		catch (URISyntaxException e)
-		{
-			throw new PropertyLoadException(
-				"Couldn't convert defaults URL to 'Path' object. Actual resource URL:'" + defaultsURL + "'; interface '" + configDescriptionInterfaceName + "'.")
-				.logAndReturn();
-		}
-		
 		Properties newProperties;
-		try (BufferedReader propFileReader = Files.newBufferedReader(fullFilePath, charset))
+		try (BufferedReader propFileReader = new BufferedReader(new InputStreamReader(defaultsURL.openStream(), charset), 256 * 1024))
 		{
 			newProperties = new Properties();
 			newProperties.load(propFileReader);
@@ -118,8 +103,8 @@ abstract class AbstractLoader
 		catch (IOException e)
 		{
 			throw new PropertyLoadException(
-				"Error during loading default properties from file '" + fullFilePath + "' with charset '" + charset.toString() +
-					"', config interface: '" + configDescriptionInterfaceName + "'.", e)
+				"Error during loading default properties from file '" + defaultsURL + "' with charset '" + charset + "', config interface: '"
+					+ configDescriptionInterfaceName + "'.", e)
 				.logAndReturn();
 		}
 		
