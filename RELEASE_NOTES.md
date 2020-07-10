@@ -27,3 +27,10 @@ First initial release.
 ## version 1.4
 (May, 2020)
 - Added ability to use sets of default properties.
+
+
+## version 1.5
+(July, 2020)
+- Added new types File and Path.
+- Fixed documentation.
+- Fixed problem with loading default configs from jar.
