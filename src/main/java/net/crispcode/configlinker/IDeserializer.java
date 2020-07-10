@@ -22,10 +22,11 @@ import java.util.Map;
 
 /**
  *
- * @param <T> is your custom type, that the deserializer will return
+ * @param <CUSTOM_TYPE> is your custom type, that the deserializer will return
  */
-public interface IDeserializer<T>
+public interface IDeserializer<CUSTOM_TYPE>
 {
-	default T deserialize(Map<String,String> stringValues) { return null; }
-	default T deserialize(String rawValue) { return null; }
+	default CUSTOM_TYPE deserialize(Map<String,String> stringValues) { return null; }
+	default CUSTOM_TYPE deserialize(String rawValue) { return null; }
+	default <ARG_TYPE> CUSTOM_TYPE deserialize(ARG_TYPE boundObject) { return null; }
 }

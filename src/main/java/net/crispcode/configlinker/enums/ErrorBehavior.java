@@ -34,7 +34,7 @@ import net.crispcode.configlinker.exceptions.PropertyNotFoundException;
  */
 public enum ErrorBehavior {
 	/**
-	 * Inherits value from {@link FactorySettingsBuilder#setErrorBehavior(ErrorBehavior)}. Default value {@link #THROW_EXCEPTION}.
+	 * Inherits value from {@link FactorySettingsBuilder#setErrorBehavior(ErrorBehavior)} if it is used in {@code BoundObject.errorBehavior}. Default value {@link #THROW_EXCEPTION}.
 	 */
 	INHERIT,
 	/**

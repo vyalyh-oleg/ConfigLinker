@@ -39,8 +39,9 @@ import java.nio.charset.Charset;
 public @interface BoundObject {
 
 	/**
-	 * <p>
-	 * Describes the type of the source that is used to retrieve property values for this annotated object.
+	 * <p>Describes the type of the source that is used to retrieve property values for this annotated object.
+	 * <p>Default value is {@link SourceScheme#INHERIT}.
+	 * <p>It means that the value will be inherited from {@link FactorySettingsBuilder#setSourceScheme(SourceScheme)} and by default (in builder) equals {@link SourceScheme#FILE}.
 	 * @return -
 	 */
 	SourceScheme sourceScheme() default SourceScheme.INHERIT;
@@ -76,7 +77,7 @@ public @interface BoundObject {
 
 	/**
 	 * <p>This value is used to retrieve {@code Charset} object invoking {@link java.nio.charset.Charset#forName(String)}, and then it will be used to load configuration in raw text format.
-	 * <p>The default value is inherited from {@link FactorySettingsBuilder#setCharset(Charset)} and equal {@code StandardCharsets.UTF_8}.
+	 * <p>The default value is inherited from {@link FactorySettingsBuilder#setCharset(Charset)} and by default (in builder) equals {@code StandardCharsets.UTF_8}.
 	 * <p>If you set any value here, it will be used instead of default value.
 	 * @return -
 	 */
@@ -121,7 +122,8 @@ public @interface BoundObject {
 	String propertyNamePrefix() default "";
 
 	/**
-	 * <p>Default value is {@link TrackPolicy#INHERIT} which mean global policy will be used (specify in method {@link FactorySettingsBuilder#setTrackPolicy(TrackPolicy)}). To override such behaviour choose {@link TrackPolicy#DISABLE} or {@link TrackPolicy#ENABLE} value.
+	 * <p>Default value is {@link TrackPolicy#INHERIT}
+	 * <p>It means that the global policy will be used, which inherited from {@link FactorySettingsBuilder#setTrackPolicy(TrackPolicy)} and by default (in builder) equals {@link TrackPolicy#DISABLE}
 	 * @return -
 	 */
 	TrackPolicy trackingPolicy() default TrackPolicy.INHERIT;
@@ -129,7 +131,7 @@ public @interface BoundObject {
 	/**
 	 * <p>Used only if in this annotation or in {@link FactorySettingsBuilder#setTrackPolicy(TrackPolicy)} specified {@link TrackPolicy#ENABLE}, and the {@link SourceScheme#HTTP}.
 	 * <p>Otherwise this parameter is ignored.
-	 * <p>Default value is '0' which means inherited behaviour (will be used value from {@code FactorySettingsBuilder} (equal '60' seconds).
+	 * <p>Default value is '0' seconds which means inherited behaviour from {@link FactorySettingsBuilder#setTrackingInterval(int)} and by default (in builder) equals '60' seconds.
 	 * <p>MIN value = 15 seconds, MAX value = 86400 seconds (1 day = 24 hours * 3600 seconds).
 	 * @return -
 	 */
@@ -142,9 +144,9 @@ public @interface BoundObject {
 	Class<? extends IConfigChangeListener> changeListener() default IConfigChangeListener.class;
 
 	/**
-	 * <p>
-	 * What to do if the property value does not exist in underlying persistent store or cannot be converted to object representation for any reasons.
-	 * Default value is {@link ErrorBehavior#INHERIT} and specified in {@link FactorySettingsBuilder#setErrorBehavior(ErrorBehavior)}
+	 * <p>What to do if the property value does not exist in underlying persistent store or cannot be converted to object representation for any reasons.
+	 * <p>Default value is {@link ErrorBehavior#INHERIT}.
+	 * <p>It means that the value will be inherited from {@link FactorySettingsBuilder#setErrorBehavior(ErrorBehavior)} and by default (in builder) equals {@link ErrorBehavior#THROW_EXCEPTION}
 	 * @return -
 	 */
 	ErrorBehavior errorBehavior() default ErrorBehavior.INHERIT;

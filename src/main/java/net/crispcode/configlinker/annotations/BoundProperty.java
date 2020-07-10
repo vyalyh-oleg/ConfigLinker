@@ -98,6 +98,7 @@ public @interface BoundProperty {
 	
 	/**
 	 * <p>Whether or not to ignore leading and trailing getWhitespaces for configuration names and values.
+	 * <p>It means that the value will be inherited from {@link FactorySettingsBuilder#setWhitespaces(Whitespaces)} and by default (in builder) equals {@link  Whitespaces#IGNORE}.
 	 * <p>See: {@link Whitespaces}
 	 * @return -
 	 */
@@ -106,37 +107,58 @@ public @interface BoundProperty {
 	/**
 	 * <p>Default value is {@code Object.class}, which means automatic detection for standard supported return types.</p>
 	 * <p><b>So you no need to change anything if you use them:</b></p>
+	 *
+	 * &nbsp;&nbsp;&nbsp;&nbsp;<i>Basic types:</i>
 	 * <ul>
-	 * <li>all primitives and arrays of primitives;</li>
-	 * <li>all wrappers of primitives and arrays of them;</li>
-	 * <li>{@code String} and {@code String[]}</li>
-	 * <li>{@code Enum} and {@code Enum[]}</li>
-	 * <li>{@code List<String>}</li>
-	 * <li>{@code Set<String>}</li>
-	 * <li>{@code Map<String,String>}</li>
+	 * <li>all primitives;</li>
+	 * <li>all wrappers of primitives;</li>
+	 * <li>String;</li>
+	 * <li>Enum;</li>
 	 * </ul>
+	 *
+	 * &nbsp;&nbsp;&nbsp;&nbsp;<i>Arrays and Collections:</i>
+	 * <li>arrays of primitives;</li>
+	 * <li>arrays of wrappers (of primitives);</li>
+	 * <li>String[];</li>
+	 * <li>Enum[]</li>
+	 * <li>List<String>;</li>
+	 * <li>Set<String>;</li>
+	 * <li>Map<String,String>;</li>
+	 * </ul>
+	 *
+	 * &nbsp;&nbsp;&nbsp;&nbsp;<i>Extended types:</i>
+	 * <li>URL</li>
+	 * <li>URI</li>
+	 * <li>Path</li>
+	 * <li>File</li>
+	 * <li>UUID</li>
+	 * <li>InetAddress</li>
+	 * </ul>
+	 *
+	 * <p>See also: Predefined deserializers for Date type {@link net.crispcode.configlinker.deserializers.DateType}.
+	 * <p>
 	 * <br>
 	 * <p>If you want to use <b>custom return type (or array of custom types)</b>, you must just implement deserialization logic for your type, and no need any changes in the current parameter.
 	 * <p>If you want to use <b>custom return type as generic type</b> for {@code List<CustomType>}, {@code Set<CustomType>} or {@code Map<String,CustomType>}, you must just properly specify it's generic type in the angle brackets and implement deserialization logic.
 	 * <br>
-	 * <p><b>Deserialization logic</b> should be encapsulated in one of the methods, described in {@link DeserializationMethod} enum. Then set your choice in {@link BoundProperty#deserializationMethod}.
+	 * <p><b>Deserialization logic</b> should be encapsulated in one of the methods, described in {@link DeserializationMethod} enum. If your class implements multiple deserialization methods, then choice the appropriate variant in {@link BoundProperty#deserializationMethod}.
 	 * <br>
 	 * <br>
 	 * <p> <b>Only if the deserialization method resides <u>not in your custom type</u></b>, but in other place (other class), set here it class:
 	 * <p> {@code customType = YourDeserializer.class}.
 	 * @return -
-	 */
+	 */ // TODO: rewrite logic for custom type deserialization (add ability to point the group of config values)
 	Class<?> customType() default Object.class;
 
 	/**
-	 * <p>If you want to use custom return type, you must just implement deserialization logic for it (see {@link #customType()}) and point the type of deserialization method here.
+	 * <p>If you want to use custom return type, you just need to implement deserialization method for it (see {@link #customType()}).
 	 * <p>Default value is {@link DeserializationMethod#AUTO}
 	 * <p>By default, the appropriate deserialization method will be tried to found out automatically.
-	 * <p>If your class implements multiple deserialization variants, you must choose appropriate value manually.
+	 * <p>If your class implements multiple deserialization methods, you must choose here appropriate value manually.
 	 *
 	 * <p>If the return type for you configuration method is List, Set or Map (thus your custom type is a generic parameter), then only {@link DeserializationMethod#CONSTRUCTOR_STRING}, {@link DeserializationMethod#VALUEOF_STRING}, {@link DeserializationMethod#DESERIALIZER_STRING} allowed as deserialization method for custom type.
 	 * @return -
-	 */
+	 */ // TODO: extend ability to use any deserialization method for List, Set, Map
 	DeserializationMethod deserializationMethod() default DeserializationMethod.AUTO;
 
 	/**
@@ -154,8 +176,9 @@ public @interface BoundProperty {
 	Class<? extends IPropertyValidator> validator() default IPropertyValidator.class;
 
 	/**
-	 * What to do if the property value does not exist in underlying persistent store.
-	 * Default value is {@link ErrorBehavior#INHERIT} and specified in {@link FactorySettingsBuilder#setErrorBehavior(ErrorBehavior)}
+	 * <p>What to do if the property value does not exist in underlying persistent store.
+	 * <p>Default value is {@link ErrorBehavior#INHERIT}.
+	 * <p>It means that the value will be inherited from {@link BoundObject#errorBehavior()}.
 	 * @return -
 	 */
 	ErrorBehavior errorBehavior() default ErrorBehavior.INHERIT;

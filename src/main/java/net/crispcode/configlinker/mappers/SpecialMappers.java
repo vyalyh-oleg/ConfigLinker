@@ -19,12 +19,21 @@
 package net.crispcode.configlinker.mappers;
 
 
-final class CharacterMapper
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+
+final class SpecialMappers
 {
-	static char valueOf(String raw)
+	static char characterMapper(String raw)
 	{
 		if (raw.length() > 1)
 			throw new IllegalArgumentException("Given string '" + raw + "' instead of a single char.");
 		return raw.charAt(0);
+	}
+	
+	static Path pathMapper(String raw)
+	{
+		return Paths.get(raw);
 	}
 }
