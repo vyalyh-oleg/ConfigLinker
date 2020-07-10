@@ -117,22 +117,24 @@ public @interface BoundProperty {
 	 * </ul>
 	 *
 	 * &nbsp;&nbsp;&nbsp;&nbsp;<i>Arrays and Collections:</i>
+	 * <ul>
 	 * <li>arrays of primitives;</li>
 	 * <li>arrays of wrappers (of primitives);</li>
 	 * <li>String[];</li>
-	 * <li>Enum[]</li>
-	 * <li>List<String>;</li>
-	 * <li>Set<String>;</li>
-	 * <li>Map<String,String>;</li>
+	 * <li>Enum[];</li>
+	 * <li>List&lt;String&gt;;</li>
+	 * <li>Set&lt;String&gt;;</li>
+	 * <li>Map&lt;String,String&gt;;</li>
 	 * </ul>
 	 *
 	 * &nbsp;&nbsp;&nbsp;&nbsp;<i>Extended types:</i>
-	 * <li>URL</li>
-	 * <li>URI</li>
-	 * <li>Path</li>
-	 * <li>File</li>
-	 * <li>UUID</li>
-	 * <li>InetAddress</li>
+	 * <ul>
+	 * <li>URL;</li>
+	 * <li>URI;</li>
+	 * <li>Path;</li>
+	 * <li>File;</li>
+	 * <li>UUID;</li>
+	 * <li>InetAddress;</li>
 	 * </ul>
 	 *
 	 * <p>See also: Predefined deserializers for Date type {@link net.crispcode.configlinker.deserializers.DateType}.
