@@ -108,6 +108,8 @@ Extended types:
 
 - `URL`
 - `URI`
+- `Path`
+- `File`
 - `UUID`
 - `InetAddress`
 
