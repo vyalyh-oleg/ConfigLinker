@@ -58,8 +58,11 @@ final class ConfigInvocationHandlerImpl implements InvocationHandler
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
 	{
-		ConfigDescription configDescription = mapConfigDescriptions.get(method.getDeclaringClass());
+		final Class<?> declaringClass = method.getDeclaringClass();
+		if (method.getName().equals("toString"))
+			return "['ConfigLinker' library] Proxy for configuration interface '" + declaringClass.getName() + "'.";
 		
+		final ConfigDescription configDescription = mapConfigDescriptions.get(declaringClass);
 		if (configDescription != null)
 		{
 			ConfigDescription.PropertyDescription propertyDescription = configDescription.getBoundPropertyMethods().get(method);
@@ -68,18 +71,15 @@ final class ConfigInvocationHandlerImpl implements InvocationHandler
 				return loaderService.getProperty(propertyDescription, method, args);
 		}
 		
-		if (method.getName().equals("toString"))
-			return "['ConfigLinker' library] Proxy for configuration interface.";
-		
 		if (method.isDefault())
 		{
-			return constructor.newInstance(method.getDeclaringClass())
-				.in(method.getDeclaringClass())
-				.unreflectSpecial(method, method.getDeclaringClass())
+			return constructor.newInstance(declaringClass)
+				.in(declaringClass)
+				.unreflectSpecial(method, declaringClass)
 				.bindTo(proxy)
 				.invokeWithArguments(args);
 		}
 		
-		return method.invoke(proxy, args);
+		return null;
 	}
 }
