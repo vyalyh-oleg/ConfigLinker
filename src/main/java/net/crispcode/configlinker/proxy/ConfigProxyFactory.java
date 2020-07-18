@@ -26,8 +26,11 @@ import java.util.HashMap;
 import java.util.Set;
 
 
-public class ConfigProxyFactory
+public final class ConfigProxyFactory
 {
+	private ConfigProxyFactory()
+	{
+	}
 	
 	public static Proxy create(HashMap<Class<?>, ConfigDescription> mapConfigDescriptions, LoaderService loaderService)
 	{

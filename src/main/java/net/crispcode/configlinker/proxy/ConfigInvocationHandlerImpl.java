@@ -19,8 +19,11 @@
 package net.crispcode.configlinker.proxy;
 
 import net.crispcode.configlinker.ConfigDescription;
+import net.crispcode.configlinker.exceptions.ConfigProxyException;
 import net.crispcode.configlinker.loaders.LoaderService;
 
+import java.lang.invoke.MethodHandles;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -28,6 +31,20 @@ import java.util.HashMap;
 
 final class ConfigInvocationHandlerImpl implements InvocationHandler
 {
+	static private final Constructor<MethodHandles.Lookup> constructor;
+	
+	static
+	{
+		try
+		{
+			constructor = MethodHandles.Lookup.class.getDeclaredConstructor(Class.class);
+			constructor.setAccessible(true);
+		}
+		catch (NoSuchMethodException e)
+		{
+			throw new ConfigProxyException(e).logAndReturn();
+		}
+	}
 	
 	private final HashMap<Class<?>, ConfigDescription> mapConfigDescriptions;
 	private final LoaderService loaderService;
@@ -53,6 +70,15 @@ final class ConfigInvocationHandlerImpl implements InvocationHandler
 		
 		if (method.getName().equals("toString"))
 			return "['ConfigLinker' library] Proxy for configuration interface.";
+		
+		if (method.isDefault())
+		{
+			return constructor.newInstance(method.getDeclaringClass())
+				.in(method.getDeclaringClass())
+				.unreflectSpecial(method, method.getDeclaringClass())
+				.bindTo(proxy)
+				.invokeWithArguments(args);
+		}
 		
 		return method.invoke(proxy, args);
 	}
